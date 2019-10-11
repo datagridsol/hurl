@@ -72,14 +72,14 @@ $(document).ready(function(){
         $(btn).buttonLoader('start');
         $.ajax({
           'method':'POST',
-          'url':'/hurlapp/user_login/',
+          'url':'/user_login/',
           'data': $('#signinForm').serialize(),
           success: function(response){
             if(response.status=='success')
             {
               $(btn).buttonLoader('stop')
               toastr.success('Login successfully.')
-              window.location.href="/hurlapp/dashboard/";
+              window.location.href="/dashboard/";
             }
             else
             {
