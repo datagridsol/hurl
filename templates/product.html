@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body_block %}
+  <div class="container">
+    <div class="jumbotron">
+      <h1 style="margin-left: 30%;">Add Product</h1>
+      <br>
+<form method="post" action="{% url 'hurlapp:add_product' %}">
+          {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+        <div style="margin-left: 30%;">
+          <label for="product_name">Product Name:</label>
+          <input  style="margin-left:1%"  type="product_name" name="product_name" placeholder="product_name">
+        </div>
+        <<br>
+        <div style="margin-left: 30%;">
+          <label for="password">Product Unit:</label>
+          <input  style="margin-left:1%"  type="product_unit" name="product_unit" placeholder="product_unit">
+        </div>
+        <br>
+
+        <div>
+        <input style="margin-left: 30%;" type="submit" name="" value="Add"></div>
+        </div>
+
+</form>
+    </div>
+  </div>
+{% endblock %}

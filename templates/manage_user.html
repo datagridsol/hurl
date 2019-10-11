@@ -1,0 +1,50 @@
+
+
+      {% extends "base.html" %}
+      {% block body_block %}
+      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+      <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+      <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+      <div>
+      <script type="text/javascript">
+        {% autoescape off %}
+      	//var device_not_reporting = {{ response }};
+      		var result_data = {{ data}};
+      	{% endautoescape %}
+
+          $(document).ready(function() {
+            var shTable=jQuery('#shTable').DataTable({
+              "aaData":result_data,
+              "scrollY":'200px',
+              "destroy": true,
+              
+              // "columnDefs": [ {
+              //     "targets": 2,
+              //     "data": null,
+              //     "defaultContent": "<button>DisApproved</button>"
+              // } ],
+              // "columnDefs": [ {
+              //     "targets": 2,
+              //     "data": null,
+              //     "defaultContent": "<button>Approved</button>"
+              // } ],
+            });
+          } );
+       </script>
+     </div><!-- panel-heading -->
+
+     <table id="shTable" class="display">
+   <thead class="">
+       <tr>
+           <th style="background-color:#A0CFEC !important;">Login As</th>
+           <th style="background-color:#A0CFEC !important;">Remark for User Details</th>
+          <!--  <th style="background-color:#A0CFEC !important;">Data</th>
+           <th style="background-color:#A0CFEC !important;">Action</th> -->
+       </tr>
+     </thead>
+     <tbody>
+            
+
+    </tbody>
+    </table>
+{% endblock %}

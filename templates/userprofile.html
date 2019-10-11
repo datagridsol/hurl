@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+<script>
+  $(document).ready(function(){
+    console.log("dddddddd")
+  })
+</script>
+{% block body_block %}
+
+  <div class="container">
+    <div class="jumbotron">
+      <h1 style="margin-left: 30%;">Add User</h1>
+
+<form method="post" action="{% url 'hurlapp:add_user' %}">
+          {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+          <br>
+          <div style="margin-left: 30%;">
+              <label for="user_type">UserType:</label>
+               <select id="user_type" name="user_type">
+                <option  value="" selected="selected">---select---</option>
+                {% for user_type in data %}
+                 <option value="{{user_type.id}}">{{user_type}}</option>
+                {% endfor %}
+              </select>
+            </div>
+        <br>
+        <div style="margin-left: 30%;">
+          <label for="username">Username:</label>
+          <input  style="margin-left:1%"  type="username" name="username" placeholder="username">
+        </div>
+        <br>
+        <div style="margin-left: 30%;">
+          <label for="password">Password:</label>
+          <input  style="margin-left:1%"  type="password" name="password" placeholder="Password">
+        </div>
+        <br>
+        <div style="margin-left: 30%;">
+          <label for="address">Address:</label>
+          <input  style="margin-left:2%"  type="address" name="address" placeholder="Address">
+        </div>
+        <br>
+        <div>
+        <input style="margin-left: 30%;" type="submit" name="" value="Add"></div>
+
+
+</form>
+    </div>
+  </div>
+{% endblock %}
