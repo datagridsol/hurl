@@ -96,5 +96,74 @@ $(document).ready(function(){
       return false;
     }
   });
+
+  $("#userForm").validate({
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      username: {
+        required: true,
+      },
+      aadhar_no: {
+        required: true,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      username: {
+        required: "Please enter a mobile number",
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      }
+    },
+    errorPlacement: function(error, element) {
+      error.appendTo(element.parent("div"));
+    },
+    // submitHandler: function() {
+    //     $.ajax({
+    //       'method':'POST',
+    //       'url':'/hurlapp/add_user/',
+    //       'data': $('#userForm').serialize(),
+    //       success: function(response){
+    //         if(response.status=='success')
+    //         {
+    //           window.location.href="/hurlapp/add_user/";
+    //         }
+    //         else
+    //         {
+    //           alert(response.msg);
+    //         }
+
+    //       },
+    //       error: function(xhr,status,errorThrown){
+    //         alert(xhr.responseText)
+    //       },
+    //     });
+    //   return false;
+    // }
+  });
       
 });
