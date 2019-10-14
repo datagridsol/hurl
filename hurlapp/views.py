@@ -34,7 +34,7 @@ def not_in_student_group(user):
 #@permission_required("dappx.test1")
 #@user_passes_test(not_in_student_group, login_url='/accounts/login/')
 def register(request):
-    registered = False
+    registered = True
     #db_data=models.Test1.objects.all()
     data=['amol','jamdade']
     return render(request,'registration.html',
