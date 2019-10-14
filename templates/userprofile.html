@@ -6,43 +6,95 @@
 </script>
 {% block body_block %}
 
-  <div class="container">
+  <div class="content-wrapper" >
     <div class="jumbotron">
       <h1 style="margin-left: 30%;">Add User</h1>
 
-<form method="post" action="{% url 'hurlapp:add_user' %}">
+<form method="post" action="{% url 'add_user' %}">
           {% csrf_token %}
           {# A more "HTML" way of creating the login form#}
           <br>
-          <div style="margin-left: 30%;">
-              <label for="user_type">UserType:</label>
+          <table width="80%">
+            <tr>
+              <td colspan="2">
+                   <label for="user_type">UserType:</label><br/>
                <select id="user_type" name="user_type">
                 <option  value="" selected="selected">---select---</option>
                 {% for user_type in data %}
                  <option value="{{user_type.id}}">{{user_type}}</option>
                 {% endfor %}
               </select>
-            </div>
-        <br>
-        <div style="margin-left: 30%;">
-          <label for="username">Username:</label>
-          <input  style="margin-left:1%"  type="username" name="username" placeholder="username">
-        </div>
-        <br>
-        <div style="margin-left: 30%;">
-          <label for="password">Password:</label>
-          <input  style="margin-left:1%"  type="password" name="password" placeholder="Password">
-        </div>
-        <br>
-        <div style="margin-left: 30%;">
-          <label for="address">Address:</label>
-          <input  style="margin-left:2%"  type="address" name="address" placeholder="Address">
-        </div>
-        <br>
-        <div>
-        <input style="margin-left: 30%;" type="submit" name="" value="Add"></div>
+              </td>
+               <td>
+                  <label for="langauge" style="margin-left:-100%">Langauge:</label><br/>
+          <input  style="margin-left:-100%"  type="langauge" name="langauge" placeholder="langauge">
+              
+             
+            </tr>
+            <tr>
+             
+              <td>
+                     <label for="name">Name:</label><br/>
+          <input  style="margin-left:1%"  type="name" name="name" placeholder="name">
+              </td>
+              <td> <label for="email">Email:</label><br/>
+          <input  style="margin-left:2%"  type="email" name="email" placeholder="Email"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td> <label for="mobile_number">Phone:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">aadhar:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">State:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">District:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Pincode:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Address:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Photo:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Aadhar:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Pancard:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Vote Id:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Soil Card:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Land Area:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="2"><input style="margin-left: 30%;" type="submit" name="" value="Add"></td>
+            </tr>
+         
 
-
+</table>
 </form>
     </div>
   </div>
