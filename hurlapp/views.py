@@ -75,20 +75,40 @@ def user_login(request):
             password = request.COOKIES['password']
         return render(request, 'login.html', {"username" : username,"password" : password})
 
+
 @csrf_exempt
-def addUser(request):
+def add_user(request):
     gr_no=[]
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
         gr_no.append(i[1])
-
-    print(request.user.id)
-    my_user_type=Group.objects.filter(user=request.user.id).values_list('name')
+    my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
     print(my_user_type[0][0])
     if request.method == 'POST':
         data={}
         username = request.POST.get('username')
         password = request.POST.get('password')
+        full_name = request.POST.get('name')
+        ### userinfo#### 
+        # langn_id=request.POST.get('language_id')
+        # user_type = request.POST.get('user_type')
+        # parent_id=request.POST.get('parent_id')
+        # aadhar_no=request.POST.get('aadhar_no')
+        # state=request.POST.get('state')
+        # city=request.POST.get('city')
+        # district=request.POST.get('district')
+        # pincode=request.POST.get('pincode')
+        # address=request.POST.get('address')
+        # user_photo=request.POST.get('user_photo')
+        # aadhar_card=request.POST.get('aadhar_card')
+        # pan_card=request.POST.get('pan_card')
+        # vote_id=request.POST.get('vote_id')
+        # land_area=request.POST.get('land_area')
+    
         address = request.POST.get('address')
         user_type = request.POST.get('user_type')
         print("values",user_type)
@@ -114,9 +134,45 @@ def addUser(request):
         return render(request, 'manage_user.html', {'data':data})
 
     else:
-        print("Get Method",gr_no)
+        print("Get Method",lang_data)
         return render(request, 'userprofile.html', {'data':gr_no})
 
+
+def get_langauge():
+    lang_data=[]
+    lang_type=models.Language.objects.all().values_list('id', 'lang_name')
+    for i in lang_type:
+        case1 = {'id': i[0], 'name': i[1],}
+        lang_data.append(case1)
+    return lang_data
+
+
+def get_group():
+    group_data=[]
+    gr_no=[]
+    user_type=Group.objects.all().values_list('id', 'name')
+    for i in user_type:
+        gr_no.append(i[1])
+        case = {'id': i[0], 'name': i[1]}
+        group_data.append(case)
+    return group_data,gr_no
+
+def get_state():
+    state_data=[]
+    state_list=models.State.objects.all().values_list('id', 'state_name')
+    for i in state_list:
+        case2 = {'id': i[0], 'name': i[1],}
+        state_data.append(case2)
+    return state_data
+
+def get_distict(request):
+    district_data=[]
+    state_id=request.POST.get('state_id')
+    district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
+    for i in district_list:
+        case2 = {'id': i[0], 'name': i[1],}
+        district_data.append(case2)
+    return district_data
 
 @csrf_exempt
 def get_manage_user(request):
