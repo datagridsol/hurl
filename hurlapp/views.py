@@ -121,14 +121,37 @@ def addUser(request):
 @csrf_exempt
 def get_manage_user(request):
     data=[]
-    user_type=User.objects.all().values_list('id', 'username')
-    gridList = []
-    for nlist in user_type:
-        row = []
-        for item in nlist:
-           row.append(item)
+    user_type=""
+    district=""
+    state=""
+    userdata=User.objects.all().values_list('id', 'first_name','last_name','username','is_active')
+    for nlist in userdata:
+        row=[]
+        user_id=nlist[0]
+        first_name=nlist[1]
+        last_name=nlist[2]
+        full_name=str(first_name)+" "+str(last_name)
+        username=nlist[3]
+        status=nlist[4]
+        if status:
+            status="Active"
+        else:
+            status="Deactive"
+
+        user_info=models.UserProfile.objects.filter(user=user_id).values_list('user_type__name','district__district_name','state__state_name')
+        for i in user_info:
+            user_type=i[0]
+            district=i[1]
+            state=i[2]
+
+        row.append(user_id)
+        row.append(user_type)
+        row.append(full_name)
+        row.append(username)
+        row.append(district)
+        row.append(state)
+        row.append(status)
         data.append(row)
-    print(data)
     return render(request, 'manage_user.html', {'data':(data)})
 
 
