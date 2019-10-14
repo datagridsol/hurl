@@ -76,6 +76,9 @@ def user_login(request):
         return render(request, 'login.html', {"username" : username,"password" : password})
 
 
+
+
+
 @csrf_exempt
 def add_user(request):
     gr_no=[]
@@ -83,6 +86,8 @@ def add_user(request):
     lang_data=get_langauge()
     state_data=get_state()
 
+    print(group_data,lang_data,state_data)
+    print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
         gr_no.append(i[1])
@@ -91,8 +96,9 @@ def add_user(request):
     if request.method == 'POST':
         data={}
         username = request.POST.get('username')
-        password = request.POST.get('password')
+        password = request.POST.get('username')
         full_name = request.POST.get('name')
+
         ### userinfo#### 
         # langn_id=request.POST.get('language_id')
         # user_type = request.POST.get('user_type')
@@ -109,16 +115,16 @@ def add_user(request):
         # vote_id=request.POST.get('vote_id')
         # land_area=request.POST.get('land_area')
     
-        address = request.POST.get('address')
-        user_type = request.POST.get('user_type')
-        print("values",user_type)
-        new_user = User.objects.create(username = username,password = password)
-        new_user.set_password(password)
-        new_user.save()
-        new_Uid = new_user.id
-        print("new_Uid",new_Uid)
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type="re",address=address)
-        userprofile.save()
+        
+       
+
+        # new_user = User.objects.create(username = username,password = password)
+        # new_user.set_password(password)
+        # new_user.save()
+        # new_Uid = new_user.id
+        # print("new_Uid",new_Uid)
+        # userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,language=langn_id,aadhar_no=aadhar_no,state=state,city=city,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,land_area=land_area)
+        # userprofile.save()
         #new_user.set_password(password)
         #new_user = User.objects.create(username=username,password=password)
         #new_user = form.save(commit=False)
@@ -137,6 +143,16 @@ def add_user(request):
         print("Get Method",lang_data)
         return render(request, 'userprofile.html', {'data':gr_no})
 
+
+
+def get_username(request):
+    username=request.POST.get('username')
+    if User.objects.filter(username=username).exists():
+        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        return response
+    else:
+        response=JsonResponse({'status':'success'})
+        return response
 
 def get_langauge():
     lang_data=[]
