@@ -182,7 +182,7 @@ def get_state():
     state_data=[]
     state_list=models.State.objects.all().values_list('id', 'state_name')
     for i in state_list:
-        case2 = {'id': i[0], 'name': i[1],}
+        case2 = {'id': i[0], 'name': i[1]}
         state_data.append(case2)
     return state_data
 
@@ -191,7 +191,7 @@ def get_distict(request):
     state_id=request.POST.get('state_id')
     district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
     for i in district_list:
-        case2 = {'id': i[0], 'name': i[1],}
+        case2 = {'id': i[0], 'name': i[1]}
         district_data.append(case2)
     return district_data
 
@@ -199,7 +199,7 @@ def get_city():
     city_data=[]
     city_list=models.City.objects.all().values_list('id', 'city_name')
     for i in city_list:
-        case2 = {'id': i[0], 'name': i[1],}
+        case2 = {'id': i[0], 'name': i[1]}
         city_data.append(case2)
     return city_data
 
