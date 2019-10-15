@@ -80,6 +80,7 @@ $(document).ready(function(){
               $(btn).buttonLoader('stop')
               toastr.success('Login successfully.')
               window.location.href="/dashboard/";
+
             }
             else
             {
@@ -106,11 +107,16 @@ $(document).ready(function(){
       name: {
         required: true,
       },
-      username: {
+      mobile_number: {
         required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
       },
       aadhar_no: {
         required: true,
+        minlength: 12,
+        maxlength: 12,
       },
       state: {
         required: true,
@@ -126,11 +132,16 @@ $(document).ready(function(){
       name: {
         required: "Please enter a name",
       },
-      username: {
+      mobile_number: {
         required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
+         minlength: "Your mobile number must consist of at least 12 digits",
+        maxlength: "Your mobile number must consist of at max 12 digits",
       },
       state: {
         required: "Please enter a state",
@@ -139,31 +150,29 @@ $(document).ready(function(){
         required: "Please enter a district",
       }
     },
-    errorPlacement: function(error, element) {
-      error.appendTo(element.parent("div"));
-    },
-    // submitHandler: function() {
-    //     $.ajax({
-    //       'method':'POST',
-    //       'url':'/add_user/',
-    //       'data': $('#userForm').serialize(),
-    //       success: function(response){
-    //         if(response.status=='success')
-    //         {
-    //           window.location.href="/add_user/";
-    //         }
-    //         else
-    //         {
-    //           alert(response.msg);
-    //         }
+    submitHandler: function() {
+        $.ajax({
+          'method':'POST',
+          'url':'/add_user/',
+          'data': $('#userForm').serialize(),
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('user Created successfully.').delay(10000)
+              window.location.href="/get_user/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
 
-    //       },
-    //       error: function(xhr,status,errorThrown){
-    //         alert(xhr.responseText)
-    //       },
-    //     });
-    //   return false;
-    // }
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
   });
       
 });

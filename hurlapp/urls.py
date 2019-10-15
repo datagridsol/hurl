@@ -14,5 +14,7 @@ urlpatterns=[
     url(r'^user_login/$',views.user_login,name='user_login'),
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
+    url(r'^get_district/$',views.get_district,name='get_district'),
+    url(r'^testimage/$',views.hotel_image_view,name='testimage'),
 
 ]

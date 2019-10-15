@@ -1,6 +1,6 @@
 # dappx/views.py
 from django.shortcuts import render
-from hurlapp.forms import UserForm
+from hurlapp.forms import UserForm,UserProfileInfoForm,HotelForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -83,8 +83,10 @@ def user_login(request):
 @csrf_exempt
 def add_user(request):
     gr_no=[]
+
     first_name=''
     last_name=''
+    city_name=''
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -97,9 +99,13 @@ def add_user(request):
     if my_user_type:
         print(my_user_type[0][0])
     if request.method == 'POST':
+        print("Post Data")
         data={}
-        username = request.POST.get('username')
-        password = request.POST.get('username')
+        username = request.POST.get('mobile_number')
+        if User.objects.filter(username=username).exists():
+            response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+            return response
+        password = request.POST.get('mobile_number')
         email = request.POST.get('email')
         full_name = request.POST.get('name')
         if (' ' in full_name) == True:
@@ -124,29 +130,39 @@ def add_user(request):
         aadhar_card=request.POST.get('aadhar_card')
         pan_card=request.POST.get('pan_card')
         vote_id=request.POST.get('vote_id')
+        soil_card=request.POST.get('soil_card')
         land_area=request.POST.get('land_area')
-    
+        #user_photo = request.FILES['user_photo']
+        #print("user_photo",user_photo)
+        #hotel_image_view(request)
+        #user_photo=request.FILES.get('user_photo')
+        #file = request.FILES['user_photo']
+        #print("user_photo",user_photo,file)
+        #input()
         new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
         user_type=Group.objects.get(id=user_type)
+        user_type.user_set.add(new_Uid)
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
         district=models.District.objects.get(id=district)
-        if models.City.objects.filter(city_name=city).exists():
-            city_id=city
-        else:
-            new_city = models.City.objects.create(city_name =city,status=1)
-            new_city.save()
-            city_id=new_city.city_name
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_id,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,land_area=land_area)
+        if city:
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
         userprofile.save()
-        data={'user_type':user_type,'address':address,"status":True}
-        return render(request, 'manage_user.html', {'data':data})
+        print("saveee calll")
+        response=JsonResponse({'status':'success'})
+        return response
 
     else:
-        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data})
+        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
 
 
@@ -176,8 +192,8 @@ def get_group():
         gr_no.append(i[1])
         case = {'id': i[0], 'name': i[1]}
         group_data.append(case)
-    return group_data,gr_no
-
+    return group_data
+@csrf_exempt
 def get_state():
     state_data=[]
     state_list=models.State.objects.all().values_list('id', 'state_name')
@@ -185,15 +201,17 @@ def get_state():
         case2 = {'id': i[0], 'name': i[1]}
         state_data.append(case2)
     return state_data
-
-def get_distict(request):
-    district_data=[]
-    state_id=request.POST.get('state_id')
-    district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
-    for i in district_list:
-        case2 = {'id': i[0], 'name': i[1]}
-        district_data.append(case2)
-    return district_data
+@csrf_exempt
+def get_district(request):
+    if request.method == 'POST':
+        district_data=[]
+        state_id=request.POST.get('state_id')
+        district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
+        for i in district_list:
+            case2 = {'id': i[0], 'name': i[1]}
+            district_data.append(case2)
+        response=JsonResponse({'status':'success','district_data':district_data})
+        return response
 
 def get_city():
     city_data=[]
@@ -288,3 +306,20 @@ def addOrder(request):
     else:
         #return render(request, 'login.html', {})
         return render(request, 'order.html', {})
+
+# Create your views here. 
+def hotel_image_view(request): 
+  
+    if request.method == 'POST': 
+        form = HotelForm(request.POST, request.FILES) 
+  
+        if form.is_valid(): 
+            form.save() 
+            return redirect('success') 
+    else: 
+        form = HotelForm() 
+    return render(request, 'userprofile.html', {'form' : form}) 
+  
+  
+def success(request): 
+    return HttpResponse('successfuly uploaded')
