@@ -88,6 +88,7 @@ def add_user(request):
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
+    city_data=get_city()
     print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
@@ -194,6 +195,14 @@ def get_distict(request):
         district_data.append(case2)
     return district_data
 
+def get_city():
+    city_data=[]
+    city_list=models.City.objects.all().values_list('id', 'city_name')
+    for i in city_list:
+        case2 = {'id': i[0], 'name': i[1],}
+        city_data.append(case2)
+    return city_data
+
 @csrf_exempt
 def get_manage_user(request):
     data=[]
@@ -201,7 +210,7 @@ def get_manage_user(request):
     district=""
     state=""
     count=0
-    userdata=User.objects.all().values_list('id', 'first_name','last_name','username','is_active')
+    userdata=User.objects.filter(~Q(id=1)).values_list('id', 'first_name','last_name','username','is_active')
     for nlist in userdata:
         row=[]
         user_id=nlist[0]
