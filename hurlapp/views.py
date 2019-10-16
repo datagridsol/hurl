@@ -11,6 +11,10 @@ from django.contrib.auth.models import User,Group
 import json
 from hurlapp import models
 from django.db.models import Q
+from hurlapp.forms import ProfileForm
+from hurlapp.models import UserProfile
+from hurlapp import forms
+from hurl import settings
 def index(request):
     return render(request,'index.html')
 
@@ -98,6 +102,7 @@ def add_user(request):
     my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
     if my_user_type:
         print(my_user_type[0][0])
+
     if request.method == 'POST':
         print("Post Data")
         data={}
@@ -132,6 +137,7 @@ def add_user(request):
         vote_id=request.POST.get('vote_id')
         soil_card=request.POST.get('soil_card')
         land_area=request.POST.get('land_area')
+
         #user_photo = request.FILES['user_photo']
         #print("user_photo",user_photo)
         #hotel_image_view(request)
@@ -139,6 +145,8 @@ def add_user(request):
         #file = request.FILES['user_photo']
         #print("user_photo",user_photo,file)
         #input()
+        # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
+        # user_photo = default_storage.save(save_path, request.FILES['file'])
         new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
         new_user.set_password(password)
         new_user.save()
@@ -162,6 +170,7 @@ def add_user(request):
         return response
 
     else:
+        MyProfileForm = forms.ProfileForm()
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
 
@@ -173,6 +182,23 @@ def get_username(request):
         return response
     else:
         response=JsonResponse({'status':'success'})
+        return response
+
+@csrf_exempt
+def user_status(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
         return response
 
 def get_langauge():
@@ -221,6 +247,45 @@ def get_city():
         city_data.append(case2)
     return city_data
 
+# @csrf_exempt
+# def get_manage_user(request):
+#     data=[]
+#     user_type=""
+#     district=""
+#     state=""
+#     count=0
+#     userdata=User.objects.filter(~Q(id=1)).values_list('id', 'first_name','last_name','username','is_active')
+#     for nlist in userdata:
+#         row=[]
+#         user_id=nlist[0]
+#         first_name=nlist[1]
+#         last_name=nlist[2]
+#         full_name=str(first_name)+" "+str(last_name)
+#         username=nlist[3]
+#         status=nlist[4]
+#         if status:
+#             status="Active"
+#         else:
+#             status="Deactive"
+
+#         user_info=models.UserProfile.objects.filter(user=user_id).values_list('user_type__name','district__district_name','state__state_name')
+#         for i in user_info:
+#             user_type=i[0]
+#             district=i[1]
+#             state=i[2]
+
+#         count+=1
+#         row.append(count)
+#         row.append(user_type)
+#         row.append(full_name)
+#         row.append(username)
+#         row.append(district)
+#         row.append(state)
+#         row.append(status)
+#         data.append(row)
+
+#     return render(request, 'manage_user.html', {'data':(data)})
+
 @csrf_exempt
 def get_manage_user(request):
     data=[]
@@ -228,35 +293,27 @@ def get_manage_user(request):
     district=""
     state=""
     count=0
-    userdata=User.objects.filter(~Q(id=1)).values_list('id', 'first_name','last_name','username','is_active')
-    for nlist in userdata:
-        row=[]
-        user_id=nlist[0]
-        first_name=nlist[1]
-        last_name=nlist[2]
+    row=[]
+    user_info=models.UserProfile.objects.filter(~Q(user='1')).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+    for i in user_info:
+        user_type=i[0]
+        district=i[1]
+        state=i[2]
+        user_id=i[3]
+        first_name=i[4]
+        last_name=i[5]
         full_name=str(first_name)+" "+str(last_name)
-        username=nlist[3]
-        status=nlist[4]
+        username=i[6]
+        status=i[7]
+        print(username)
         if status:
             status="Active"
         else:
             status="Deactive"
 
-        user_info=models.UserProfile.objects.filter(user=user_id).values_list('user_type__name','district__district_name','state__state_name')
-        for i in user_info:
-            user_type=i[0]
-            district=i[1]
-            state=i[2]
 
         count+=1
-        row.append(user_id)
-        row.append(user_type)
-        row.append(full_name)
-        row.append(username)
-        row.append(district)
-        row.append(state)
-        row.append(status)
-        data.append(row)
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"",user_id])
     return render(request, 'manage_user.html', {'data':(data)})
 
 
@@ -323,3 +380,30 @@ def hotel_image_view(request):
   
 def success(request): 
     return HttpResponse('successfuly uploaded')
+
+
+
+from hurlapp.forms import ProfileForm
+from hurlapp.models import Hotel
+import os 
+def SaveProfile(request):
+    saved = False 
+    if request.method == "POST":
+      print("request.POST",request.POST)
+      print("request.POST",request.FILES)
+      MyProfileForm = ProfileForm(request.POST, request.FILES)      
+      if MyProfileForm.is_valid():
+         print("valid")
+         profile = models.Hotel()
+         profile.name = MyProfileForm.cleaned_data["name"]
+         profile.hotel_Main_Img = MyProfileForm.cleaned_data["picture"]
+         profile.save()
+         saved = True
+         response=JsonResponse({'status':'success'})
+         return response
+      else:
+          print("not Valid")
+
+    else:
+       MyProfileForm = forms.ProfileForm()
+    return render(request, 'profile.html', {"group_data":get_group()})

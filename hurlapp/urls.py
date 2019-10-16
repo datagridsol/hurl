@@ -12,9 +12,12 @@ urlpatterns=[
     url(r'^add_product/$',views.addProduct,name='add_product'),
     url(r'^add_order/$',views.addOrder,name='add_order'),
     url(r'^user_login/$',views.user_login,name='user_login'),
+    url(r'^user_status/$',views.user_status,name='user_status'),
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
+    url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),
     url(r'^get_district/$',views.get_district,name='get_district'),
-    url(r'^testimage/$',views.hotel_image_view,name='testimage'),
+    url(r'^testimage/$',views.SaveProfile,name='testimage'),
+    
 
 ]

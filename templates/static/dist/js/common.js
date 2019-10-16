@@ -174,5 +174,47 @@ $(document).ready(function(){
       return false;
     }
   });
-      
+   
+   $("#userForm1").validate({
+    rules: {
+      name: {
+        required: true,
+        
+      },
+      picture: {
+        required: true,
+      }
+    },
+    messages: {
+      name: {
+        required: "Please enter a user type",
+      },
+      picture: {
+        required: "Please enter a name",
+      }
+    },
+    submitHandler: function() {
+        $.ajax({
+          'method':'POST',
+          'url':'/testimage/',
+          'data': $('#userForm1').serialize(),
+           success: function(response){
+            if(response.status=='success')
+            {
+              window.location.href="/get_user/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
 });

@@ -1,0 +1,28 @@
+<html>
+   <body>   
+      <form method="post" id="userForm1" style="margin-left:20%;" enctype="multipart/form-data" >{% csrf_token %}         
+         <div style = "max-width:470px;">
+            <center>  
+               <input type = "text" style = "margin-left:20%;"
+               placeholder = "Name" name = "name" id="name" />
+            </center>
+         </div>
+         <br>         
+         <div style = "max-width:470px;">
+            <center>
+               <input type = "file" style = "margin-left:20%;"
+                  placeholder = "Picture" name = "picture" id="picture" />
+            </center>
+         </div>
+         <br>         
+         <div style = "max-width:470px;">
+            <center>            
+               <button style = "border:0px;background-color:#4285F4; margin-top:8%;
+                  height:35px; width:80%; margin-left:19%;" type = "submit" value = "Login" >
+                  <strong>Login</strong>
+               </button>               
+            </center>
+         </div>
+      </form>
+   </body>
+</html>

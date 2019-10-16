@@ -43,6 +43,8 @@
                   <th>District</th>
                   <th>State</th>
                   <th>Status</th>
+                  <th>Action</th>
+                  <th>user_id</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -52,6 +54,7 @@
                   </td>
                   <td></td>
                   <td> </td>
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
@@ -85,8 +88,84 @@
         "aaData":result_data,
         "scrollY":'200px',
         "destroy": true,
+        "columnDefs": [
+            {
+                "targets": [ -1 ],
+                "visible": false,
+                "searchable": false
+            }
+        ],
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    if ( aData[6] == "Deactive" )
+                    {
+                        $('td', nRow).css('background-color', '#rgb(232, 194, 179) ');
+                        $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Approve</button></div>");
+                    }
+                     if ( aData[6] == "Active" )
+                    {
+                        $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut'>Disapproved</button></div>");
+                    }
+
+                },
+        
+
       });
-    } );
+
+
+    $('#shTable tbody').on('dblclick', 'tr td', function(){
+          var tr = $(this).closest('tr');
+          var row = shTable.row( tr );
+          // call_id_global = row.data()[1]
+          // history_flag = row.data()[20]
+          // caller_username = row.data()[21]
+          // caller_firstname = row.data()[22]
+          user_status(row.data()[6],row.data()[8])
+        })
+
+    function user_status(status,user_id) {
+        if (status=="Deactive"){
+          status1="Approve"
+        }
+        else
+          {
+               status1="Active"
+
+          }
+        var result=confirm("Do You Want To "+' '+status1 +' '+'User');
+        if (result == true) { 
+               $.ajax({
+                  'method':'POST',
+                  'url':'/user_status/',
+                  'data':{"status":status,"user_id":user_id},
+                   success: function(response){
+                    if(response.status=='success')
+                    {
+                      alert(response.msg)
+                      window.location.href="/get_user/";
+
+                    }
+                    else
+                    {
+                     alert(response.msg)
+
+                  }
+                },
+                  error: function(xhr,status,errorThrown){
+                    toastr.error(xhr.responseText)
+                    $(btn).buttonLoader('stop')
+                  },
+                });
+            } 
+
+        else
+                    {
+                    
+
+                  }
+      
+   }
+});
+
  </script>
 
 {% endblock %}

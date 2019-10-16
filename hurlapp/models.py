@@ -38,6 +38,7 @@ class City(models.Model):
 class UserProfile(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
     parent_id=models.IntegerField()
+    company_name=models.CharField(max_length=255,null=True, blank=True)
     user_type = models.ForeignKey(Group, on_delete=models.CASCADE)
     language= models.ForeignKey(Language, on_delete=models.CASCADE)
     aadhar_no=models.CharField(max_length=255)
@@ -51,6 +52,7 @@ class UserProfile(models.Model):
     pan_card=models.ImageField(upload_to='media',blank=True)
     vote_id=models.ImageField(upload_to='media',blank=True)
     soil_card=models.ImageField(upload_to='media',blank=True)
+    fertilizer_photo=models.ImageField(upload_to='media',blank=True)
     land_area=models.CharField(max_length=255,null=True, blank=True)
     otp=models.CharField(max_length=10,null=True, blank=True)
     fcm_id=models.TextField(null=True, blank=True)

@@ -14,10 +14,8 @@ class UserForm(forms.ModelForm):
 #          fields = ()
 
 class HotelForm(forms.ModelForm): 
-  
-    class Meta: 
-        model = Hotel 
-        fields = ['name', 'hotel_Main_Img'] 
+    name = forms.CharField(max_length = 100)
+    picture = forms.ImageField() 
 
 class UserProfileInfoForm(forms.ModelForm):
      class Meta():
@@ -41,3 +39,9 @@ class OrderForm(forms.ModelForm):
     class Meta():
         model = User
         fields = ('username','password','email')
+
+
+from django import forms 
+class ProfileForm(forms.Form):
+   name = forms.CharField(max_length = 100)
+   picture = forms.ImageField()
