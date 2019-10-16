@@ -305,7 +305,6 @@ def get_manage_user(request):
         full_name=str(first_name)+" "+str(last_name)
         username=i[6]
         status=i[7]
-        print(username)
         if status:
             status="Active"
         else:
