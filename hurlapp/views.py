@@ -91,6 +91,11 @@ def add_user(request):
     first_name=''
     last_name=''
     city_name=''
+    user_photo=''
+    aadhar_card=''
+    pan_card=''
+    vote_id=''
+    soil_card=''
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -131,22 +136,20 @@ def add_user(request):
         district=request.POST.get('district')
         pincode=request.POST.get('pincode')
         address=request.POST.get('address')
-        user_photo=request.POST.get('user_photo')
-        aadhar_card=request.POST.get('aadhar_card')
-        pan_card=request.POST.get('pan_card')
-        vote_id=request.POST.get('vote_id')
-        soil_card=request.POST.get('soil_card')
+
+        if request.FILES.get('user_photo'):
+            user_photo = request.FILES['user_photo']
+        if request.FILES.get('aadhar_card'):
+            aadhar_card = request.FILES['aadhar_card']
+        if request.FILES.get('pan_card'):
+            pan_card = request.FILES['pan_card']
+        if request.FILES.get('vote_id'):
+            vote_id = request.FILES['vote_id']
+        if request.FILES.get('soil_card'):
+            soil_card = request.FILES['soil_card']
+
         land_area=request.POST.get('land_area')
 
-        #user_photo = request.FILES['user_photo']
-        #print("user_photo",user_photo)
-        #hotel_image_view(request)
-        #user_photo=request.FILES.get('user_photo')
-        #file = request.FILES['user_photo']
-        #print("user_photo",user_photo,file)
-        #input()
-        # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
-        # user_photo = default_storage.save(save_path, request.FILES['file'])
         new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
         new_user.set_password(password)
         new_user.save()
@@ -165,7 +168,6 @@ def add_user(request):
                 city_name=new_city.city_name
         userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
         userprofile.save()
-        print("saveee calll")
         response=JsonResponse({'status':'success'})
         return response
 
@@ -174,6 +176,90 @@ def add_user(request):
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
 
+@csrf_exempt
+def edit_user(request):
+    gr_no=[]
+
+    first_name=''
+    last_name=''
+    city_name=''
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
+    print(request.user.id)
+    user_type=Group.objects.all().values_list('id', 'name')
+    for i in user_type:
+        gr_no.append(i[1])
+    my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
+    if my_user_type:
+        print(my_user_type[0][0])
+
+    if request.method == 'POST':
+        data={}
+        user_id = request.POST.get('user_id')
+        # username = request.POST.get('mobile_number')
+        # if User.objects.filter(username=username).exists():
+        #     response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        #     return response
+        password = request.POST.get('mobile_number')
+        email = request.POST.get('email')
+        full_name = request.POST.get('name')
+        if (' ' in full_name) == True:
+            full_name_split=full_name.split(' ')
+            if len(full_name_split)==2:
+                first_name=full_name_split[0]
+                last_name=full_name_split[1]
+            if len(full_name_split)==3:
+                first_name=full_name_split[0]
+                last_name=full_name_split[2]
+        else:
+            first_name=full_name
+        langn_id=request.POST.get('language_id')
+        user_type = request.POST.get('user_type')
+        aadhar_no=request.POST.get('aadhar_no')
+        state=request.POST.get('state')
+        city=request.POST.get('city')
+        district=request.POST.get('district')
+        pincode=request.POST.get('pincode')
+        address=request.POST.get('address')
+        user_photo=request.POST.get('user_photo')
+        aadhar_card=request.POST.get('aadhar_card')
+        pan_card=request.POST.get('pan_card')
+        vote_id=request.POST.get('vote_id')
+        soil_card=request.POST.get('soil_card')
+        land_area=request.POST.get('land_area')
+
+        #user_photo = request.FILES['user_photo']
+        #print("user_photo",user_photo)
+        #hotel_image_view(request)
+        #user_photo=request.FILES.get('user_photo')
+        #file = request.FILES['user_photo']
+        #print("user_photo",user_photo,file)
+        #input()
+        # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
+        # user_photo = default_storage.save(save_path, request.FILES['file'])
+        # new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,is_active=0,email=email)
+        
+        user_type=Group.objects.get(id=user_type)
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if city:
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+        models.UserProfile.objects.filter(user_id=user_id).update(user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
+        response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        MyProfileForm = forms.ProfileForm()
+        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
 def get_username(request):
     username=request.POST.get('username')
@@ -382,27 +468,27 @@ def success(request):
 
 
 
-from hurlapp.forms import ProfileForm
-from hurlapp.models import Hotel
-import os 
-def SaveProfile(request):
-    saved = False 
-    if request.method == "POST":
-      print("request.POST",request.POST)
-      print("request.POST",request.FILES)
-      MyProfileForm = ProfileForm(request.POST, request.FILES)      
-      if MyProfileForm.is_valid():
-         print("valid")
-         profile = models.Hotel()
-         profile.name = MyProfileForm.cleaned_data["name"]
-         profile.hotel_Main_Img = MyProfileForm.cleaned_data["picture"]
-         profile.save()
-         saved = True
-         response=JsonResponse({'status':'success'})
-         return response
-      else:
-          print("not Valid")
+# from hurlapp.forms import ProfileForm
+# from hurlapp.models import Hotel
+# import os 
+# def SaveProfile(request):
+#     saved = False 
+#     if request.method == "POST":
+#       print("request.POST",request.POST)
+#       print("request.POST",request.FILES)
+#       MyProfileForm = ProfileForm(request.POST, request.FILES)      
+#       if MyProfileForm.is_valid():
+#          print("valid")
+#          profile = models.Hotel()
+#          profile.name = MyProfileForm.cleaned_data["name"]
+#          profile.hotel_Main_Img = MyProfileForm.cleaned_data["picture"]
+#          profile.save()
+#          saved = True
+#          response=JsonResponse({'status':'success'})
+#          return response
+#       else:
+#           print("not Valid")
 
-    else:
-       MyProfileForm = forms.ProfileForm()
-    return render(request, 'profile.html', {"group_data":get_group()})
+#     else:
+#        MyProfileForm = forms.ProfileForm()
+#     return render(request, 'profile.html', {"group_data":get_group()})

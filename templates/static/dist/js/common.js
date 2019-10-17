@@ -99,6 +99,7 @@ $(document).ready(function(){
   });
 
   $("#userForm").validate({
+   
     rules: {
       user_type: {
         required: true,
@@ -151,11 +152,17 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
+       var formData = new FormData('#userForm1');
         $.ajax({
           'method':'POST',
           'url':'/add_user/',
-          'data': $('#userForm').serialize(),
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
           success: function(response){
+            alert("response")
+            alert(response)
             if(response.status=='success')
             {
               toastr.success('user Created successfully.').delay(10000)
@@ -194,10 +201,14 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
+      var formData = new FormData('#userForm1');
         $.ajax({
           'method':'POST',
           'url':'/testimage/',
-          'data': $('#userForm1').serialize(),
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
            success: function(response){
             if(response.status=='success')
             {

@@ -84,6 +84,9 @@
   {% endautoescape %}
 
     $(document).ready(function() {
+
+   
+    
       var shTable=jQuery('#shTable').DataTable({
         "aaData":result_data,
         "scrollY":'200px',
@@ -100,6 +103,7 @@
                     {
                         $('td', nRow).css('background-color', '#rgb(232, 194, 179) ');
                         $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Approve</button></div>");
+                        
                     }
                      if ( aData[6] == "Active" )
                     {
@@ -107,11 +111,30 @@
                     }
 
                 },
-        
 
+              
+              
       });
 
-
+      
+    $('#shTable tfoot th').each( function () {
+        var title = aData[6];
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+    var table = $('#shTable').DataTable();
+    // Apply the search
+      table.columns().every( function () {
+          var that = this;
+   
+          $( 'input', this.footer() ).on( 'keyup change clear', function () {
+              if ( that.search() !== this.value ) {
+                  that
+                      .search( this.value )
+                      .draw();
+              }
+          } );
+      } );
+                  
     $('#shTable tbody').on('dblclick', 'tr td', function(){
           var tr = $(this).closest('tr');
           var row = shTable.row( tr );

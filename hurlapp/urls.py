@@ -9,6 +9,7 @@ urlpatterns=[
     url(r'^dashboard/$',views.dashboard,name='dashboard'),
     url(r'^get_user/$',views.get_manage_user,name='get_user'),
     url(r'^add_user/$',views.add_user,name='add_user'),
+    url(r'^edit_user/$',views.edit_user,name='edit_user'),
     url(r'^add_product/$',views.addProduct,name='add_product'),
     url(r'^add_order/$',views.addOrder,name='add_order'),
     url(r'^user_login/$',views.user_login,name='user_login'),
@@ -17,7 +18,7 @@ urlpatterns=[
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
     url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),
     url(r'^get_district/$',views.get_district,name='get_district'),
-    url(r'^testimage/$',views.SaveProfile,name='testimage'),
+    # url(r'^testimage/$',views.SaveProfile,name='testimage'),
     
 
 ]
