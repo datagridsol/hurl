@@ -10,13 +10,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Manage Users</h1>
+            <h1>All Products</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active" type="button"> <a href="{% url 'add_user' %}">Add Users</li>
+             <li class="breadcrumb-item active" type="button"> <a href="{% url 'add_product' %}">Add Product</li>
               <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-              <li class="breadcrumb-item active">Manage Users</li>
             </ol>
           </div>
         </div>
@@ -37,29 +36,25 @@
                 <thead>
                 <tr>
                   <th>Sr No</th>
-                  <th>UserType</th>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>District</th>
-                  <th>State</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                  <th>Edit</th>
-                  <th>user_id</th>
+                  <th>Product Image</th>
+                  <th>Product Name</th>
+                  <th>Product Code</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>User_id</th>
+                   <th>Edit</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                   <td></td>
-                  <td>
-                  </td>
+                  <td></td>
                   <td></td>
                   <td> </td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                   <td></td>
                 </tr>
 
                 </tfoot>
@@ -93,37 +88,25 @@
         "aaData":result_data,
         "scrollY":'200px',
         "destroy": true,
-        "columnDefs": [
-            {
-                "targets": [ -1 ],
-                "visible": false,
-                "searchable": false
-            }
-        ],
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                    if ( aData[6] == "Deactive" )
-                    {
-                        $('td', nRow).css('background-color', '#rgb(232, 194, 179) ');
-                        $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Approve</button></div>");
-                         $('td:eq(8)', nRow).append("Edit");
-                    }
-                     if ( aData[6] == "Active" )
-                    {
-                        $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut'>Disapproved</button></div>");
-                         $('td:eq(8)', nRow).append("Edit");
-                    }
-
-                },
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button>Edit</button>"
+        },{
+            "targets": -2,
+            "visible": false,
+        } ],
+        
 
               
               
       });
 
       
-    $('#shTable tfoot th').each( function () {
-        var title = aData[6];
-        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-    } );
+    // $('#shTable tfoot th').each( function () {
+    //     var title = aData[6];
+    //     $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    // } );
     var table = $('#shTable').DataTable();
     // Apply the search
       table.columns().every( function () {
@@ -138,26 +121,10 @@
           } );
       } );
                   
-    // $('#shTable tbody').on('dblclick', 'tr td', function(){
-    //       var tr = $(this).closest('tr');
-    //       var row = shTable.row( tr );
-    //       // call_id_global = row.data()[1]
-    //       // history_flag = row.data()[20]
-    //       // caller_username = row.data()[21]
-    //       // caller_firstname = row.data()[22]
-    //       // user_status(row.data()[6],row.data()[9])
-    //     })
-
-   
-
-    $('#shTable tbody').on( 'click', 'button', function () {
+   $('#shTable tbody').on( 'click', 'button', function () {
         var data = table.row( $(this).parents('tr') ).data();
-        user_status(data[ 6 ],data[ 9 ])
+        alert( "Product_id Is: "+ data[ 7 ] );
     } );
-
-   
-
-
     function user_status(status,user_id) {
         if (status=="Deactive"){
           status1="Approve"
@@ -200,36 +167,6 @@
                   }
       
    }
-
-
-    $('#shTable tbody').on( 'click', 'tr td:eq(8)', function (){
-         var data = table.row( $(this).parents('tr') ).data();
-          window.location.href="/edit_user/";
-          $.ajax({
-            'method':'POST',
-            'url':'/edit_user/',
-            'data': {"user_id":data[9]},
-            'cache':false,
-            'contentType': false,
-            'processData': false,
-            success: function(response){
-              if(response.status=='success')
-              {
-                toastr.success('user Created successfully.').delay(10000)
-                window.location.href="/get_user/";
-              }
-              else
-              {
-                alert(response.msg);
-              }
-
-            },
-            error: function(xhr,status,errorThrown){
-              alert(xhr.responseText)
-            },
-          });
-        });
-
 });
 
  </script>

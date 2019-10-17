@@ -198,6 +198,7 @@ def edit_user(request):
         print(my_user_type[0][0])
 
     if request.method == 'POST':
+        print("POST Calll")
         data={}
         user_id = request.POST.get('user_id')
         # username = request.POST.get('mobile_number')
@@ -261,7 +262,7 @@ def edit_user(request):
 
     else:
         MyProfileForm = forms.ProfileForm()
-        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
+        return render(request, 'edit_user.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
 def get_username(request):
     username=request.POST.get('username')
@@ -400,30 +401,49 @@ def get_manage_user(request):
 
 
         count+=1
-        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"",user_id])
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"","",user_id])
     return render(request, 'manage_user.html', {'data':(data)})
 
 
+@csrf_exempt
+def get_product(request):
+    data=[]
+    count=0
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+    for i in product_info:
+        product_image=i[0]
+        product_name=i[1]
+        product_code=i[2]
+        product_unit=i[3]
+        product_price=i[4]
+        product_id=i[5]
+        count+=1
+        data.append([count,str(product_image),str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
+    return render(request, 'get_product.html', {'data':(data)})
 
 @csrf_exempt
-def addProduct(request):
+def add_product(request):
     print("Add USer")
     if request.method == 'POST':
-        print("POST")
         data={}
+        product_image=''
         product_name = request.POST.get('product_name')
+        product_code = request.POST.get('product_code')
         product_unit = request.POST.get('product_unit')
+        sub_code = request.POST.get('sub_code')
+        product_unit1=product_unit+' '+sub_code
+        product_price = request.POST.get('product_price')
+        if request.FILES.get('product_image'):
+            product_image = request.FILES['product_image']
 
-        print("values",product_name,product_unit)
-        user = models.Product.objects.create(product_name=product_name,product_unit=product_unit)
-        user.save()
-        #remember_me = request.POST.get('remember_me')
-        #print("Insideeee",remember_me)
-        data={'product_name':product_name,'product_unit':product_unit,"status":True}
-        return render(request, 'product.html', {})
+        product = models.Product.objects.create(product_name=product_name,product_code=product_code,product_unit=product_unit,product_price=product_price,product_image=product_image)
+        product.save()
+        # data={'product_name':product_name,'product_unit':product_unit,"status":True}
+        # return render(request, 'product.html', {})
+        response=JsonResponse({'status':'success'})
+        return response
 
     else:
-        #return render(request, 'login.html', {})
         return render(request, 'product.html', {})
 
 @csrf_exempt

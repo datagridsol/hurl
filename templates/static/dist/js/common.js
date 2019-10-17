@@ -152,7 +152,8 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
-       var formData = new FormData('#userForm');
+      var userForm=document.getElementById('userForm');
+       var formData = new FormData(userForm);
         $.ajax({
           'method':'POST',
           'url':'/add_user/',
@@ -182,50 +183,54 @@ $(document).ready(function(){
     }
   });
    
-  //  $("#userForm1").validate({
-  //   rules: {
-  //     name: {
-  //       required: true,
+   $("#productForm").validate({
+    rules: {
+      product_name: {
+        required: true,
         
-  //     },
-  //     picture: {
-  //       required: true,
-  //     }
-  //   },
-  //   messages: {
-  //     name: {
-  //       required: "Please enter a user type",
-  //     },
-  //     picture: {
-  //       required: "Please enter a name",
-  //     }
-  //   },
-  //   submitHandler: function() {
-  //     var formData = new FormData('#userForm1');
-  //       $.ajax({
-  //         'method':'POST',
-  //         'url':'/testimage/',
-  //         'data': formData,
-  //         'cache':false,
-  //         'contentType': false,
-  //         'processData': false,
-  //          success: function(response){
-  //           if(response.status=='success')
-  //           {
-  //             window.location.href="/get_user/";
-  //           }
-  //           else
-  //           {
-  //             alert(response.msg);
-  //           }
+      },
+      product_price: {
+        required: true,
+        number: true
+      }
+    },
+    messages: {
+      product_name: {
+        required: "Please enter a name",
+      },
+      product_price: {
+        required: "Please enter a price",
+        number: "Please enter valid price"
+      }
+    },
+    submitHandler: function() {
+       var productForm=document.getElementById('productForm');
+       var formData = new FormData(productForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_product/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+           success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Product Add successfully.').delay(10000)
+              window.location.href="/get_product/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
 
-  //         },
-  //         error: function(xhr,status,errorThrown){
-  //           alert(xhr.responseText)
-  //         },
-  //       });
-  //     return false;
-  //   }
-  // });
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
 
 });
