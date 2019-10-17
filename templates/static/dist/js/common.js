@@ -128,7 +128,7 @@ $(document).ready(function(){
     },
     messages: {
       user_type: {
-        required: "Please enter a user type",
+        required: "Please enter a user type12",
       },
       name: {
         required: "Please enter a name",
@@ -152,7 +152,7 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
-       var formData = new FormData('#userForm1');
+       var formData = new FormData('#userForm');
         $.ajax({
           'method':'POST',
           'url':'/add_user/',
@@ -182,50 +182,50 @@ $(document).ready(function(){
     }
   });
    
-   $("#userForm1").validate({
-    rules: {
-      name: {
-        required: true,
+  //  $("#userForm1").validate({
+  //   rules: {
+  //     name: {
+  //       required: true,
         
-      },
-      picture: {
-        required: true,
-      }
-    },
-    messages: {
-      name: {
-        required: "Please enter a user type",
-      },
-      picture: {
-        required: "Please enter a name",
-      }
-    },
-    submitHandler: function() {
-      var formData = new FormData('#userForm1');
-        $.ajax({
-          'method':'POST',
-          'url':'/testimage/',
-          'data': formData,
-          'cache':false,
-          'contentType': false,
-          'processData': false,
-           success: function(response){
-            if(response.status=='success')
-            {
-              window.location.href="/get_user/";
-            }
-            else
-            {
-              alert(response.msg);
-            }
+  //     },
+  //     picture: {
+  //       required: true,
+  //     }
+  //   },
+  //   messages: {
+  //     name: {
+  //       required: "Please enter a user type",
+  //     },
+  //     picture: {
+  //       required: "Please enter a name",
+  //     }
+  //   },
+  //   submitHandler: function() {
+  //     var formData = new FormData('#userForm1');
+  //       $.ajax({
+  //         'method':'POST',
+  //         'url':'/testimage/',
+  //         'data': formData,
+  //         'cache':false,
+  //         'contentType': false,
+  //         'processData': false,
+  //          success: function(response){
+  //           if(response.status=='success')
+  //           {
+  //             window.location.href="/get_user/";
+  //           }
+  //           else
+  //           {
+  //             alert(response.msg);
+  //           }
 
-          },
-          error: function(xhr,status,errorThrown){
-            alert(xhr.responseText)
-          },
-        });
-      return false;
-    }
-  });
+  //         },
+  //         error: function(xhr,status,errorThrown){
+  //           alert(xhr.responseText)
+  //         },
+  //       });
+  //     return false;
+  //   }
+  // });
 
 });

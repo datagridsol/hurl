@@ -54,9 +54,10 @@ def user_login(request):
         remember_me = request.POST.get('remember_me')
         data={'username':username,'password':password,"status":True}
         
-        user = authenticate(username=username, password=password)
-        if user:
-            if user.is_active:
+        user = User.objects.get(username=username)
+        if user.is_active:
+            user = authenticate(username=username, password=password)
+            if user:  
                 login(request,user)
                 response=JsonResponse({'status':'success'})
                 if request.POST.get('remember'):
@@ -67,11 +68,12 @@ def user_login(request):
                     response.delete_cookie('password')
                 return response
             else:
-                response=JsonResponse({'status':'error','msg':'Your account was inactive'})
+                response=JsonResponse({'status':'error','msg':'Invalid login details'})
                 return response
         else:
-            response=JsonResponse({'status':'error','msg':'Invalid login details'})
+            response=JsonResponse({'status':'error','msg':'Your account was inactive'})
             return response
+        
     else:
         username=''
         password=''
