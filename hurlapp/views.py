@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User,Group
 import json
 from hurlapp import models
+from django.db.models import Q
 def index(request):
     return render(request,'index.html')
 
@@ -76,67 +77,86 @@ def user_login(request):
         return render(request, 'login.html', {"username" : username,"password" : password})
 
 
+
+
+
 @csrf_exempt
 def add_user(request):
     gr_no=[]
+    first_name=''
+    last_name=''
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
-
+    print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
         gr_no.append(i[1])
     my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
-    print(my_user_type[0][0])
+    if my_user_type:
+        print(my_user_type[0][0])
     if request.method == 'POST':
         data={}
         username = request.POST.get('username')
-        password = request.POST.get('password')
+        password = request.POST.get('username')
+        email = request.POST.get('email')
         full_name = request.POST.get('name')
-        ### userinfo#### 
-        # langn_id=request.POST.get('language_id')
-        # user_type = request.POST.get('user_type')
-        # parent_id=request.POST.get('parent_id')
-        # aadhar_no=request.POST.get('aadhar_no')
-        # state=request.POST.get('state')
-        # city=request.POST.get('city')
-        # district=request.POST.get('district')
-        # pincode=request.POST.get('pincode')
-        # address=request.POST.get('address')
-        # user_photo=request.POST.get('user_photo')
-        # aadhar_card=request.POST.get('aadhar_card')
-        # pan_card=request.POST.get('pan_card')
-        # vote_id=request.POST.get('vote_id')
-        # land_area=request.POST.get('land_area')
-    
-        address = request.POST.get('address')
+        if (' ' in full_name) == True:
+            full_name_split=full_name.split(' ')
+            if len(full_name_split)==2:
+                first_name=full_name_split[0]
+                last_name=full_name_split[1]
+            if len(full_name_split)==3:
+                first_name=full_name_split[0]
+                last_name=full_name_split[2]
+        else:
+            first_name=full_name
+        langn_id=request.POST.get('language_id')
         user_type = request.POST.get('user_type')
-        print("values",user_type)
-        new_user = User.objects.create(username = username,password = password)
+        aadhar_no=request.POST.get('aadhar_no')
+        state=request.POST.get('state')
+        city=request.POST.get('city')
+        district=request.POST.get('district')
+        pincode=request.POST.get('pincode')
+        address=request.POST.get('address')
+        user_photo=request.POST.get('user_photo')
+        aadhar_card=request.POST.get('aadhar_card')
+        pan_card=request.POST.get('pan_card')
+        vote_id=request.POST.get('vote_id')
+        land_area=request.POST.get('land_area')
+    
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
-        print("new_Uid",new_Uid)
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type="re",address=address)
+        user_type=Group.objects.get(id=user_type)
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if models.City.objects.filter(city_name=city).exists():
+            city_id=city
+        else:
+            new_city = models.City.objects.create(city_name =city,status=1)
+            new_city.save()
+            city_id=new_city.city_name
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_id,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,land_area=land_area)
         userprofile.save()
-        #new_user.set_password(password)
-        #new_user = User.objects.create(username=username,password=password)
-        #new_user = form.save(commit=False)
-        #new_user.save()
-        #user = User.objects.create(username=username,password=password)
-        #user.save()
-        #new_id=new_user.id
-        #userprofile = models.UserProfile.objects.create(user=new_id,user_type="re",address=address)
-        #userprofile.save()
-        #remember_me = request.POST.get('remember_me')
-        #print("Insideeee",remember_me)
         data={'user_type':user_type,'address':address,"status":True}
         return render(request, 'manage_user.html', {'data':data})
 
     else:
-        print("Get Method",lang_data)
-        return render(request, 'userprofile.html', {'data':gr_no})
+        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data})
 
+
+
+def get_username(request):
+    username=request.POST.get('username')
+    if User.objects.filter(username=username).exists():
+        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        return response
+    else:
+        response=JsonResponse({'status':'success'})
+        return response
 
 def get_langauge():
     lang_data=[]
@@ -150,7 +170,7 @@ def get_langauge():
 def get_group():
     group_data=[]
     gr_no=[]
-    user_type=Group.objects.all().values_list('id', 'name')
+    user_type=Group.objects.filter(~Q(id=1)).values_list('id', 'name')
     for i in user_type:
         gr_no.append(i[1])
         case = {'id': i[0], 'name': i[1]}
@@ -180,6 +200,7 @@ def get_manage_user(request):
     user_type=""
     district=""
     state=""
+    count=0
     userdata=User.objects.all().values_list('id', 'first_name','last_name','username','is_active')
     for nlist in userdata:
         row=[]
@@ -200,6 +221,7 @@ def get_manage_user(request):
             district=i[1]
             state=i[2]
 
+        count+=1
         row.append(user_id)
         row.append(user_type)
         row.append(full_name)

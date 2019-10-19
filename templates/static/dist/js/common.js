@@ -145,12 +145,12 @@ $(document).ready(function(){
     // submitHandler: function() {
     //     $.ajax({
     //       'method':'POST',
-    //       'url':'/hurlapp/add_user/',
+    //       'url':'/add_user/',
     //       'data': $('#userForm').serialize(),
     //       success: function(response){
     //         if(response.status=='success')
     //         {
-    //           window.location.href="/hurlapp/add_user/";
+    //           window.location.href="/add_user/";
     //         }
     //         else
     //         {
