@@ -9,7 +9,7 @@ urlpatterns=[
     url(r'^dashboard/$',views.dashboard,name='dashboard'),
     url(r'^get_user/$',views.get_manage_user,name='get_user'),
     url(r'^add_user/$',views.add_user,name='add_user'),
-    url(r'^edit_user/$',views.edit_user,name='edit_user'),
+    url(r'^edit_user/(?P<pk>\d+)$',views.edit_user,name='edit_user'),
     url(r'^add_product/$',views.add_product,name='add_product'),
     url(r'^get_product/$',views.get_product,name='get_product'),
     url(r'^add_order/$',views.addOrder,name='add_order'),
@@ -23,3 +23,5 @@ urlpatterns=[
     
 
 ]
+
+

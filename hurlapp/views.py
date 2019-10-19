@@ -152,7 +152,7 @@ def add_user(request):
 
         land_area=request.POST.get('land_area')
 
-        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
@@ -179,12 +179,13 @@ def add_user(request):
 
 
 @csrf_exempt
-def edit_user(request):
+def edit_user(request, pk):
     gr_no=[]
-
     first_name=''
     last_name=''
     city_name=''
+    state=''
+    data={}
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -198,13 +199,8 @@ def edit_user(request):
         print(my_user_type[0][0])
 
     if request.method == 'POST':
-        print("POST Calll")
         data={}
         user_id = request.POST.get('user_id')
-        # username = request.POST.get('mobile_number')
-        # if User.objects.filter(username=username).exists():
-        #     response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
-        #     return response
         password = request.POST.get('mobile_number')
         email = request.POST.get('email')
         full_name = request.POST.get('name')
@@ -233,16 +229,6 @@ def edit_user(request):
         soil_card=request.POST.get('soil_card')
         land_area=request.POST.get('land_area')
 
-        #user_photo = request.FILES['user_photo']
-        #print("user_photo",user_photo)
-        #hotel_image_view(request)
-        #user_photo=request.FILES.get('user_photo')
-        #file = request.FILES['user_photo']
-        #print("user_photo",user_photo,file)
-        #input()
-        # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
-        # user_photo = default_storage.save(save_path, request.FILES['file'])
-        # new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
         models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,is_active=0,email=email)
         
         user_type=Group.objects.get(id=user_type)
@@ -261,8 +247,38 @@ def edit_user(request):
         return response
 
     else:
-        MyProfileForm = forms.ProfileForm()
-        return render(request, 'edit_user.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
+        user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
+        for i in user_info:
+            user_type=i[0],
+            language=i[1]
+            first_name=i[2]
+            last_name=i[3]
+            full_name=str(first_name)+" "+str(last_name)
+            email=i[4]
+            mobile_number=i[5]
+            aadhar_no=i[6]
+            state=i[7]
+            city=i[8]
+            district=i[9]
+            pincode=i[10]
+            address=i[11]
+            user_photo=i[12]
+            aadhar_card=i[13]
+            pan_card=i[14]
+            vote_id=i[15]
+            soil_card=i[16]
+            land_area=i[17]
+            group_id=i[18]
+            lang_id=i[19]
+            state_id=i[20]
+            district_id=i[21]
+            user_type={"name":user_type[0],'id':group_id}
+            language={"name":language,'id':lang_id}
+            state={"name":state,'id':state_id}
+            district={"name":district,'id':district_id}
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area}
+            # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
+        return render(request, 'edit_user.html',{'data':data})
 
 def get_username(request):
     username=request.POST.get('username')
@@ -401,7 +417,7 @@ def get_manage_user(request):
 
 
         count+=1
-        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"","",user_id])
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
     return render(request, 'manage_user.html', {'data':(data)})
 
 

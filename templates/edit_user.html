@@ -5,7 +5,7 @@
 
 {% block body_block %}
 <style type="text/css">
-    #userForm label.error {
+    #edituserForm label.error {
       display: inline-block;
       max-width: 100%;
       margin-bottom: 5px;
@@ -38,34 +38,47 @@
         /*min-width: 20px;*/
     }
   </style>
+  <script type="text/javascript">
+    {% autoescape off %}
+  //var device_not_reporting = {{ response }};
+    //var result_data = {{ data }};
+  {% endautoescape %}
+
+  </script>
   <div class="content-wrapper" >
     <div class="jumbotron">
-      <h1 style="margin-left: 30%;">Edit User</h1>
+      <h1 style="margin-left: 30%;">Edit User{{data.user_type.id}}</h1>
 
- <form method="post" id="userForm" style="margin-left:20%;" enctype="multipart/form-data" >
+ <form method="post" id="edituserForm" style="margin-left:20%;" enctype="multipart/form-data" >
           {% csrf_token %}
           {# A more "HTML" way of creating the login form#}
           <br>
           <table width="80%">
             <tr>
-              <td colspan="2">
-                   <label for="user_type">UserType:</label><br/>
-               <select  style="width: 43%;" id="user_type" name="user_type">
+              <td> <label for="user_type">UserType:</label><br/>
+          <!-- <input  style="margin-left:2%"  type="" name="user_type" id="user_type" placeholder="user_type" value="{{data.user_type.name}}" readonly="true"> -->
+          <select  style="width: 43%;" id="user_type" name="user_type">
                 <option  value="" selected="selected">---select---</option>
                 {% for user_type in group_data %}
-                 <option value="{{user_type.id}}">{{user_type.name}}</option>
+                 <option value="{{data.user_type.name}}" {% if data.user_type.name == data.user_type.name %} selected="true" {% endif %} >{{data.user_type.name}} </option>
                 {% endfor %}
               </select>
-              </td>
+        </td>
+              <td></td>
+              
                <td>
-                  <label for="language_id" style="margin-left:-76%">Langauge:</label><br/>
+                        <td> <label for="language_id" style="margin-left:-244%">Langauge:</label><br/>
+                  <input  style="margin-left:-244%"  type="" name="language_id" id="language_id" placeholder="language" value="{{data.language.name}}" readonly="true">
+                </td>
+                      <td></td>
+                 <!--  <label for="language_id" style="margin-left:-76%">Langauge:</label><br/>
                    <select  style="margin-left: -76%;
     width: 72%"; id="language_id" name="language_id">
                 <option  value="" selected="selected">---select---</option>
                 {% for lang_data in lang_data %}
                  <option value="{{lang_data.id}}">{{lang_data.name}}</option>
                 {% endfor %}
-              </select>
+              </select> -->
          
               </td>
              
@@ -74,81 +87,75 @@
              
               <td>
                      <label for="name">Name:</label><br/>
-          <input  style="margin-left:1%"  type="name" name="name" id="name" placeholder="name">
+          <input  style="margin-left:1%"  type="" name="name" id="name" placeholder="name" value="{{data.full_name}}">
               </td>
               <td> <label style="margin-left:-5%" for="email">Email:</label><br/>
-          <input  style="margin-left:-5%"  type="email" name="email" id="email" placeholder="Email"></td>
+          <input  style="margin-left:-5%"  type="" name="email" id="email" placeholder="Email" value="{{data.email}}" ></td>
               <td></td>
             </tr>
             <tr>
               <td> <label for="mobile_number">Phone:</label><br/>
-          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" id="mobile_number" placeholder="mobile_number"></td>
+          <input  style="margin-left:2%"  type="" name="mobile_number" id="mobile_number" placeholder="mobile_number" value="{{data.mobile_number}}"></td>
               <td></td>
                <td> <label style="margin-left:-77%" for="aadhar_no" style="margin-left:-100%">Aadhar No:</label><br/>
-          <input  style="margin-left:-77%"  type="aadhar_no" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No"></td>
+          <input  style="margin-left:-77%"  type="" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No" value="{{data.aadhar_no}}"></td>
               <td></td>
             </tr>
              <tr>
               <td> <label style="margin-left: 1%;for="state">State:</label><br/>
-         <select  style="width: 73%;margin-left: 2%;" id="state" name="state">
-                <option  value="" selected="selected">---select---</option>
-                {% for state_data in state_data %}
-                 <option value="{{state_data.id}}">{{state_data.name}}</option>
-                {% endfor %}
-              </select>
+                 <input  style="width: 73%;margin-left: 2%"  type="" name="state" id="state" placeholder="State" value="{{data.state}}"></td>
+        
               <td></td>
               <td> <label style="margin-left: -78%;" for="city">City:</label><br/>
-          <input  style="margin-left:-78%"  type="city" name="city" placeholder="City"></td>
+          <input  style="margin-left:-78%"  type="" name="city" placeholder="City" value="{{data.city}}"></td>
               <td></td>
                
             </tr>
              <tr>
               <td> <label for="district" style="margin-left:4px%">District:</label><br/>
-                <select  style="margin-left: 4px%;
-    width: 77%"; id="district" name="district">
-                <option  value="" selected="selected">---select---</option>
-                {% for district_data in district_data %}
-                 <option value="{{district_data.id}}">{{district_data.name}}</option>
-                {% endfor %}
-              </select>
+                 <input style="margin-left: 4px%;
+    width: 77%";  type="" name="district" id="" placeholder="District" value="{{data.district}}"></td>
+        
+              <td></td>
+                
           
               <td></td>
-              <td> <label style="margin-left: -78%; for="pincode">Pincode:</label><br/>
-          <input  style="margin-left:-78%"  type="pincode" name="pincode" placeholder="Pincode"></td>
+              <td> <label style="margin-left:-245%; for="pincode">Pincode:</label><br/>
+          <input  style="margin-left:-245%"  type="" name="pincode" placeholder="Pincode" value="{{data.pincode}}"></td>
               <td></td>
               
             </tr>
             <tr><td> <label for="address">Address:</label><br/>
           <textarea  name="address" id="address"  style="margin-left: 2%;
-    width: 76%";> </textarea></td>
+    width: 76%";>{{data.address}} </textarea></td>
               <td></td></tr>
              <tr>
               <td> <label for="user_photo">Photo:</label><br/>
-          <input  style="margin-left:2%"  type="file" name="user_photo" id="user_photo" placeholder="Aadhar Card"></td>
+          <input  style="margin-left:2%"  type="file" name="user_photo" id="user_photo" placeholder="Aadhar Card" value="{{data.user_photo}}"></td>
               <td></td>
                <td> <label for="aadhar_card" style="margin-left:-77%">Aadhar Photo:</label><br/>
-          <input  style="margin-left:-77%"  type="file" name="aadhar_card" id="aadhar_card" placeholder="Aadhar Photo"></td>
+          <input  style="margin-left:-77%"  type="file" name="aadhar_card" id="aadhar_card" placeholder="Aadhar Photo" value="{{data.aadhar_card}}"></td>
               <td></td>
             </tr>
              <tr>
               <td> <label for="pan_card">Pancard:</label><br/>
-          <input  style="margin-left:2%"  type="file" name="pan_card" placeholder="Pancard"></td>
+          <input  style="margin-left:2%"  type="file" name="pan_card" placeholder="Pancard" value="{{data.pan_card}}"></td>
               <td></td>
                <td> <label for="vote_id" style="margin-left:-77%">Vote Id:</label><br/>
-          <input  style="margin-left:-77%"  type="file" name="vote_id" placeholder="Vote Id"></td>
+          <input  style="margin-left:-77%"  type="file" name="vote_id" placeholder="Vote Id" value="{{data.vote_id}}"></td>
               <td></td>
             </tr>
              <tr>
               <td> <label for="soil_card">Soil Card:</label><br/>
-          <input  style="margin-left:2%"  type="file" name="soil_card" placeholder="Soil Card"></td>
+          <input  style="margin-left:2%"  type="file" name="soil_card" placeholder="Soil Card" value="{{data.soil_card}}"></td>
               <td></td>
                <td> <label for="land_area" style="margin-left:-77%">Land Area:</label><br/>
-          <input  style="margin-left:-77%"  type="" name="land_area" placeholder="Land Area"></td>
+          <input  style="margin-left:-77%"  type="" name="land_area" placeholder="Land Area" value="{{data.land_area}}"></td>
               <td></td>
             </tr>
             <td></td><td></td>
             <tr>
-              <td colspan="2"><input style="margin-left: 47%;margin-top: 7%;width: 19%;"  type="submit" value="Add"></td>
+              <td colspan="2"><input style="margin-left: 35%;margin-top: 7%;width: 19%;"  type="submit" value="Update"></td>
             </tr>
          
 
@@ -157,25 +164,31 @@
     </div>
   </div>
 
+  
+
+  
 
 
+<<!-- script src="{% static "plugins/jquery/jquery.min.js" %}"></script> -->
 <!-- <script>
+
   $(document).ready(function(){
-    $("#state").change(function(){
-    $.ajax({
-        type:"POST",
-        url : "/get_district/",
-        data : {"state_id":$(this).val()},
-        success : function(response) {
-          alert(response['district_data'])
-          district_data = response['district_data'];
-          return district_data;
-        },
-        error: function() {
-            alert('Error occured');
-        }
-    });
-    });
+  
+    // $("#state").change(function(){
+    // $.ajax({
+    //     type:"POST",
+    //     url : "/get_district/",
+    //     data : {"state_id":$(this).val()},
+    //     success : function(response) {
+    //       alert(response['district_data'])
+    //       district_data = response['district_data'];
+    //       return district_data;
+    //     },
+    //     error: function() {
+    //         alert('Error occured');
+    //     }
+    // });
+    // });
 
      
 });

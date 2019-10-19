@@ -2,7 +2,42 @@
 {% block body_block %}
 {% load staticfiles %}
 <!-- DataTables -->
+  <div class="modal fade" id="cust_history_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+             <div style="width:60%; margin-left: 28%;">
+                 <div class="modal-content">
+                     <div class="modal-header" style="background-color:#000000;">
+                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="background-color: red;
+    margin-left: -1%;">&times;</button>
+                          <h4 class="modal-title text-center" id="myModalLabel"><span style="margin-left: -155%;font-weight:bold;color:#fff">Customer(Profile Summary)</span></h4>
+                     </div>
+                     <div class="modal-body pl-0 pr-0" style="background-color:ivory;color:black;padding:0px;">
+                       <div class="container-fluid" style="padding-left:10px">
+                       <div class="row" style="background-color:#f0f0f0">
+                                             <div class="col-md-6">
+                                               <div class="row" style="background-color:#f0f0f0;">
+                                                 <div class="col-md-6">
+                    
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <div class="text-center" style="width:100px;margin:0 auto;">
+                                            <img  id="imgpathhistory" src="https://us.123rf.com/450wm/triken/triken1608/triken160800029/61320775-stock-vector-male-avatar-profile-picture-default-user-avatar-guest-avatar-simply-human-head-vector-illustration-i.jpg?ver=6" alt="No Images" style="background-color:transparent;max-width:100%;height: auto">
+                                        </div>
+                                        {{data}}
+                                      </div>
+                                    </div>
+                                   
+                         </div>
+                        
+                            </div>
+                        </div>
+                          </div>
+                       </div>
+                     </div>
 
+                       </div>
+
+                  </div>
+                 </div>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -44,6 +79,7 @@
                   <th>State</th>
                   <th>Status</th>
                   <th>Action</th>
+                  <th>View</th>
                   <th>Edit</th>
                   <th>user_id</th>
                 </tr>
@@ -105,12 +141,14 @@
                     {
                         $('td', nRow).css('background-color', '#rgb(232, 194, 179) ');
                         $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Approve</button></div>");
-                         $('td:eq(8)', nRow).append("Edit");
+                         $('td:eq(8)', nRow).append("View");
+                          $('td:eq(9)', nRow).append("Edit");
                     }
                      if ( aData[6] == "Active" )
                     {
                         $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut'>Disapproved</button></div>");
-                         $('td:eq(8)', nRow).append("Edit");
+                         $('td:eq(8)', nRow).append("View");
+                         $('td:eq(9)', nRow).append("Edit");
                     }
 
                 },
@@ -120,6 +158,7 @@
       });
 
       
+
     $('#shTable tfoot th').each( function () {
         var title = aData[6];
         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
@@ -152,7 +191,7 @@
 
     $('#shTable tbody').on( 'click', 'button', function () {
         var data = table.row( $(this).parents('tr') ).data();
-        user_status(data[ 6 ],data[ 9 ])
+        user_status(data[ 6 ],data[ 10 ])
     } );
 
    
@@ -176,8 +215,8 @@
                    success: function(response){
                     if(response.status=='success')
                     {
-                      alert(response.msg)
-                      window.location.href="/get_user/";
+                      alert(response.status)
+                      
 
                     }
                     else
@@ -202,32 +241,36 @@
    }
 
 
-    $('#shTable tbody').on( 'click', 'tr td:eq(8)', function (){
+    $('#shTable tbody').on( 'click', 'tr td:eq(9)', function (){
          var data = table.row( $(this).parents('tr') ).data();
-          window.location.href="/edit_user/";
-          $.ajax({
-            'method':'POST',
-            'url':'/edit_user/',
-            'data': {"user_id":data[9]},
-            'cache':false,
-            'contentType': false,
-            'processData': false,
-            success: function(response){
-              if(response.status=='success')
-              {
-                toastr.success('user Created successfully.').delay(10000)
-                window.location.href="/get_user/";
-              }
-              else
-              {
-                alert(response.msg);
-              }
+          window.location.href='/edit_user/'+data[10];
+          // $.ajax({
+          //   'method':'GET',
+          //   'url':'/edit_user/'+data[9]+'/',
+          //   'data':"",
+          //   'cache':false,
+          //   'contentType': false,
+          //   'processData': false,
+          //   success: function(response){
+          //     if(response.status=='success')
+          //     {
+          //       toastr.success('user Created successfully.').delay(10000)
+          //       window.location.href="/get_user/";
+          //     }
+          //     else
+          //     {
+          //       alert(response.msg);
+          //     }
 
-            },
-            error: function(xhr,status,errorThrown){
-              alert(xhr.responseText)
-            },
-          });
+          //   },
+          //   error: function(xhr,status,errorThrown){
+          //     alert(xhr.responseText)
+          //   },
+          // });
+        });
+
+     $('#shTable tbody').on( 'click', 'tr td:eq(8)', function (){
+          $("#cust_history_modal").modal("show");
         });
 
 });

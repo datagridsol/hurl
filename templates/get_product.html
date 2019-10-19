@@ -103,70 +103,13 @@
       });
 
       
-    // $('#shTable tfoot th').each( function () {
-    //     var title = aData[6];
-    //     $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-    // } );
-    var table = $('#shTable').DataTable();
-    // Apply the search
-      table.columns().every( function () {
-          var that = this;
-   
-          $( 'input', this.footer() ).on( 'keyup change clear', function () {
-              if ( that.search() !== this.value ) {
-                  that
-                      .search( this.value )
-                      .draw();
-              }
-          } );
-      } );
+    
                   
    $('#shTable tbody').on( 'click', 'button', function () {
         var data = table.row( $(this).parents('tr') ).data();
         alert( "Product_id Is: "+ data[ 7 ] );
     } );
-    function user_status(status,user_id) {
-        if (status=="Deactive"){
-          status1="Approve"
-        }
-        else
-          {
-               status1="Active"
-
-          }
-        var result=confirm("Do You Want To "+' '+status1 +' '+'User');
-        if (result == true) { 
-               $.ajax({
-                  'method':'POST',
-                  'url':'/user_status/',
-                  'data':{"status":status,"user_id":user_id},
-                   success: function(response){
-                    if(response.status=='success')
-                    {
-                      alert(response.msg)
-                      window.location.href="/get_user/";
-
-                    }
-                    else
-                    {
-                     alert(response.msg)
-
-                  }
-                },
-                  error: function(xhr,status,errorThrown){
-                    toastr.error(xhr.responseText)
-                    $(btn).buttonLoader('stop')
-                  },
-                });
-            } 
-
-        else
-                    {
-                    
-
-                  }
-      
-   }
+   
 });
 
  </script>
