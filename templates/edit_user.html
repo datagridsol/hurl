@@ -47,7 +47,11 @@
   </script>
   <div class="content-wrapper" >
     <div class="jumbotron">
+<<<<<<< HEAD
       <h1 style="margin-left: 30%;">Edit User{{data}}</h1>
+=======
+      <h1 style="margin-left: 30%;">Edit User{{data.user_type.id}}</h1>
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 
  <form method="post" id="edituserForm" style="margin-left:20%;" enctype="multipart/form-data" >
           {% csrf_token %}
@@ -55,12 +59,21 @@
           <br>
           <table width="80%">
             <tr>
+<<<<<<< HEAD
               <td > <label for="user_type">UserType:</label><br/>
           <!-- <input  style="margin-left:2%"  type="" name="user_type" id="user_type" placeholder="user_type" value="{{data.user_type.name}}" readonly="true"> -->
           <select  style="width: 43%;" disabled="disabled" id="user_type" name="user_type">
                 <option  value="" selected="selected">---select---</option>
                 {% for user_type in data.group_data %}
                  <option value="{{user_type.id}}" {% if data.user_type.id == user_type.id %} selected="selected" {% endif %} >{{user_type.name}} </option>
+=======
+              <td> <label for="user_type">UserType:</label><br/>
+          <!-- <input  style="margin-left:2%"  type="" name="user_type" id="user_type" placeholder="user_type" value="{{data.user_type.name}}" readonly="true"> -->
+          <select  style="width: 43%;" id="user_type" name="user_type">
+                <option  value="" selected="selected">---select---</option>
+                {% for user_type in group_data %}
+                 <option value="{{data.user_type.name}}" {% if data.user_type.name == data.user_type.name %} selected="true" {% endif %} >{{data.user_type.name}} </option>
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
                 {% endfor %}
               </select>
         </td>

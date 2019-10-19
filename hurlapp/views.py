@@ -12,12 +12,18 @@ import json
 from hurlapp import models
 from django.db.models import Q
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 from hurlapp.forms import ProfileForm
 from hurlapp.models import UserProfile
 from hurlapp import forms
 from hurl import settings
+<<<<<<< HEAD
 =======
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 def index(request):
     return render(request,'index.html')
 
@@ -93,6 +99,7 @@ def user_login(request):
 def add_user(request):
     gr_no=[]
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     first_name=''
     last_name=''
@@ -107,12 +114,25 @@ def add_user(request):
     state_data=get_state()
     city_data=get_city()
 =======
+=======
+
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     first_name=''
     last_name=''
+    city_name=''
+    user_photo=''
+    aadhar_card=''
+    pan_card=''
+    vote_id=''
+    soil_card=''
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
+<<<<<<< HEAD
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+    city_data=get_city()
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
@@ -121,6 +141,7 @@ def add_user(request):
     if my_user_type:
         print(my_user_type[0][0])
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
@@ -128,15 +149,24 @@ def add_user(request):
         print("Post Data")
         data={}
 <<<<<<< HEAD
+=======
+
+    if request.method == 'POST':
+        print("Post Data")
+        data={}
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
         username = request.POST.get('mobile_number')
         if User.objects.filter(username=username).exists():
             response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
             return response
         password = request.POST.get('mobile_number')
+<<<<<<< HEAD
 =======
         username = request.POST.get('username')
         password = request.POST.get('username')
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
         email = request.POST.get('email')
         full_name = request.POST.get('name')
         if (' ' in full_name) == True:
@@ -158,6 +188,9 @@ def add_user(request):
         pincode=request.POST.get('pincode')
         address=request.POST.get('address')
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 
         if request.FILES.get('user_photo'):
             user_photo = request.FILES['user_photo']
@@ -170,6 +203,7 @@ def add_user(request):
         if request.FILES.get('soil_card'):
             soil_card = request.FILES['soil_card']
 
+<<<<<<< HEAD
         land_area=request.POST.get('land_area')
 
         new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
@@ -182,10 +216,16 @@ def add_user(request):
     
         new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+        land_area=request.POST.get('land_area')
+
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
         user_type=Group.objects.get(id=user_type)
+<<<<<<< HEAD
 <<<<<<< HEAD
         user_type.user_set.add(new_Uid)
         langn_id=models.Language.objects.get(id=langn_id)
@@ -207,25 +247,104 @@ def add_user(request):
         MyProfileForm = forms.ProfileForm()
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 =======
+=======
+        user_type.user_set.add(new_Uid)
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
         district=models.District.objects.get(id=district)
-        if models.City.objects.filter(city_name=city).exists():
-            city_id=city
-        else:
-            new_city = models.City.objects.create(city_name =city,status=1)
-            new_city.save()
-            city_id=new_city.city_name
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_id,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,land_area=land_area)
+        if city:
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
         userprofile.save()
-        data={'user_type':user_type,'address':address,"status":True}
-        return render(request, 'manage_user.html', {'data':data})
+        response=JsonResponse({'status':'success'})
+        return response
 
     else:
+<<<<<<< HEAD
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data})
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
 
 
+@csrf_exempt
+def edit_user(request, pk):
+    gr_no=[]
+    first_name=''
+    last_name=''
+    city_name=''
+    state=''
+    data={}
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
+    print(request.user.id)
+    user_type=Group.objects.all().values_list('id', 'name')
+    for i in user_type:
+        gr_no.append(i[1])
+    my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
+    if my_user_type:
+        print(my_user_type[0][0])
+
+    if request.method == 'POST':
+        data={}
+        user_id = request.POST.get('user_id')
+        password = request.POST.get('mobile_number')
+        email = request.POST.get('email')
+        full_name = request.POST.get('name')
+        if (' ' in full_name) == True:
+            full_name_split=full_name.split(' ')
+            if len(full_name_split)==2:
+                first_name=full_name_split[0]
+                last_name=full_name_split[1]
+            if len(full_name_split)==3:
+                first_name=full_name_split[0]
+                last_name=full_name_split[2]
+        else:
+            first_name=full_name
+        langn_id=request.POST.get('language_id')
+        user_type = request.POST.get('user_type')
+        aadhar_no=request.POST.get('aadhar_no')
+        state=request.POST.get('state')
+        city=request.POST.get('city')
+        district=request.POST.get('district')
+        pincode=request.POST.get('pincode')
+        address=request.POST.get('address')
+        user_photo=request.POST.get('user_photo')
+        aadhar_card=request.POST.get('aadhar_card')
+        pan_card=request.POST.get('pan_card')
+        vote_id=request.POST.get('vote_id')
+        soil_card=request.POST.get('soil_card')
+        land_area=request.POST.get('land_area')
+=======
+        MyProfileForm = forms.ProfileForm()
+        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
+
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,is_active=0,email=email)
+        
+        user_type=Group.objects.get(id=user_type)
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if city:
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+        models.UserProfile.objects.filter(user_id=user_id).update(user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
+        response=JsonResponse({'status':'success'})
+        return response
+
+<<<<<<< HEAD
+=======
 @csrf_exempt
 def edit_user(request, pk):
     gr_no=[]
@@ -294,6 +413,7 @@ def edit_user(request, pk):
         response=JsonResponse({'status':'success'})
         return response
 
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     else:
         user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
         for i in user_info:
@@ -324,6 +444,7 @@ def edit_user(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
+<<<<<<< HEAD
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
             
         return render(request, 'edit_user.html',{'data':data})
@@ -353,6 +474,11 @@ def user_status(request):
         user_details.save()
         response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
         return response
+=======
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area}
+            # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
+        return render(request, 'edit_user.html',{'data':data})
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 
 def get_username(request):
     username=request.POST.get('username')
@@ -361,6 +487,23 @@ def get_username(request):
         return response
     else:
         response=JsonResponse({'status':'success'})
+        return response
+
+@csrf_exempt
+def user_status(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
         return response
 
 def get_langauge():
@@ -435,6 +578,7 @@ def get_city():
 #             user_type=i[0]
 #             district=i[1]
 #             state=i[2]
+<<<<<<< HEAD
 
 #         count+=1
 #         row.append(count)
@@ -446,6 +590,19 @@ def get_city():
 #         row.append(status)
 #         data.append(row)
 
+=======
+
+#         count+=1
+#         row.append(count)
+#         row.append(user_type)
+#         row.append(full_name)
+#         row.append(username)
+#         row.append(district)
+#         row.append(state)
+#         row.append(status)
+#         data.append(row)
+
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 #     return render(request, 'manage_user.html', {'data':(data)})
 
 @csrf_exempt
@@ -456,6 +613,9 @@ def get_manage_user(request):
     state=""
     count=0
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     row=[]
     user_info=models.UserProfile.objects.filter(~Q(user='1')).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
     for i in user_info:
@@ -465,6 +625,7 @@ def get_manage_user(request):
         user_id=i[3]
         first_name=i[4]
         last_name=i[5]
+<<<<<<< HEAD
 =======
     userdata=User.objects.all().values_list('id', 'first_name','last_name','username','is_active')
     for nlist in userdata:
@@ -473,6 +634,8 @@ def get_manage_user(request):
         first_name=nlist[1]
         last_name=nlist[2]
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
         full_name=str(first_name)+" "+str(last_name)
         username=i[6]
         status=i[7]
@@ -481,6 +644,7 @@ def get_manage_user(request):
         else:
             status="Deactive"
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
         count+=1
@@ -502,6 +666,11 @@ def get_manage_user(request):
         row.append(status)
         data.append(row)
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+
+        count+=1
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     return render(request, 'manage_user.html', {'data':(data)})
 
 

@@ -56,6 +56,9 @@ def generateOTP() :
     for i in range(4) : 
         OTP += digits[math.floor(random.random() * 10)] 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     return OTP 
 
 
@@ -130,6 +133,9 @@ def add_user_mobile(request):
         data={"user_id":new_Uid,"name":full_name,"company_name":company_name,"mobile_number":username,"email":email,"language":langn_id,"aadhar_no":aadhar_no,"state":state,"city":city_name,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"fertilizer_photo":fertilizer_photo}
         response=JsonResponse({'status':'success','data':data})
         return response
+<<<<<<< HEAD
 =======
     return OTP 
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229

@@ -15,6 +15,9 @@ urlpatterns=[
     url(r'^add_order/$',views.addOrder,name='add_order'),
     url(r'^user_login/$',views.user_login,name='user_login'),
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     url(r'^user_status/$',views.user_status,name='user_status'),
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
@@ -22,10 +25,13 @@ urlpatterns=[
     url(r'^get_district/$',views.get_district,name='get_district'),
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
     
+<<<<<<< HEAD
 =======
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
 >>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 
 ]
 
