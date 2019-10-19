@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+
+{% block body_block %}
+<style type="text/css">
+    #userForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    .spinner {
+        display: inline-block;
+        opacity: 0;
+        width: 0;
+        -webkit-transition: opacity 0.25s, width 0.25s;
+        -moz-transition: opacity 0.25s, width 0.25s;
+        -o-transition: opacity 0.25s, width 0.25s;
+        transition: opacity 0.25s, width 0.25s;
+    }
+
+
+
+    .has-spinner.active {
+        cursor:progress;
+    }
+
+    .has-spinner.active .spinner {
+        opacity: 1;
+        width: auto;
+    }
+
+    .has-spinner.btn.active .spinner {
+        /*min-width: 20px;*/
+    }
+  </style>
+  <div class="content-wrapper" >
+    <div class="jumbotron">
+      <h1 style="margin-left: 30%;">Add User</h1>
+      <form method="post" id="userForm1" style="margin-left:20%;" enctype="multipart/form-data" >{% csrf_token %}         
+         <div style = "max-width:470px;">
+            <center>  
+               <input type = "text" style = "margin-left:20%;"
+               placeholder = "Name" name = "name" id="name" />
+            </center>
+         </div>
+         <br>         
+         <div style = "max-width:470px;">
+            <center>
+               <input type = "file" style = "margin-left:20%;"
+                  placeholder = "Picture" name = "picture" id="picture" />
+            </center>
+         </div>
+         <br>         
+         <div style = "max-width:470px;">
+            <center>            
+               <button style = "border:0px;background-color:#4285F4; margin-top:8%;
+                  height:35px; width:80%; margin-left:19%;" type = "submit" value = "Login" >
+                  <strong>Login</strong>
+               </button>               
+            </center>
+         </div>
+      </form>
+   </div>
+  </div>
+
+
+
+<!-- <script>
+  $(document).ready(function(){
+    $("#state").change(function(){
+    $.ajax({
+        type:"POST",
+        url : "/get_district/",
+        data : {"state_id":$(this).val()},
+        success : function(response) {
+          alert(response['district_data'])
+          district_data = response['district_data'];
+          return district_data;
+        },
+        error: function() {
+            alert('Error occured');
+        }
+    });
+    });
+
+     
+});
+</script> -->
+{% endblock %}

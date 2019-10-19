@@ -20,6 +20,8 @@
   <link rel="stylesheet" href="{% static "plugins/overlayScrollbars/css/OverlayScrollbars.min.css" %}">
 
   <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
+
+  <link rel="stylesheet" href="{% static "plugins/toastr/toastr.min.css" %}">
   
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
@@ -109,8 +111,122 @@
               </p>
             </a>
           </li>
+
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product/" == request.path %} active {% endif %}">
+              <i class="fas fa-archive"></i>
+              <p>
+                Manage Product
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product1/" == request.path %} active {% endif %}">
+              <i class="nav-icon fas fa-users"></i> 
+              <p>
+                Manage Retailer
+              </p>
+            </a>
+          </li>
+
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product2/" == request.path %} active {% endif %}">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Manage Farmers
+              </p>
+            </a>
+          </li>
+
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product3/" == request.path %} active {% endif %}">
+              <i class="fas fa-award"></i>
+              <p>
+                Loyality Configration
+              </p>
+            </a>
+          </li>
+
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product4/" == request.path %} active {% endif %}">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Retailer
+              </p>
+            </a>
+          </li>
           
-          
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product5/" == request.path %} active {% endif %}">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Farmers
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product6/" == request.path %} active {% endif %}">
+              <i class="fas fa-mobile-alt"></i>
+              <p>
+                Manage Recharge
+              </p>
+            </a>
+          </li>
+
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product7/" == request.path %} active {% endif %}">
+             <i class="fas fa-clone"></i>
+              <p>
+                Manage Content
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product8/" == request.path %} active {% endif %}">
+              <i class="fas fa-headset"></i>
+              <p>
+                Support
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product9/" == request.path %} active {% endif %}">
+              <i class="far fa-comments"></i>
+              <p>
+                Notification
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product10/" == request.path %} active {% endif %}">
+              <i class="fas fa-chart-area"></i>
+              <p>
+                Manage Area
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item has-treeview ">
+            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product11/" == request.path %} active {% endif %}">
+              <i class="fas fa-chart-area"></i>
+              <p>
+                Reports
+              </p>
+            </a>
+          </li>
+
+         
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -155,12 +271,13 @@
 
 <script src="{% static "plugins/datatables/jquery.dataTables.js" %}"></script>
 <script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static "dist/js/adminlte.js" %}"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{% static "dist/js/pages/dashboard.js" %}"></script>
+
 <!-- AdminLTE for demo purposes -->
 <script src="{% static "dist/js/demo.js" %}"></script>
+<script src="{% static "dist/js/jquery_validation/jquery.validate.min.js" %}"></script>
 
 <script src="{% static "dist/js/common.js" %}"></script>
 

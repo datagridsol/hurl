@@ -45,9 +45,10 @@ $(document).ready(function(){
     rules: {
       mobile_number: {
         required: true,
+        number: true,
         minlength: 10,
-        maxlength: 10,
-        number: true
+        maxlength: 10
+        
       },
       password: {
         required: true,
@@ -56,9 +57,10 @@ $(document).ready(function(){
     messages: {
       mobile_number: {
         required: "Please enter a mobile number",
+        number: "Please enter valid mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
-        maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        maxlength: "Your mobile number must consist of at max 10 digits"
+       
       },
       password: {
         required: "Please provide a password",
@@ -80,6 +82,7 @@ $(document).ready(function(){
               $(btn).buttonLoader('stop')
               toastr.success('Login successfully.')
               window.location.href="/dashboard/";
+
             }
             else
             {
@@ -98,6 +101,7 @@ $(document).ready(function(){
   });
 
   $("#userForm").validate({
+   
     rules: {
       user_type: {
         required: true,
@@ -106,11 +110,16 @@ $(document).ready(function(){
       name: {
         required: true,
       },
-      username: {
+      mobile_number: {
         required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
       },
       aadhar_no: {
         required: true,
+        minlength: 12,
+        maxlength: 12,
       },
       state: {
         required: true,
@@ -126,11 +135,16 @@ $(document).ready(function(){
       name: {
         required: "Please enter a name",
       },
-      username: {
+      mobile_number: {
         required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
       },
       state: {
         required: "Please enter a state",
@@ -139,31 +153,171 @@ $(document).ready(function(){
         required: "Please enter a district",
       }
     },
-    errorPlacement: function(error, element) {
-      error.appendTo(element.parent("div"));
-    },
-    // submitHandler: function() {
-    //     $.ajax({
-    //       'method':'POST',
-    //       'url':'/add_user/',
-    //       'data': $('#userForm').serialize(),
-    //       success: function(response){
-    //         if(response.status=='success')
-    //         {
-    //           window.location.href="/add_user/";
-    //         }
-    //         else
-    //         {
-    //           alert(response.msg);
-    //         }
+    submitHandler: function() {
+      var userForm=document.getElementById('userForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_user/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            alert("response")
+            alert(response)
+            if(response.status=='success')
+            {
+              toastr.success('user Created successfully.').delay(10000)
+              window.location.href="/get_user/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
 
-    //       },
-    //       error: function(xhr,status,errorThrown){
-    //         alert(xhr.responseText)
-    //       },
-    //     });
-    //   return false;
-    // }
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
   });
-      
+
+  $("#edituserForm").validate({
+   
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      mobile_number: {
+        required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
+      },
+      aadhar_no: {
+        required: true,
+        minlength: 12,
+        maxlength: 12,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      mobile_number: {
+        required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('userForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_user/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            alert("response")
+            alert(response)
+            if(response.status=='success')
+            {
+              toastr.success('user Created successfully.').delay(10000)
+              window.location.href="/get_user/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+   
+   $("#productForm").validate({
+    rules: {
+      product_name: {
+        required: true,
+        
+      },
+      product_price: {
+        required: true,
+        number: true
+      }
+    },
+    messages: {
+      product_name: {
+        required: "Please enter a name",
+      },
+      product_price: {
+        required: "Please enter a price",
+        number: "Please enter valid price"
+      }
+    },
+    submitHandler: function() {
+       var productForm=document.getElementById('productForm');
+       var formData = new FormData(productForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_product/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+           success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Product Add successfully.').delay(10000)
+              window.location.href="/get_product/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
 });

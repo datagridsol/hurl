@@ -1,16 +1,48 @@
 {% extends "base.html" %}
-<script>
-  $(document).ready(function(){
-    console.log("dddddddd")
-  })
-</script>
-{% block body_block %}
+{% load staticfiles %}
 
+
+
+{% block body_block %}
+<style type="text/css">
+    #userForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    .spinner {
+        display: inline-block;
+        opacity: 0;
+        width: 0;
+        -webkit-transition: opacity 0.25s, width 0.25s;
+        -moz-transition: opacity 0.25s, width 0.25s;
+        -o-transition: opacity 0.25s, width 0.25s;
+        transition: opacity 0.25s, width 0.25s;
+    }
+
+
+
+    .has-spinner.active {
+        cursor:progress;
+    }
+
+    .has-spinner.active .spinner {
+        opacity: 1;
+        width: auto;
+    }
+
+    .has-spinner.btn.active .spinner {
+        /*min-width: 20px;*/
+    }
+  </style>
   <div class="content-wrapper" >
     <div class="jumbotron">
       <h1 style="margin-left: 30%;">Add User</h1>
 
-<form method="post" action="{% url 'add_user' %}">
+ <form method="post" id="userForm" style="margin-left:20%;" enctype="multipart/form-data" >
           {% csrf_token %}
           {# A more "HTML" way of creating the login form#}
           <br>
@@ -18,79 +50,105 @@
             <tr>
               <td colspan="2">
                    <label for="user_type">UserType:</label><br/>
-               <select id="user_type" name="user_type">
+               <select  style="width: 43%;" id="user_type" name="user_type">
                 <option  value="" selected="selected">---select---</option>
-                {% for user_type in data %}
-                 <option value="{{user_type.id}}">{{user_type}}</option>
+                {% for user_type in group_data %}
+                 <option value="{{user_type.id}}">{{user_type.name}}</option>
                 {% endfor %}
               </select>
               </td>
                <td>
-                  <label for="langauge" style="margin-left:-100%">Langauge:</label><br/>
-          <input  style="margin-left:-100%"  type="langauge" name="langauge" placeholder="langauge">
-              
+                  <label for="language_id" style="margin-left:-76%">Langauge:</label><br/>
+                   <select  style="margin-left: -76%;
+    width: 72%"; id="language_id" name="language_id">
+                <option  value="" selected="selected">---select---</option>
+                {% for lang_data in lang_data %}
+                 <option value="{{lang_data.id}}">{{lang_data.name}}</option>
+                {% endfor %}
+              </select>
+         
+              </td>
              
             </tr>
             <tr>
              
               <td>
                      <label for="name">Name:</label><br/>
-          <input  style="margin-left:1%"  type="name" name="name" placeholder="name">
+          <input  style="margin-left:1%"  type="name" name="name" id="name" placeholder="name">
               </td>
-              <td> <label for="email">Email:</label><br/>
-          <input  style="margin-left:2%"  type="email" name="email" placeholder="Email"></td>
+              <td> <label style="margin-left:-5%" for="email">Email:</label><br/>
+          <input  style="margin-left:-5%"  type="" name="email" id="email" placeholder="Email"></td>
               <td></td>
             </tr>
             <tr>
               <td> <label for="mobile_number">Phone:</label><br/>
-          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+          <input  style="margin-left:2%"  type="" name="mobile_number" id="mobile_number" placeholder="mobile_number"></td>
               <td></td>
-               <td> <label for="mobile_number" style="margin-left:-100%">aadhar:</label><br/>
-          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
-              <td></td>
-            </tr>
-             <tr>
-              <td> <label for="mobile_number">State:</label><br/>
-          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
-              <td></td>
-               <td> <label for="mobile_number" style="margin-left:-100%">District:</label><br/>
-          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+               <td> <label style="margin-left:-77%" for="aadhar_no" style="margin-left:-100%">Aadhar No:</label><br/>
+          <input  style="margin-left:-77%"  type="" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No"></td>
               <td></td>
             </tr>
              <tr>
-              <td> <label for="mobile_number">Pincode:</label><br/>
-          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td> <label style="margin-left: 1%;for="state">State:</label><br/>
+         <select  style="width: 73%;margin-left: 2%;" id="state" name="state">
+                <option  value="" selected="selected">---select---</option>
+                {% for state_data in state_data %}
+                 <option value="{{state_data.id}}">{{state_data.name}}</option>
+                {% endfor %}
+              </select>
               <td></td>
-               <td> <label for="mobile_number" style="margin-left:-100%">Address:</label><br/>
-          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td> <label style="margin-left: -78%;" for="city">City:</label><br/>
+          <input  style="margin-left:-78%"  type="" name="city" placeholder="City"></td>
+              <td></td>
+               
+            </tr>
+             <tr>
+              <td> <label for="district" style="margin-left:4px%">District:</label><br/>
+                <select  style="margin-left: 4px%;
+    width: 77%"; id="district" name="district">
+                <option  value="" selected="selected">---select---</option>
+                {% for district_data in district_data %}
+                 <option value="{{district_data.id}}">{{district_data.name}}</option>
+                {% endfor %}
+              </select>
+          
+              <td></td>
+              <td> <label style="margin-left: -78%; for="pincode">Pincode:</label><br/>
+          <input  style="margin-left:-78%"  type="" name="pincode" placeholder="Pincode"></td>
+              <td></td>
+              
+            </tr>
+            <tr><td> <label for="address">Address:</label><br/>
+          <textarea  name="address" id="address"  style="margin-left: 2%;
+    width: 76%";> </textarea></td>
+              <td></td></tr>
+             <tr>
+              <td> <label for="user_photo">Photo:</label><br/>
+          <input  style="margin-left:2%"  type="file" name="user_photo" id="user_photo" placeholder="Aadhar Card"></td>
+              <td></td>
+               <td> <label for="aadhar_card" style="margin-left:-77%">Aadhar Photo:</label><br/>
+          <input  style="margin-left:-77%"  type="file" name="aadhar_card" id="aadhar_card" placeholder="Aadhar Photo"></td>
               <td></td>
             </tr>
              <tr>
-              <td> <label for="mobile_number">Photo:</label><br/>
-          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td> <label for="pan_card">Pancard:</label><br/>
+          <input  style="margin-left:2%"  type="file" name="pan_card" placeholder="Pancard"></td>
               <td></td>
-               <td> <label for="mobile_number" style="margin-left:-100%">Aadhar:</label><br/>
-          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
-              <td></td>
-            </tr>
-             <tr>
-              <td> <label for="mobile_number">Pancard:</label><br/>
-          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
-              <td></td>
-               <td> <label for="mobile_number" style="margin-left:-100%">Vote Id:</label><br/>
-          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+               <td> <label for="vote_id" style="margin-left:-77%">Vote Id:</label><br/>
+          <input  style="margin-left:-77%"  type="file" name="vote_id" placeholder="Vote Id"></td>
               <td></td>
             </tr>
              <tr>
-              <td> <label for="mobile_number">Soil Card:</label><br/>
-          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td> <label for="soil_card">Soil Card:</label><br/>
+          <input  style="margin-left:2%"  type="file" name="soil_card" placeholder="Soil Card"></td>
               <td></td>
-               <td> <label for="mobile_number" style="margin-left:-100%">Land Area:</label><br/>
-          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+               <td> <label for="land_area" style="margin-left:-77%">Land Area:</label><br/>
+          <input  style="margin-left:-77%"  type="" name="land_area" placeholder="Land Area"></td>
               <td></td>
             </tr>
+            <td></td><td></td>
             <tr>
-              <td colspan="2"><input style="margin-left: 30%;" type="submit" name="" value="Add"></td>
+              <td colspan="2"><input style="margin-left: 47%;margin-top: 7%;width: 19%;"  type="submit" value="Add"></td>
             </tr>
          
 
@@ -98,4 +156,28 @@
 </form>
     </div>
   </div>
+
+
+
+<!-- <script>
+  $(document).ready(function(){
+    $("#state").change(function(){
+    $.ajax({
+        type:"POST",
+        url : "/get_district/",
+        data : {"state_id":$(this).val()},
+        success : function(response) {
+          alert(response['district_data'])
+          district_data = response['district_data'];
+          return district_data;
+        },
+        error: function() {
+            alert('Error occured');
+        }
+    });
+    });
+
+     
+});
+</script> -->
 {% endblock %}

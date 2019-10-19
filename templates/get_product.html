@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block body_block %}
+{% load staticfiles %}
+<!-- DataTables -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>All Products</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+             <li class="breadcrumb-item active" type="button"> <a href="{% url 'add_product' %}">Add Product</li>
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">List of all users</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="shTable" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Sr No</th>
+                  <th>Product Image</th>
+                  <th>Product Name</th>
+                  <th>Product Code</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>User_id</th>
+                   <th>Edit</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td> </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<!-- DataTables -->
+<script src="{% static "plugins/jquery/jquery.min.js" %}"></script>
+
+<script type="text/javascript">
+  {% autoescape off %}
+  //var device_not_reporting = {{ response }};
+    var result_data = {{ data}};
+  {% endautoescape %}
+
+    $(document).ready(function() {
+
+   
+    
+      var shTable=jQuery('#shTable').DataTable({
+        "aaData":result_data,
+        "scrollY":'200px',
+        "destroy": true,
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button>Edit</button>"
+        },{
+            "targets": -2,
+            "visible": false,
+        } ],
+        
+
+              
+              
+      });
+
+      
+    
+                  
+   $('#shTable tbody').on( 'click', 'button', function () {
+        var data = table.row( $(this).parents('tr') ).data();
+        alert( "Product_id Is: "+ data[ 7 ] );
+    } );
+   
+});
+
+ </script>
+
+{% endblock %}
+
