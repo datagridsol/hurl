@@ -11,10 +11,13 @@ from django.contrib.auth.models import User,Group
 import json
 from hurlapp import models
 from django.db.models import Q
+<<<<<<< HEAD
 from hurlapp.forms import ProfileForm
 from hurlapp.models import UserProfile
 from hurlapp import forms
 from hurl import settings
+=======
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
 def index(request):
     return render(request,'index.html')
 
@@ -89,6 +92,7 @@ def user_login(request):
 @csrf_exempt
 def add_user(request):
     gr_no=[]
+<<<<<<< HEAD
 
     first_name=''
     last_name=''
@@ -102,6 +106,13 @@ def add_user(request):
     lang_data=get_langauge()
     state_data=get_state()
     city_data=get_city()
+=======
+    first_name=''
+    last_name=''
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
     print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
@@ -109,15 +120,23 @@ def add_user(request):
     my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
     if my_user_type:
         print(my_user_type[0][0])
+<<<<<<< HEAD
 
+=======
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
     if request.method == 'POST':
         print("Post Data")
         data={}
+<<<<<<< HEAD
         username = request.POST.get('mobile_number')
         if User.objects.filter(username=username).exists():
             response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
             return response
         password = request.POST.get('mobile_number')
+=======
+        username = request.POST.get('username')
+        password = request.POST.get('username')
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
         email = request.POST.get('email')
         full_name = request.POST.get('name')
         if (' ' in full_name) == True:
@@ -138,6 +157,7 @@ def add_user(request):
         district=request.POST.get('district')
         pincode=request.POST.get('pincode')
         address=request.POST.get('address')
+<<<<<<< HEAD
 
         if request.FILES.get('user_photo'):
             user_photo = request.FILES['user_photo']
@@ -153,10 +173,20 @@ def add_user(request):
         land_area=request.POST.get('land_area')
 
         new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
+=======
+        user_photo=request.POST.get('user_photo')
+        aadhar_card=request.POST.get('aadhar_card')
+        pan_card=request.POST.get('pan_card')
+        vote_id=request.POST.get('vote_id')
+        land_area=request.POST.get('land_area')
+    
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
         user_type=Group.objects.get(id=user_type)
+<<<<<<< HEAD
         user_type.user_set.add(new_Uid)
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
@@ -176,6 +206,24 @@ def add_user(request):
     else:
         MyProfileForm = forms.ProfileForm()
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
+=======
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if models.City.objects.filter(city_name=city).exists():
+            city_id=city
+        else:
+            new_city = models.City.objects.create(city_name =city,status=1)
+            new_city.save()
+            city_id=new_city.city_name
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_id,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,land_area=land_area)
+        userprofile.save()
+        data={'user_type':user_type,'address':address,"status":True}
+        return render(request, 'manage_user.html', {'data':data})
+
+    else:
+        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data})
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
 
 
 @csrf_exempt
@@ -306,6 +354,15 @@ def user_status(request):
         response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
         return response
 
+def get_username(request):
+    username=request.POST.get('username')
+    if User.objects.filter(username=username).exists():
+        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        return response
+    else:
+        response=JsonResponse({'status':'success'})
+        return response
+
 def get_langauge():
     lang_data=[]
     lang_type=models.Language.objects.all().values_list('id', 'lang_name')
@@ -398,6 +455,7 @@ def get_manage_user(request):
     district=""
     state=""
     count=0
+<<<<<<< HEAD
     row=[]
     user_info=models.UserProfile.objects.filter(~Q(user='1')).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
     for i in user_info:
@@ -407,6 +465,14 @@ def get_manage_user(request):
         user_id=i[3]
         first_name=i[4]
         last_name=i[5]
+=======
+    userdata=User.objects.all().values_list('id', 'first_name','last_name','username','is_active')
+    for nlist in userdata:
+        row=[]
+        user_id=nlist[0]
+        first_name=nlist[1]
+        last_name=nlist[2]
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
         full_name=str(first_name)+" "+str(last_name)
         username=i[6]
         status=i[7]
@@ -415,9 +481,27 @@ def get_manage_user(request):
         else:
             status="Deactive"
 
+<<<<<<< HEAD
 
         count+=1
         data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+=======
+        user_info=models.UserProfile.objects.filter(user=user_id).values_list('user_type__name','district__district_name','state__state_name')
+        for i in user_info:
+            user_type=i[0]
+            district=i[1]
+            state=i[2]
+
+        count+=1
+        row.append(user_id)
+        row.append(user_type)
+        row.append(full_name)
+        row.append(username)
+        row.append(district)
+        row.append(state)
+        row.append(status)
+        data.append(row)
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
     return render(request, 'manage_user.html', {'data':(data)})
 
 

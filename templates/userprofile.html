@@ -25,6 +25,7 @@
 
 
 
+<<<<<<< HEAD
     .has-spinner.active {
         cursor:progress;
     }
@@ -38,11 +39,17 @@
         /*min-width: 20px;*/
     }
   </style>
+=======
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
   <div class="content-wrapper" >
     <div class="jumbotron">
       <h1 style="margin-left: 30%;">Add User</h1>
 
+<<<<<<< HEAD
  <form method="post" id="userForm" style="margin-left:20%;" enctype="multipart/form-data" >
+=======
+<form method="post" action="{% url 'add_user' %}">
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
           {% csrf_token %}
           {# A more "HTML" way of creating the login form#}
           <br>
@@ -50,7 +57,11 @@
             <tr>
               <td colspan="2">
                    <label for="user_type">UserType:</label><br/>
+<<<<<<< HEAD
                <select  style="width: 43%;" id="user_type" name="user_type">
+=======
+               <select id="user_type" name="user_type">
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
                 <option  value="" selected="selected">---select---</option>
                 {% for user_type in group_data %}
                  <option value="{{user_type.id}}">{{user_type.name}}</option>
@@ -58,6 +69,7 @@
               </select>
               </td>
                <td>
+<<<<<<< HEAD
                   <label for="language_id" style="margin-left:-76%">Langauge:</label><br/>
                    <select  style="margin-left: -76%;
     width: 72%"; id="language_id" name="language_id">
@@ -68,20 +80,33 @@
               </select>
          
               </td>
+=======
+                  <label for="langauge" style="margin-left:-100%">Langauge:</label><br/>
+          <input  style="margin-left:-100%"  type="langauge" name="langauge" placeholder="langauge">
+              
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
              
             </tr>
             <tr>
              
               <td>
                      <label for="name">Name:</label><br/>
+<<<<<<< HEAD
           <input  style="margin-left:1%"  type="name" name="name" id="name" placeholder="name">
               </td>
               <td> <label style="margin-left:-5%" for="email">Email:</label><br/>
           <input  style="margin-left:-5%"  type="" name="email" id="email" placeholder="Email"></td>
+=======
+          <input  style="margin-left:1%"  type="name" name="name" placeholder="name">
+              </td>
+              <td> <label for="email">Email:</label><br/>
+          <input  style="margin-left:2%"  type="email" name="email" placeholder="Email"></td>
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
               <td></td>
             </tr>
             <tr>
               <td> <label for="mobile_number">Phone:</label><br/>
+<<<<<<< HEAD
           <input  style="margin-left:2%"  type="" name="mobile_number" id="mobile_number" placeholder="mobile_number"></td>
               <td></td>
                <td> <label style="margin-left:-77%" for="aadhar_no" style="margin-left:-100%">Aadhar No:</label><br/>
@@ -149,6 +174,56 @@
             <td></td><td></td>
             <tr>
               <td colspan="2"><input style="margin-left: 47%;margin-top: 7%;width: 19%;"  type="submit" value="Add"></td>
+=======
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">aadhar:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">State:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">District:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Pincode:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Address:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Photo:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Aadhar:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Pancard:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Vote Id:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+             <tr>
+              <td> <label for="mobile_number">Soil Card:</label><br/>
+          <input  style="margin-left:2%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+               <td> <label for="mobile_number" style="margin-left:-100%">Land Area:</label><br/>
+          <input  style="margin-left:-100%"  type="mobile_number" name="mobile_number" placeholder="mobile_number"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="2"><input style="margin-left: 30%;" type="submit" name="" value="Add"></td>
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
             </tr>
          
 

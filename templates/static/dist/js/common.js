@@ -290,6 +290,7 @@ $(document).ready(function(){
         number: "Please enter valid price"
       }
     },
+<<<<<<< HEAD
     submitHandler: function() {
        var productForm=document.getElementById('productForm');
        var formData = new FormData(productForm);
@@ -310,6 +311,22 @@ $(document).ready(function(){
             {
               alert(response.msg);
             }
+=======
+    // submitHandler: function() {
+    //     $.ajax({
+    //       'method':'POST',
+    //       'url':'/add_user/',
+    //       'data': $('#userForm').serialize(),
+    //       success: function(response){
+    //         if(response.status=='success')
+    //         {
+    //           window.location.href="/add_user/";
+    //         }
+    //         else
+    //         {
+    //           alert(response.msg);
+    //         }
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
 
           },
           error: function(xhr,status,errorThrown){
