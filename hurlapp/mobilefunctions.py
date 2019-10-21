@@ -57,6 +57,16 @@ def generateOTP() :
         OTP += digits[math.floor(random.random() * 10)] 
     return OTP 
 
+@csrf_exempt
+def get_wholesaler(request):
+    whole_data=[]
+    wholesaler_data=models.UserProfile.objects.filter(user_type=3).values_list('user','user__first_name','user__last_name','parent_id')
+    for i in wholesaler_data:
+        full_name=i[1]+' '+i[2]
+        case1 = {'user_id': i[0], 'name': full_name}
+        whole_data.append(case1)
+    response=JsonResponse({'status':'success','data':whole_data})
+    return response
 
 @csrf_exempt
 def add_user_mobile(request):
@@ -91,6 +101,7 @@ def add_user_mobile(request):
         aadhar_card=request.POST.get('aadhar_card')
         user_photo=request.POST.get('user_photo')
         fertilizer_photo=request.POST.get('fertilizer_photo')
+        wholesaler_id=request.POST.get('wholesaler_id')
         if (' ' in full_name) == True:
             full_name_split=full_name.split(' ')
             if len(full_name_split)==2:
@@ -124,8 +135,27 @@ def add_user_mobile(request):
                 new_city = models.City.objects.create(city_name =city,status=1)
                 new_city.save()
                 city_name=new_city.city_name
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0,company_name=company_name,language=langn_id1,aadhar_no=aadhar_no,state=state1,city=city_name,district=district1,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,fertilizer_photo=fertilizer_photo)
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=wholesaler_id,company_name=company_name,language=langn_id1,aadhar_no=aadhar_no,state=state1,city=city_name,district=district1,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,fertilizer_photo=fertilizer_photo)
         userprofile.save()
         data={"user_id":new_Uid,"name":full_name,"company_name":company_name,"mobile_number":username,"email":email,"language":langn_id,"aadhar_no":aadhar_no,"state":state,"city":city_name,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"fertilizer_photo":fertilizer_photo}
         response=JsonResponse({'status':'success','data':data})
         return response
+
+
+@csrf_exempt
+def get_product_mobile(request):
+    data=[]
+    count=0
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+    for i in product_info:
+        product_image=i[0]
+        product_name=i[1]
+        product_code=i[2]
+        product_unit=i[3]
+        product_price=i[4]
+        product_id=i[5]
+        count+=1
+        case1 = {'product_id':product_id, 'product_name': product_name,'product_code':product_code,'product_unit':product_unit,'product_unit':product_unit,'product_price':product_price}
+        data.append(case1)
+    response=JsonResponse({'status':'success','data':data})
+    return response

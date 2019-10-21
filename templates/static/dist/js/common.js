@@ -269,6 +269,179 @@ $(document).ready(function(){
       return false;
     }
   });
+
+
+    $("#retailerForm").validate({
+   
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      mobile_number: {
+        required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
+      },
+      aadhar_no: {
+        required: true,
+        minlength: 12,
+        maxlength: 12,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      mobile_number: {
+        required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('userForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_retailer/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            alert("response")
+            alert(response)
+            if(response.status=='success')
+            {
+              toastr.success('user Created successfully.').delay(10000)
+              window.location.href="/get_retailer/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+
+    $("#editretailerForm").validate({
+   
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      mobile_number: {
+        required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
+      },
+      aadhar_no: {
+        required: true,
+        minlength: 12,
+        maxlength: 12,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      mobile_number: {
+        required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('userForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_retailer/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            alert("response")
+            alert(response)
+            if(response.status=='success')
+            {
+              toastr.success('user Created successfully.').delay(10000)
+              window.location.href="/get_retailer/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
    
    $("#productForm").validate({
     rules: {
@@ -319,5 +492,178 @@ $(document).ready(function(){
       return false;
     }
   });
+
+
+   $("#farmerForm").validate({
+   
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      mobile_number: {
+        required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
+      },
+      aadhar_no: {
+        required: true,
+        minlength: 12,
+        maxlength: 12,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      mobile_number: {
+        required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('userForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_retailer/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            alert("response")
+            alert(response)
+            if(response.status=='success')
+            {
+              toastr.success('user Created successfully.').delay(10000)
+              window.location.href="/get_retailer/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+
+    $("#editfarmerForm").validate({
+   
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      mobile_number: {
+        required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
+      },
+      aadhar_no: {
+        required: true,
+        minlength: 12,
+        maxlength: 12,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      mobile_number: {
+        required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('userForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_retailer/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            alert("response")
+            alert(response)
+            if(response.status=='success')
+            {
+              toastr.success('user Created successfully.').delay(10000)
+              window.location.href="/get_retailer/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
 
 });

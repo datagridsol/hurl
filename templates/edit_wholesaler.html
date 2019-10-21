@@ -39,8 +39,8 @@
 </script>
 <div class="content-wrapper" >
    <div class="jumbotron">
-      <h1 style="margin-left: 30%;">Edit User</h1>
-      <form method="post" id="edituserForm" style="margin-left:20%;" enctype="multipart/form-data" >
+      <h1 style="margin-left: 30%;">Edit Wholesaler</h1>
+      <form method="post" id="editfarmerForm" style="margin-left:20%;" enctype="multipart/form-data" >
          {% csrf_token %}
          {# A more "HTML" way of creating the login form#}
          <br>
@@ -100,7 +100,7 @@
             </tr>
             <tr>
                <td>
-                  <label for="state" style="margin-left: 1%;">State:</label><br/>
+                  <label style="margin-left: 1%;for="state">State:</label><br/>
                   <select  style="width: 73%;margin-left: 2%;" id="state" name="state">
                      <option  value="" selected="selected">---select---</option>
                      {% for state_data in data.state_data %}

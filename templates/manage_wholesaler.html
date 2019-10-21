@@ -21,7 +21,7 @@
                                  <div class="text-center" style="width:100px;margin:0 auto;">
                                     <img  id="imgpathhistory" src="https://us.123rf.com/450wm/triken/triken1608/triken160800029/61320775-stock-vector-male-avatar-profile-picture-default-user-avatar-guest-avatar-simply-human-head-vector-illustration-i.jpg?ver=6" alt="No Images" style="background-color:transparent;max-width:100%;height: auto">
                                  </div>
-                                 {{data}}
+                               
                               </div>
                            </div>
                         </div>
@@ -40,16 +40,16 @@
       <div class="container-fluid">
          <div class="row mb-2">
             <div class="col-sm-6">
-               <h1>Manage Users</h1>
+               <h1>Manage Wholesaler</h1>
             </div>
             <div class="col-sm-6">
                <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item active" type="button">
-                     <a href="{% url 'add_user' %}">
-                        Add Users
+                     <a href="{% url 'add_farmer' %}">
+                        Add Wholesaler
                   </li>
-                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-                  <li class="breadcrumb-item active">Manage Users</li>
+                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Import Wholesaler</a></li>
+                 
                </ol>
             </div>
          </div>
@@ -70,21 +70,20 @@
                      <thead>
                         <tr>
                            <th>Sr No</th>
-                           <th>UserType</th>
                            <th>Name</th>
                            <th>Phone</th>
                            <th>District</th>
                            <th>State</th>
                            <th>Status</th>
-                           <th>Action</th>
                            <th>View</th>
                            <th>Edit</th>
+                           <th>Loyality</th>
+                           
                            <th>user_id</th>
                         </tr>
                      </thead>
                      <tbody>
                         <tr>
-                           <td></td>
                            <td>
                            </td>
                            <td></td>
@@ -133,18 +132,18 @@
              }
          ],
          "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                     if ( aData[6] == "Deactive" )
+                     if ( aData[5] == "Deactive" )
                      {
                          $('td', nRow).css('background-color', '#rgb(232, 194, 179) ');
-                         $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Approve</button></div>");
-                          $('td:eq(8)', nRow).append("View");
-                           $('td:eq(9)', nRow).append("Edit");
+                         $('td:eq(8)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Loyality Point</button></div>");
+                          $('td:eq(6)', nRow).append("View");
+                           $('td:eq(7)', nRow).append("Edit");
                      }
-                      if ( aData[6] == "Active" )
+                      if ( aData[5] == "Active" )
                      {
-                         $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut'>Disapproved</button></div>");
-                          $('td:eq(8)', nRow).append("View");
-                          $('td:eq(9)', nRow).append("Edit");
+                         $('td:eq(8)', nRow).append("<div class='col1d'><button class='editBut'>Loyality Point</button></div>");
+                          $('td:eq(6)', nRow).append("View");
+                          $('td:eq(7)', nRow).append("Edit");
                      }
    
                  },
@@ -156,7 +155,7 @@
        
    
      $('#shTable tfoot th').each( function () {
-         var title = aData[6];
+         var title = aData[5];
          $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
      } );
      var table = $('#shTable').DataTable();
@@ -187,7 +186,7 @@
    
      $('#shTable tbody').on( 'click', 'button', function () {
          var data = table.row( $(this).parents('tr') ).data();
-         user_status(data[ 6 ],data[ 10 ])
+         user_status(data[ 5 ],data[ 9 ])
      } );
    
     
@@ -237,9 +236,9 @@
     }
    
    
-     $('#shTable tbody').on( 'click', 'tr td:eq(9)', function (){
+     $('#shTable tbody').on( 'click', 'tr td:eq(7)', function (){
           var data = table.row( $(this).parents('tr') ).data();
-           window.location.href='/edit_user/'+data[10];
+           window.location.href='/edit_retailer/'+data[9];
            // $.ajax({
            //   'method':'GET',
            //   'url':'/edit_user/'+data[9]+'/',
@@ -265,7 +264,7 @@
            // });
          });
    
-      $('#shTable tbody').on( 'click', 'tr td:eq(8)', function (){
+      $('#shTable tbody').on( 'click', 'tr td:eq(6)', function (){
            $("#cust_history_modal").modal("show");
          });
    

@@ -32,8 +32,8 @@
 </style>
 <div class="content-wrapper" >
    <div class="jumbotron">
-      <h1 style="margin-left: 30%;">Add User</h1>
-      <form method="post" id="userForm" style="margin-left:20%;" enctype="multipart/form-data" >
+      <h1 style="margin-left: 30%;">Add Farmer</h1>
+      <form method="post" id="farmerForm" style="margin-left:20%;" enctype="multipart/form-data" >
          {% csrf_token %}
          {# A more "HTML" way of creating the login form#}
          <br>
@@ -41,11 +41,9 @@
             <tr>
                <td colspan="2">
                   <label for="user_type">UserType:</label><br/>
-                  <select  style="width: 43%;" id="user_type" name="user_type">
-                     <option  value="" selected="selected">---select---</option>
-                     {% for user_type in group_data %}
-                     <option value="{{user_type.id}}">{{user_type.name}}</option>
-                     {% endfor %}
+                 <select  style="width: 43%;" disabled="disabled" id="user_type" name="user_type">
+                     <option  value="3">Farmer</option>
+                     
                   </select>
                </td>
                <td>
