@@ -15,6 +15,7 @@ from hurlapp.forms import ProfileForm
 from hurlapp.models import UserProfile
 from hurlapp import forms
 from hurl import settings
+
 def index(request):
     return render(request,'index.html')
 
@@ -89,7 +90,6 @@ def user_login(request):
 @csrf_exempt
 def add_user(request):
     gr_no=[]
-
     first_name=''
     last_name=''
     city_name=''
@@ -118,6 +118,8 @@ def add_user(request):
             response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
             return response
         password = request.POST.get('mobile_number')
+        username = request.POST.get('username')
+        password = request.POST.get('username')
         email = request.POST.get('email')
         full_name = request.POST.get('name')
         if (' ' in full_name) == True:
@@ -149,7 +151,16 @@ def add_user(request):
             vote_id = request.FILES['vote_id']
         if request.FILES.get('soil_card'):
             soil_card = request.FILES['soil_card']
+        land_area=request.POST.get('land_area')
 
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
+        user_photo=request.POST.get('user_photo')
+        aadhar_card=request.POST.get('aadhar_card')
+        pan_card=request.POST.get('pan_card')
+        vote_id=request.POST.get('vote_id')
+        land_area=request.POST.get('land_area')
+    
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
         land_area=request.POST.get('land_area')
 
         new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
@@ -176,7 +187,95 @@ def add_user(request):
     else:
         MyProfileForm = forms.ProfileForm()
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
+        user_type.user_set.add(new_Uid)
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if city:
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
+        userprofile.save()
+        response=JsonResponse({'status':'success'})
+        return response
 
+
+@csrf_exempt
+def edit_user(request, pk):
+    gr_no=[]
+    first_name=''
+    last_name=''
+    city_name=''
+    state=''
+    data={}
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
+    print(request.user.id)
+    user_type=Group.objects.all().values_list('id', 'name')
+    for i in user_type:
+        gr_no.append(i[1])
+    my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
+    if my_user_type:
+        print(my_user_type[0][0])
+
+    if request.method == 'POST':
+        print("Post Data")
+        data={}
+        user_id = request.POST.get('user_id')
+        password = request.POST.get('mobile_number')
+        email = request.POST.get('email')
+        full_name = request.POST.get('name')
+        if (' ' in full_name) == True:
+            full_name_split=full_name.split(' ')
+            if len(full_name_split)==2:
+                first_name=full_name_split[0]
+                last_name=full_name_split[1]
+            if len(full_name_split)==3:
+                first_name=full_name_split[0]
+                last_name=full_name_split[2]
+        else:
+            first_name=full_name
+        langn_id=request.POST.get('language_id')
+        user_type = request.POST.get('user_type')
+        aadhar_no=request.POST.get('aadhar_no')
+        state=request.POST.get('state')
+        city=request.POST.get('city')
+        district=request.POST.get('district')
+        pincode=request.POST.get('pincode')
+        address=request.POST.get('address')
+        user_photo=request.POST.get('user_photo')
+        aadhar_card=request.POST.get('aadhar_card')
+        pan_card=request.POST.get('pan_card')
+        vote_id=request.POST.get('vote_id')
+        soil_card=request.POST.get('soil_card')
+        land_area=request.POST.get('land_area')
+
+        MyProfileForm = forms.ProfileForm()
+        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
+
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,is_active=0,email=email)
+        
+        user_type=Group.objects.get(id=user_type)
+        user_type.user_set.add(new_Uid)
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if city:
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+        models.UserProfile.objects.filter(user_id=user_id).update(user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
+        response=JsonResponse({'status':'success'})
+        return response
 
 @csrf_exempt
 def edit_user(request, pk):
@@ -245,7 +344,6 @@ def edit_user(request, pk):
         models.UserProfile.objects.filter(user_id=user_id).update(user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
         response=JsonResponse({'status':'success'})
         return response
-
     else:
         user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
         for i in user_info:
@@ -276,9 +374,35 @@ def edit_user(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area}
-            # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
+            
         return render(request, 'edit_user.html',{'data':data})
+
+def get_username(request):
+    username=request.POST.get('username')
+    if User.objects.filter(username=username).exists():
+        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        return response
+    else:
+        response=JsonResponse({'status':'success'})
+        return response
+
+@csrf_exempt
+def user_status(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
+        return response
 
 def get_username(request):
     username=request.POST.get('username')
@@ -389,6 +513,17 @@ def get_city():
 #         row.append(status)
 #         data.append(row)
 
+
+#         count+=1
+#         row.append(count)
+#         row.append(user_type)
+#         row.append(full_name)
+#         row.append(username)
+#         row.append(district)
+#         row.append(state)
+#         row.append(status)
+#         data.append(row)
+
 #     return render(request, 'manage_user.html', {'data':(data)})
 
 @csrf_exempt
@@ -420,6 +555,7 @@ def get_manage_user(request):
         #user_id
         data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/edit_user/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_user.html', {'data':(data)})
+
 
 
 @csrf_exempt

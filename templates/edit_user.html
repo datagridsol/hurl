@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-
-
-
 {% block body_block %}
 <style type="text/css">
     #edituserForm label.error {
@@ -47,6 +44,7 @@
   </script>
   <div class="content-wrapper" >
     <div class="jumbotron">
+
       <h1 style="margin-left: 30%;">Edit User{{data.user_type.id}}</h1>
 
  <form method="post" id="edituserForm" style="margin-left:20%;" enctype="multipart/form-data" >
@@ -164,33 +162,4 @@
     </div>
   </div>
 
-  
-
-  
-
-
-<<!-- script src="{% static "plugins/jquery/jquery.min.js" %}"></script> -->
-<!-- <script>
-
-  $(document).ready(function(){
-  
-    // $("#state").change(function(){
-    // $.ajax({
-    //     type:"POST",
-    //     url : "/get_district/",
-    //     data : {"state_id":$(this).val()},
-    //     success : function(response) {
-    //       alert(response['district_data'])
-    //       district_data = response['district_data'];
-    //       return district_data;
-    //     },
-    //     error: function() {
-    //         alert('Error occured');
-    //     }
-    // });
-    // });
-
-     
-});
-</script> -->
 {% endblock %}

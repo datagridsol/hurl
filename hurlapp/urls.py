@@ -20,7 +20,6 @@ urlpatterns=[
     url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),
     url(r'^get_district/$',views.get_district,name='get_district'),
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
-    
 
 ]
 
