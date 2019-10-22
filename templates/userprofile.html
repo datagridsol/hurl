@@ -28,7 +28,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-              <li class="breadcrumb-item active">General Form</li>
+              <li class="breadcrumb-item active">Add User</li>
             </ol>
           </div>
         </div>
@@ -81,7 +81,7 @@
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" name="name" id="name" placeholder="Name ...">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
                       </div>
                     </div>
                     <div class="col-sm-6">
@@ -120,7 +120,7 @@
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label>City</label>
-                        <input type="text" class="form-control" name="city" id="city" placeholder="City">
+                        <input type="text" class="form-control typeahead" autocomplete="off" name="city" id="city" placeholder="City">
                       </div>
                     </div>
                   </div>
@@ -128,7 +128,7 @@
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label>District</label>
-                        <select class="form-control" id="state" name="state">
+                        <select class="form-control" id="district" name="district">
                           <option  value="" selected="selected">---select---</option>
                           {% for district_data in district_data %}
                          <option value="{{district_data.id}}">{{district_data.name}}</option>
@@ -147,7 +147,7 @@
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label>Address</label>
-                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Address ..."></textarea>
+                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Address"></textarea>
                       </div>
                     </div>
                     
@@ -175,27 +175,7 @@
                     
                   </div>
 
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label for="customFile">Pancard</label>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="pan_card" id="pan_card">
-                          <label class="custom-file-label" for="pan_card">Choose file</label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label for="customFile">Aadhar Photo</label>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="aadhar_card" id="aadhar_card">
-                          <label class="custom-file-label" for="aadhar_card">Choose file</label>
-                        </div>
-                      </div>
-                    </div>
-                    
-                  </div>
+                  
 
                   <div class="row">
                     <div class="col-sm-6">
@@ -218,7 +198,7 @@
                     </div>
                   </div>
 
-                  <div class="row">
+                  <div class="row" id="show_farmer" style="display: none">
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label for="customFile">Soil Card</label>
@@ -260,5 +240,4 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
 {% endblock %}

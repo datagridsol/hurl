@@ -23,6 +23,17 @@
     }
 })(jQuery);
 
+$(document).on('change','#user_type',function(){
+    var user=$(this).val();
+    if(user=='3')
+    {
+      $('#show_farmer').show();
+    }
+    else
+    {
+      $('#show_farmer').hide();
+    }
+  });
 $(document).ready(function(){
   toastr.options = {
     "closeButton": false,
@@ -116,6 +127,9 @@ $(document).ready(function(){
         maxlength: 10,
         number: true
       },
+      email: {
+        email: true,
+      },
       aadhar_no: {
         required: true,
         minlength: 12,
@@ -134,6 +148,9 @@ $(document).ready(function(){
       },
       name: {
         required: "Please enter a name",
+      },
+      email: {
+        email: "Please enter valid email address",
       },
       mobile_number: {
         required: "Please enter a mobile number",
@@ -164,16 +181,15 @@ $(document).ready(function(){
           'contentType': false,
           'processData': false,
           success: function(response){
-            alert("response")
-            alert(response)
+            
             if(response.status=='success')
             {
-              toastr.success('user Created successfully.').delay(10000)
+              toastr.success(response.msg).delay(10000)
               window.location.href="/get_user/";
             }
             else
             {
-              alert(response.msg);
+              toastr.error(response.msg).delay(10000)
             }
 
           },
@@ -194,6 +210,9 @@ $(document).ready(function(){
       },
       name: {
         required: true,
+      },
+      email: {
+        email: true,
       },
       mobile_number: {
         required: true,
@@ -220,6 +239,9 @@ $(document).ready(function(){
       name: {
         required: "Please enter a name",
       },
+      email: {
+        email: "Please enter valid email address",
+      },
       mobile_number: {
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
@@ -239,26 +261,27 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
-      var userForm=document.getElementById('userForm');
+      var userForm=document.getElementById('edituserForm');
        var formData = new FormData(userForm);
+       var user_id_pk=document.getElementById('user_id_pk').value;
         $.ajax({
           'method':'POST',
-          'url':'/edit_user/',
+          'url':'/edit_user/'+user_id_pk,
           'data': formData,
           'cache':false,
           'contentType': false,
           'processData': false,
           success: function(response){
-            alert("response")
-            alert(response)
+           
             if(response.status=='success')
             {
-              toastr.success('user Created successfully.').delay(10000)
+              toastr.success(response.msg).delay(10000)
               window.location.href="/get_user/";
             }
             else
             {
-              alert(response.msg);
+              toastr.error(response.msg).delay(10000)
+              
             }
 
           },
@@ -666,4 +689,23 @@ $(document).ready(function(){
   });
 
 
+    $('.typeahead').typeahead(
+    {  
+        source: function(query, result)
+        {
+         $.ajax({
+          url:"/search_city/",
+          method:"GET",
+          data:{query:query},
+          //dataType:"json",
+          success:function(data)
+          {
+           result($.map(data, function(item){
+            return item;
+           }));
+          }
+         })
+        }
+    }
+  );
 });
