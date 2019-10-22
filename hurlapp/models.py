@@ -44,7 +44,7 @@ class City(models.Model):
 def get_image_filename(instance,filename):
     user_id=instance.user.id
     print("test",user_id)
-    return 'media/'+str(user_id)+'/user_photo/'
+    return 'media/'+str(user_id)+'/'+str(filename)
 
 class UserProfile(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
@@ -59,11 +59,11 @@ class UserProfile(models.Model):
     pincode=models.IntegerField(null=True, blank=True)
     address=models.TextField(null=True, blank=True)
     user_photo=models.ImageField(upload_to=get_image_filename,blank=True) #'media/'+'user_photo/'+'2/',blank=True
-    aadhar_card=models.ImageField(upload_to='media',blank=True)
-    pan_card=models.ImageField(upload_to='media',blank=True)
-    vote_id=models.ImageField(upload_to='media',blank=True)
-    soil_card=models.ImageField(upload_to='media',blank=True)
-    fertilizer_photo=models.ImageField(upload_to='media',blank=True)
+    aadhar_card=models.ImageField(upload_to=get_image_filename,blank=True)
+    pan_card=models.ImageField(upload_to=get_image_filename,blank=True)
+    vote_id=models.ImageField(upload_to=get_image_filename,blank=True)
+    soil_card=models.ImageField(upload_to=get_image_filename,blank=True)
+    fertilizer_photo=models.ImageField(upload_to=get_image_filename,blank=True)
     land_area=models.CharField(max_length=255,null=True, blank=True)
     otp=models.CharField(max_length=10,null=True, blank=True)
     fcm_id=models.TextField(null=True, blank=True)
