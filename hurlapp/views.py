@@ -712,6 +712,35 @@ def get_city():
 
 #     return render(request, 'manage_user.html', {'data':(data)})
 
+# @csrf_exempt
+# def get_manage_user(request):
+#     data=[]
+#     user_type=""
+#     district=""
+#     state=""
+#     count=0
+#     row=[]
+#     user_info=models.UserProfile.objects.filter(~Q(user='1')).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+#     for i in user_info:
+#         user_type=i[0]
+#         district=i[1]
+#         state=i[2]
+#         user_id=i[3]
+#         first_name=i[4]
+#         last_name=i[5]
+#         full_name=str(first_name)+" "+str(last_name)
+#         username=i[6]
+#         status=i[7]
+#         if status:
+#             status="Active"
+#         else:
+#             status="Deactive"
+
+
+#         count+=1
+#         data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+#     return render(request, 'manage_user.html', {'data':(data)})
+
 @csrf_exempt
 def get_manage_user(request):
     data=[]
@@ -733,12 +762,13 @@ def get_manage_user(request):
         status=i[7]
         if status:
             status="Active"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-user-id="+str(user_id)+">Disapprove</button></div>"
         else:
             status="Deactive"
-
-
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-user-id="+str(user_id)+">Approve</button></div>"
         count+=1
-        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+        #user_id
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/edit_user/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_user.html', {'data':(data)})
 
 
