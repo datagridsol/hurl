@@ -16,6 +16,7 @@ from hurlapp.models import UserProfile
 from hurlapp import forms
 from hurl import settings
 import os
+
 def index(request):
     return render(request,'index.html')
 
@@ -142,6 +143,7 @@ def add_user(request):
         if request.FILES.get('user_photo'):
             user_photo = request.FILES['user_photo']
             #folerval=image_upload_location(username,user_photo,'user')
+            
         if request.FILES.get('aadhar_card'):
             aadhar_card = request.FILES['aadhar_card']
         if request.FILES.get('pan_card'):
@@ -157,6 +159,7 @@ def add_user(request):
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
+        #print("5444444444444",models.get_image_filename(get_image_filename))
         user_type=Group.objects.get(id=user_type)
         user_type.user_set.add(new_Uid)
         langn_id=models.Language.objects.get(id=langn_id)
@@ -266,12 +269,7 @@ def edit_user(request, pk):
             district=i[9]
             pincode=i[10]
             address=i[11]
-            BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            MEDIA_DIR = os.path.join(BASE_DIR,'media')
             user_photo=i[12]
-            print("wwwwwww",user_photo)
-            user_photo=MEDIA_DIR+user_photo
-            print("www",user_photo)
             aadhar_card=i[13]
             pan_card=i[14]
             vote_id=i[15]

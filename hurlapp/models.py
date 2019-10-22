@@ -2,6 +2,8 @@
 from django.db import models
 from django.contrib.auth.models import User,Group
 import datetime
+from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User as Usertest
 # Create your models here.
 
 
@@ -35,6 +37,15 @@ class City(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
 
+# def get_image_filename(instance,filename):
+#     user_id = 3
+#     return 'media/'+'user_photo/'+str(user_id)+
+
+def get_image_filename(instance,filename):
+    user_id=instance.user.id
+    print("test",user_id)
+    return 'media/'+str(user_id)+'/user_photo/'
+
 class UserProfile(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
     parent_id=models.IntegerField()
@@ -47,7 +58,7 @@ class UserProfile(models.Model):
     district=models.ForeignKey(District, on_delete=models.CASCADE)
     pincode=models.IntegerField(null=True, blank=True)
     address=models.TextField(null=True, blank=True)
-    user_photo=models.ImageField(upload_to='media',blank=True)
+    user_photo=models.ImageField(upload_to=get_image_filename,blank=True) #'media/'+'user_photo/'+'2/',blank=True
     aadhar_card=models.ImageField(upload_to='media',blank=True)
     pan_card=models.ImageField(upload_to='media',blank=True)
     vote_id=models.ImageField(upload_to='media',blank=True)
