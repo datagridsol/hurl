@@ -102,6 +102,7 @@ def add_user_mobile(request):
         user_photo=request.POST.get('user_photo')
         fertilizer_photo=request.POST.get('fertilizer_photo')
         wholesaler_id=request.POST.get('wholesaler_id')
+        
         if (' ' in full_name) == True:
             full_name_split=full_name.split(' ')
             if len(full_name_split)==2:
@@ -141,6 +142,35 @@ def add_user_mobile(request):
         response=JsonResponse({'status':'success','data':data})
         return response
 
+
+@csrf_exempt
+def get_state_list(request):
+    state_data=[]
+    state_list=models.State.objects.all().values_list('id', 'state_name')
+    for i in state_list:
+        case2 = {'id': i[0], 'name': i[1]}
+        state_data.append(case2)
+    response=JsonResponse({'status':'success','data':state_data})
+    return response
+
+@csrf_exempt
+def get_district_list(request):
+    district_data=[]
+    district_list=models.District.objects.all().values_list('id', 'district_name')
+    for i in district_list:
+        case2 = {'id': i[0], 'name': i[1]}
+        district_data.append(case2)
+    response=JsonResponse({'status':'success','district_data':district_data})
+    return response
+@csrf_exempt
+def get_city_list(request):
+    city_data=[]
+    city_list=models.City.objects.all().values_list('id', 'city_name')
+    for i in city_list:
+        case2 = {'id': i[0], 'name': i[1]}
+        city_data.append(case2)
+    response=JsonResponse({'status':'success','data':city_data})
+    return response
 
 @csrf_exempt
 def get_product_mobile(request):

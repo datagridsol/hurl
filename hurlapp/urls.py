@@ -32,6 +32,11 @@ urlpatterns=[
     url(r'^get_wholesaler_list/$',mobilefunctions.get_wholesaler,name='get_wholesaler_list'),
     url(r'^get_product_list/$',mobilefunctions.get_product_mobile,name='get_product_mobile'),
     url(r'^get_district/$',views.get_district,name='get_district'),
+    url(r'^get_district_list/$',mobilefunctions.get_district_list,name='get_district_list'),
+    url(r'^get_state_list/$',mobilefunctions.get_state_list,name='get_state_list'),
+    url(r'^get_city_list/$',mobilefunctions.get_city_list,name='get_city_list'),
+    url(r'^user_logout/$',views.user_logout,name='user_logout'),
+
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
     
 

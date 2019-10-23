@@ -128,7 +128,7 @@
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label>District</label>
-                        <select class="form-control" id="state" name="state">
+                        <select class="form-control" id="district" name="district">
                           <option  value="" selected="selected">---select---</option>
                           {% for district_data in district_data %}
                          <option value="{{district_data.id}}">{{district_data.name}}</option>
@@ -185,28 +185,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label for="customFile">Aadhar Photo</label>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="aadhar_card" id="aadhar_card">
-                          <label class="custom-file-label" for="aadhar_card">Choose file</label>
-                        </div>
-                      </div>
-                    </div>
                     
-                  </div>
-
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label for="customFile">Pancard</label>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="pan_card" id="pan_card">
-                          <label class="custom-file-label" for="pan_card">Choose file</label>
-                        </div>
-                      </div>
-                    </div>
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label for="customFile">Vote Id</label>
