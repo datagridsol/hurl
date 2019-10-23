@@ -2,42 +2,6 @@
 {% block body_block %}
 {% load staticfiles %}
 <!-- DataTables -->
-  <div class="modal fade" id="cust_history_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-             <div style="width:60%; margin-left: 28%;">
-                 <div class="modal-content">
-                     <div class="modal-header" style="background-color:#000000;">
-                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="background-color: red;
-    margin-left: -1%;">&times;</button>
-                          <h4 class="modal-title text-center" id="myModalLabel"><span style="margin-left: -155%;font-weight:bold;color:#fff">Customer(Profile Summary)</span></h4>
-                     </div>
-                     <div class="modal-body pl-0 pr-0" style="background-color:ivory;color:black;padding:0px;">
-                       <div class="container-fluid" style="padding-left:10px">
-                       <div class="row" style="background-color:#f0f0f0">
-                                             <div class="col-md-6">
-                                               <div class="row" style="background-color:#f0f0f0;">
-                                                 <div class="col-md-6">
-                    
-                                <div class="form-group row">
-                                    <div class="col-sm-12">
-                                        <div class="text-center" style="width:100px;margin:0 auto;">
-                                            <img  id="imgpathhistory" src="https://us.123rf.com/450wm/triken/triken1608/triken160800029/61320775-stock-vector-male-avatar-profile-picture-default-user-avatar-guest-avatar-simply-human-head-vector-illustration-i.jpg?ver=6" alt="No Images" style="background-color:transparent;max-width:100%;height: auto">
-                                        </div>
-                                        {{data}}
-                                      </div>
-                                    </div>
-                                   
-                         </div>
-                        
-                            </div>
-                        </div>
-                          </div>
-                       </div>
-                     </div>
-
-                       </div>
-
-                  </div>
-                 </div>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -112,7 +76,7 @@
   </div>
   <!-- /.content-wrapper -->
 <!-- DataTables -->
-<script src="{% static "plugins/jquery/jquery.min.js" %}"></script>
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
 
 <script type="text/javascript">
   {% autoescape off %}
@@ -130,6 +94,8 @@
     
       var shTable=jQuery('#shTable').DataTable({
         "aaData":result_data,
+        "autoWidth": false,
+        "destroy": true,
         "aoColumnDefs": [
             { "bSortable": false, "aTargets": [ -1,-2 ] }, 
             { "bSearchable": false, "aTargets": [ -1,-2 ] }

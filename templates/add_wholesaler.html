@@ -1,178 +1,213 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+
 {% block body_block %}
 <style type="text/css">
-   #userForm label.error {
-   display: inline-block;
-   max-width: 100%;
-   margin-bottom: 5px;
-   font-weight: bold;
-   color:#e82d2d;
-   width: 100%;
-   }
-   .spinner {
-   display: inline-block;
-   opacity: 0;
-   width: 0;
-   -webkit-transition: opacity 0.25s, width 0.25s;
-   -moz-transition: opacity 0.25s, width 0.25s;
-   -o-transition: opacity 0.25s, width 0.25s;
-   transition: opacity 0.25s, width 0.25s;
-   }
-   .has-spinner.active {
-   cursor:progress;
-   }
-   .has-spinner.active .spinner {
-   opacity: 1;
-   width: auto;
-   }
-   .has-spinner.btn.active .spinner {
-   /*min-width: 20px;*/
-   }
-</style>
-<div class="content-wrapper" >
-   <div class="jumbotron">
-      <h1 style="margin-left: 30%;">Add Wholesaler</h1>
-      <form method="post" id="farmerForm" style="margin-left:20%;" enctype="multipart/form-data" >
-         {% csrf_token %}
-         {# A more "HTML" way of creating the login form#}
-         <br>
-         <table width="80%">
-            <tr>
-               <td colspan="2">
-                  <label for="user_type">UserType:</label><br/>
-                 <select  style="width: 43%;" disabled="disabled" id="user_type" name="user_type">
-                     <option  value="3">Farmer</option>
-                     
-                  </select>
-               </td>
-               <td>
-                  <label for="language_id" style="margin-left:-76%">Langauge:</label><br/>
-                  <select  style="margin-left: -76%;
-                     width: 72%"; id="language_id" name="language_id">
-                     <option  value="" selected="selected">---select---</option>
-                     {% for lang_data in lang_data %}
-                     <option value="{{lang_data.id}}">{{lang_data.name}}</option>
-                     {% endfor %}
-                  </select>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <label for="name">Name:</label><br/>
-                  <input  style="margin-left:1%"  type="name" name="name" id="name" placeholder="name">
-               </td>
-               <td> <label style="margin-left:-5%" for="email">Email:</label><br/>
-                  <input  style="margin-left:-5%"  type="" name="email" id="email" placeholder="Email">
-               </td>
-               <td></td>
-            </tr>
-            <tr>
-               <td> <label for="mobile_number">Phone:</label><br/>
-                  <input  style="margin-left:2%"  type="" name="mobile_number" id="mobile_number" placeholder="mobile_number">
-               </td>
-               <td></td>
-               <td> <label style="margin-left:-77%" for="aadhar_no" style="margin-left:-100%">Aadhar No:</label><br/>
-                  <input  style="margin-left:-77%"  type="" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No">
-               </td>
-               <td></td>
-            </tr>
-            <tr>
-               <td>
-                  <label style="margin-left: 1%;for="state">State:</label><br/>
-                  <select  style="width: 73%;margin-left: 2%;" id="state" name="state">
-                     <option  value="" selected="selected">---select---</option>
-                     {% for state_data in state_data %}
-                     <option value="{{state_data.id}}">{{state_data.name}}</option>
-                     {% endfor %}
-                  </select>
-               <td></td>
-               <td> <label style="margin-left: -78%;" for="city">City:</label><br/>
-                  <input  style="margin-left:-78%"  type="" name="city" placeholder="City">
-               </td>
-               <td></td>
-            </tr>
-            <tr>
-               <td>
-                  <label for="district" style="margin-left:4px%">District:</label><br/>
-                  <select  style="margin-left: 4px%;
-                     width: 77%"; id="district" name="district">
-                     <option  value="" selected="selected">---select---</option>
-                     {% for district_data in district_data %}
-                     <option value="{{district_data.id}}">{{district_data.name}}</option>
-                     {% endfor %}
-                  </select>
-               <td></td>
-               <td> <label style="margin-left: -78%; for="pincode">Pincode:</label><br/>
-                  <input  style="margin-left:-78%"  type="" name="pincode" placeholder="Pincode">
-               </td>
-               <td></td>
-            </tr>
-            <tr>
-               <td> <label for="address">Address:</label><br/>
-                  <textarea  name="address" id="address"  style="margin-left: 2%;
-                     width: 76%";> </textarea>
-               </td>
-               <td></td>
-            </tr>
-            <tr>
-               <td> <label for="user_photo">Photo:</label><br/>
-                  <input  style="margin-left:2%"  type="file" name="user_photo" id="user_photo" placeholder="Aadhar Card">
-               </td>
-               <td></td>
-               <td> <label for="aadhar_card" style="margin-left:-77%">Aadhar Photo:</label><br/>
-                  <input  style="margin-left:-77%"  type="file" name="aadhar_card" id="aadhar_card" placeholder="Aadhar Photo">
-               </td>
-               <td></td>
-            </tr>
-            <tr>
-               <td> <label for="pan_card">Pancard:</label><br/>
-                  <input  style="margin-left:2%"  type="file" name="pan_card" placeholder="Pancard">
-               </td>
-               <td></td>
-               <td> <label for="vote_id" style="margin-left:-77%">Vote Id:</label><br/>
-                  <input  style="margin-left:-77%"  type="file" name="vote_id" placeholder="Vote Id">
-               </td>
-               <td></td>
-            </tr>
-            <tr>
-               <td> <label for="soil_card">Soil Card:</label><br/>
-                  <input  style="margin-left:2%"  type="file" name="soil_card" placeholder="Soil Card">
-               </td>
-               <td></td>
-               <td> <label for="land_area" style="margin-left:-77%">Land Area:</label><br/>
-                  <input  style="margin-left:-77%"  type="" name="land_area" placeholder="Land Area">
-               </td>
-               <td></td>
-            </tr>
-            <td></td>
-            <td></td>
-            <tr>
-               <td colspan="2"><input style="margin-left: 47%;margin-top: 7%;width: 19%;"  type="submit" value="Add"></td>
-            </tr>
-         </table>
-      </form>
-   </div>
-</div>
-<!-- <script>
-   $(document).ready(function(){
-     $("#state").change(function(){
-     $.ajax({
-         type:"POST",
-         url : "/get_district/",
-         data : {"state_id":$(this).val()},
-         success : function(response) {
-           alert(response['district_data'])
-           district_data = response['district_data'];
-           return district_data;
-         },
-         error: function() {
-             alert('Error occured');
-         }
-     });
-     });
-   
-      
-   });
-   </script> -->
+    #wholesalerForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    
+  </style>
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Add Wholesaler</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          
+          <!-- right column -->
+          <div class="col-md-8" style="margin: 0 auto;">
+            <!-- general form elements disabled -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Add Wholesaler</h3>
+              </div>
+              <!-- /.card-header -->
+              <form role="form" method="post" id="wholesalerForm" enctype="multipart/form-data">
+               <div class="col-sm-6" style="display:none;">
+                     <!-- text input -->
+                     <div class="form-group">
+                       <label for="user_type">User Type <span class="text-danger">*</span></label>
+                       <select class="form-control" id="user_type" name="user_type">
+                             <option  value="4" selected="selected">Wholesaler</option>
+                       </select>
+                     </div>
+                   </div>
+              <div class="card-body">
+                  {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Langauge</label>
+                        <select class="form-control" id="language_id" name="language_id">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for lang_data in lang_data %}
+                           <option value="{{lang_data.id}}">{{lang_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                          <label>Name <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                        </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Email Id">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                     <div class="form-group">
+                        <label>Phone <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="mobile_number" id="mobile_number" placeholder="Mobile Number">
+                     </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Aadhar No <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>State <span class="text-danger">*</span></label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="form-control typeahead" autocomplete="off" name="city" id="city" placeholder="City">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>District <span class="text-danger">*</span></label>
+                        <select class="form-control" id="district" name="district">
+                          <option  value="" selected="selected">---select---</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Pincode</label>
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Pincode">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label>Address</label>
+                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Address"></textarea>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Photo</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="user_photo" id="user_photo">
+                          <label class="custom-file-label" for="user_photo">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Aadhar Photo</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="aadhar_card" id="aadhar_card">
+                          <label class="custom-file-label" for="aadhar_card">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Pancard</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="pan_card" id="pan_card">
+                          <label class="custom-file-label" for="pan_card">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Vote Id</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="vote_id" id="vote_id">
+                          <label class="custom-file-label" for="vote_id">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </form>
+            <!-- /.card -->
+            
+          </div>
+          <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
 {% endblock %}
