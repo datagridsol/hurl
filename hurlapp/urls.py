@@ -34,7 +34,6 @@ urlpatterns=[
     url(r'^get_product_list/$',mobilefunctions.get_product_mobile,name='get_product_mobile'),
     url(r'^get_district/$',views.get_district,name='get_district'),
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
-    
 
 ]
 

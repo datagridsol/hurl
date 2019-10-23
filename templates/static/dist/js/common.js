@@ -506,7 +506,6 @@ $(document).ready(function(){
             {
               alert(response.msg);
             }
-
           },
           error: function(xhr,status,errorThrown){
             alert(xhr.responseText)
