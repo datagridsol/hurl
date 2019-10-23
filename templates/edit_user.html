@@ -10,156 +10,237 @@
       color:#e82d2d;
       width: 100%;
     }
-    .spinner {
-        display: inline-block;
-        opacity: 0;
-        width: 0;
-        -webkit-transition: opacity 0.25s, width 0.25s;
-        -moz-transition: opacity 0.25s, width 0.25s;
-        -o-transition: opacity 0.25s, width 0.25s;
-        transition: opacity 0.25s, width 0.25s;
-    }
-
-
-
-    .has-spinner.active {
-        cursor:progress;
-    }
-
-    .has-spinner.active .spinner {
-        opacity: 1;
-        width: auto;
-    }
-
-    .has-spinner.btn.active .spinner {
-        /*min-width: 20px;*/
-    }
+    
   </style>
-  <script type="text/javascript">
-    {% autoescape off %}
-  //var device_not_reporting = {{ response }};
-    //var result_data = {{ data }};
-  {% endautoescape %}
 
-  </script>
-  <div class="content-wrapper" >
-    <div class="jumbotron">
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Edit User</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
 
-      <h1 style="margin-left: 30%;">Edit User{{data.user_type.id}}</h1>
-
- <form method="post" id="edituserForm" style="margin-left:20%;" enctype="multipart/form-data" >
-          {% csrf_token %}
-          {# A more "HTML" way of creating the login form#}
-          <br>
-          <table width="80%">
-            <tr>
-              <td> <label for="user_type">UserType:</label><br/>
-          <!-- <input  style="margin-left:2%"  type="" name="user_type" id="user_type" placeholder="user_type" value="{{data.user_type.name}}" readonly="true"> -->
-          <select  style="width: 43%;" id="user_type" name="user_type">
-                <option  value="" selected="selected">---select---</option>
-                {% for user_type in group_data %}
-                 <option value="{{data.user_type.name}}" {% if data.user_type.name == data.user_type.name %} selected="true" {% endif %} >{{data.user_type.name}} </option>
-                {% endfor %}
-              </select>
-        </td>
-              <td></td>
-              
-               <td>
-                        <td> <label for="language_id" style="margin-left:-244%">Langauge:</label><br/>
-                  <input  style="margin-left:-244%"  type="" name="language_id" id="language_id" placeholder="language" value="{{data.language.name}}" readonly="true">
-                </td>
-                      <td></td>
-                 <!--  <label for="language_id" style="margin-left:-76%">Langauge:</label><br/>
-                   <select  style="margin-left: -76%;
-    width: 72%"; id="language_id" name="language_id">
-                <option  value="" selected="selected">---select---</option>
-                {% for lang_data in lang_data %}
-                 <option value="{{lang_data.id}}">{{lang_data.name}}</option>
-                {% endfor %}
-              </select> -->
-         
-              </td>
-             
-            </tr>
-            <tr>
-             
-              <td>
-                     <label for="name">Name:</label><br/>
-          <input  style="margin-left:1%"  type="" name="name" id="name" placeholder="name" value="{{data.full_name}}">
-              </td>
-              <td> <label style="margin-left:-5%" for="email">Email:</label><br/>
-          <input  style="margin-left:-5%"  type="" name="email" id="email" placeholder="Email" value="{{data.email}}" ></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td> <label for="mobile_number">Phone:</label><br/>
-          <input  style="margin-left:2%"  type="" name="mobile_number" id="mobile_number" placeholder="mobile_number" value="{{data.mobile_number}}"></td>
-              <td></td>
-               <td> <label style="margin-left:-77%" for="aadhar_no" style="margin-left:-100%">Aadhar No:</label><br/>
-          <input  style="margin-left:-77%"  type="" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No" value="{{data.aadhar_no}}"></td>
-              <td></td>
-            </tr>
-             <tr>
-              <td> <label style="margin-left: 1%;for="state">State:</label><br/>
-                 <input  style="width: 73%;margin-left: 2%"  type="" name="state" id="state" placeholder="State" value="{{data.state}}"></td>
-        
-              <td></td>
-              <td> <label style="margin-left: -78%;" for="city">City:</label><br/>
-          <input  style="margin-left:-78%"  type="" name="city" placeholder="City" value="{{data.city}}"></td>
-              <td></td>
-               
-            </tr>
-             <tr>
-              <td> <label for="district" style="margin-left:4px%">District:</label><br/>
-                 <input style="margin-left: 4px%;
-    width: 77%";  type="" name="district" id="" placeholder="District" value="{{data.district}}"></td>
-        
-              <td></td>
-                
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
           
-              <td></td>
-              <td> <label style="margin-left:-245%; for="pincode">Pincode:</label><br/>
-          <input  style="margin-left:-245%"  type="" name="pincode" placeholder="Pincode" value="{{data.pincode}}"></td>
-              <td></td>
-              
-            </tr>
-            <tr><td> <label for="address">Address:</label><br/>
-          <textarea  name="address" id="address"  style="margin-left: 2%;
-    width: 76%";>{{data.address}} </textarea></td>
-              <td></td></tr>
-             <tr>
-              <td> <label for="user_photo">Photo:</label><br/>
-          <input  style="margin-left:2%"  type="file" name="user_photo" id="user_photo" placeholder="Aadhar Card" value="{{data.user_photo}}"></td>
-              <td></td>
-               <td> <label for="aadhar_card" style="margin-left:-77%">Aadhar Photo:</label><br/>
-          <input  style="margin-left:-77%"  type="file" name="aadhar_card" id="aadhar_card" placeholder="Aadhar Photo" value="{{data.aadhar_card}}"></td>
-              <td></td>
-            </tr>
-             <tr>
-              <td> <label for="pan_card">Pancard:</label><br/>
-          <input  style="margin-left:2%"  type="file" name="pan_card" placeholder="Pancard" value="{{data.pan_card}}"></td>
-              <td></td>
-               <td> <label for="vote_id" style="margin-left:-77%">Vote Id:</label><br/>
-          <input  style="margin-left:-77%"  type="file" name="vote_id" placeholder="Vote Id" value="{{data.vote_id}}"></td>
-              <td></td>
-            </tr>
-             <tr>
-              <td> <label for="soil_card">Soil Card:</label><br/>
-          <input  style="margin-left:2%"  type="file" name="soil_card" placeholder="Soil Card" value="{{data.soil_card}}"></td>
-              <td></td>
-               <td> <label for="land_area" style="margin-left:-77%">Land Area:</label><br/>
-          <input  style="margin-left:-77%"  type="" name="land_area" placeholder="Land Area" value="{{data.land_area}}"></td>
-              <td></td>
-            </tr>
-            <td></td><td></td>
-            <tr>
-              <td colspan="2"><input style="margin-left: 35%;margin-top: 7%;width: 19%;"  type="submit" value="Update"></td>
-            </tr>
-         
+          <!-- right column -->
+          <div class="col-md-8" style="margin: 0 auto;">
+            <!-- general form elements disabled -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Edit User</h3>
+              </div>
+              <!-- /.card-header -->
+              <form role="form" method="post" id="edituserForm" enctype="multipart/form-data">
+              <div class="card-body">
+                  {% csrf_token %}
+                  {# A more "HTML" way of creating the login form#}
+                  <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.user_id}}">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <!-- text input -->
+                      <div class="form-group">
+                        <label for="user_type">UserType</label>
+                        <select class="form-control" id="user_type" name="user_type" disabled>
+                          <option  value="">---select---</option>
+                           {% for user_type in data.group_data %}
+                           <option value="{{data.user_type.name}}" {% if data.user_type.name == data.user_type.name %} selected="true" {% endif %} >{{data.user_type.name}} </option>
+                           {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Langauge</label>
+                        <select class="form-control" id="language_id" name="language_id">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for lang_data in data.lang_data %}
+                        <option value="{{lang_data.id}}" {% if data.lang_data.name == data.lang_data.name %} selected="true" {% endif %} >{{lang_data.name}} </option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name ..." value="{{data.full_name}}">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Email Id" value="{{data.email}}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" class="form-control" name="mobile_number" disabled id="mobile_number" placeholder="Mobile Number" value="{{data.mobile_number}}">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Aadhar No</label>
+                        <input type="text" class="form-control" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No" value="{{data.aadhar_no}}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>State</label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="">---select---</option>
+                          {% for state_data in data.state_data %}
+                           <option value="{{state_data.id}}" {% if state_data.id == data.state.id %} selected="selected" {% endif %} >{{state_data.name}} </option>
+                           {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="form-control" name="city" id="city" placeholder="City" value="{{data.city}}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>District</label>
+                        <select class="form-control" id="district" name="district">
+                          <option  value="">---select---</option>
+                          {% for district_data in data.district_data %}
+                           <option value="{{district_data.id}}" {% if district_data.id == data.district.id %} selected="selected" {% endif %} >{{district_data.name}} </option>
+                           {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Pincode</label>
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Pincode" value="{{data.pincode}}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label>Address</label>
+                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Address ...">{{data.address}}</textarea>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Photo</label>
+                        <div class="input-group">
+                           <div class="custom-file">
+                             <input type="file" class="custom-file-input" name="user_photo" id="user_photo">
+                             <label class="custom-file-label" for="user_photo">Choose file</label>
+                           </div>
+                           <div class="input-group-append">
+                              <span><img src="{{'/media/media/160/user.png'}}" width="50" height="50"></span>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Aadhar Photo</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="aadhar_card" id="aadhar_card">
+                          <label class="custom-file-label" for="aadhar_card">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
 
-</table>
-</form>
-    </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Pancard</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="pan_card" id="pan_card">
+                          <label class="custom-file-label" for="pan_card">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Vote Id</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="vote_id" id="vote_id">
+                          <label class="custom-file-label" for="vote_id">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row" id="show_farmer" {% if data.user_type.id == 2 %} style="display: none" {% endif %}>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Soil Card</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="soil_card" id="soil_card">
+                          <label class="custom-file-label" for="soil_card">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Land Area</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="land_area" id="land_area">
+                          <label class="custom-file-label" for="land_area">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+
+               
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </form>
+            <!-- /.card -->
+            
+          </div>
+          <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
   </div>
+  <!-- /.content-wrapper -->
 
 {% endblock %}

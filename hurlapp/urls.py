@@ -20,6 +20,7 @@ urlpatterns=[
     url(r'^add_wholesaler/$',views.add_wholesaler,name='add_wholesaler'),
     url(r'^edit_wholesaler/(?P<pk>\d+)$',views.edit_wholesaler,name='edit_wholesaler'),
     url(r'^import_wholesaler/$',views.import_wholesaler,name='import_wholesaler'),
+    url(r'^search_city/$',views.search_city,name='search_city'),
 
     url(r'^add_product/$',views.add_product,name='add_product'),
     url(r'^get_product/$',views.get_product,name='get_product'),

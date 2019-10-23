@@ -15,6 +15,7 @@ from hurlapp.forms import ProfileForm
 from hurlapp.models import UserProfile
 from hurlapp import forms
 from hurl import settings
+import os
 
 def index(request):
     return render(request,'index.html')
@@ -218,6 +219,7 @@ def edit_user(request, pk):
     lang_data=get_langauge()
     state_data=get_state()
     city_data=get_city()
+    user_id=pk
     print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
@@ -227,10 +229,9 @@ def edit_user(request, pk):
         print(my_user_type[0][0])
 
     if request.method == 'POST':
-        print("Post Data")
         data={}
-        user_id =pk
-        #password = request.POST.get('mobile_number')
+        user_id = request.POST.get('user_id')
+        password = request.POST.get('mobile_number')
         email = request.POST.get('email')
         full_name = request.POST.get('name')
         if (' ' in full_name) == True:
@@ -244,37 +245,23 @@ def edit_user(request, pk):
         else:
             first_name=full_name
         langn_id=request.POST.get('language_id')
-        #user_type = request.POST.get('user_type')
+        user_type = request.POST.get('user_type')
         aadhar_no=request.POST.get('aadhar_no')
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
         pincode=request.POST.get('pincode')
         address=request.POST.get('address')
-        if request.FILES.get('user_photo'):
-            user_photo = request.FILES['user_photo']
-        if request.FILES.get('aadhar_card'):
-            aadhar_card = request.FILES['aadhar_card']
-        if request.FILES.get('pan_card'):
-            pan_card = request.FILES['pan_card']
-        if request.FILES.get('vote_id'):
-            vote_id = request.FILES['vote_id']
-        if request.FILES.get('soil_card'):
-            soil_card = request.FILES['soil_card']
+        user_photo=request.POST.get('user_photo')
+        aadhar_card=request.POST.get('aadhar_card')
+        pan_card=request.POST.get('pan_card')
+        vote_id=request.POST.get('vote_id')
+        soil_card=request.POST.get('soil_card')
         land_area=request.POST.get('land_area')
-
-        MyProfileForm = forms.ProfileForm()
-        return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
         models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,is_active=0,email=email)
         
-
-        #user_type=Group.objects.get(id=user_type)
-        print("langn_idlangn_id",langn_id)
-
         user_type=Group.objects.get(id=user_type)
-        user_type.user_set.add(new_Uid)
-
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
         district=models.District.objects.get(id=district)
@@ -285,10 +272,42 @@ def edit_user(request, pk):
                 new_city = models.City.objects.create(city_name =city,status=1)
                 new_city.save()
                 city_name=new_city.city_name
-        print("aadhar_no11111111",user_id)
-        models.UserProfile.objects.filter(user_id=user_id).update(parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
+        models.UserProfile.objects.filter(user_id=user_id).update(user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
         response=JsonResponse({'status':'success'})
         return response
+    else:
+        user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
+        for i in user_info:
+            user_type=i[0],
+            language=i[1]
+            first_name=i[2]
+            last_name=i[3]
+            full_name=str(first_name)+" "+str(last_name)
+            email=i[4]
+            mobile_number=i[5]
+            aadhar_no=i[6]
+            state=i[7]
+            city=i[8]
+            district=i[9]
+            pincode=i[10]
+            address=i[11]
+            user_photo=i[12]
+            aadhar_card=i[13]
+            pan_card=i[14]
+            vote_id=i[15]
+            soil_card=i[16]
+            land_area=i[17]
+            group_id=i[18]
+            lang_id=i[19]
+            state_id=i[20]
+            district_id=i[21]
+            user_type={"name":user_type[0],'id':group_id}
+            language={"name":language,'id':lang_id}
+            state={"name":state,'id':state_id}
+            district={"name":district,'id':district_id}
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}],"user_id":user_id}
+            
+        return render(request, 'edit_user.html',{'data':data})
 
 @csrf_exempt
 def edit_user(request, pk):
@@ -390,7 +409,7 @@ def edit_user(request, pk):
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
             # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
 
-            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':1,'name':'Thane'}]}
             
 
         return render(request, 'edit_user.html',{'data':data})
@@ -1070,6 +1089,23 @@ def get_city():
         case2 = {'id': i[0], 'name': i[1]}
         city_data.append(case2)
     return city_data
+
+def search_city(request):
+    print("Call")
+    #print(request.GET)
+    city_name=request.GET.get('query')
+    #print(city_name)
+    city_list=models.City.objects.filter(city_name__startswith=city_name).values_list('city_name')
+    
+    results = []
+    for i in city_list:
+        results.append(i[0])
+    
+    mimetype = 'application/json'
+    response=HttpResponse(json.dumps(results),mimetype)
+    print(response)
+
+    return response
 
 # @csrf_exempt
 # def get_manage_user(request):
