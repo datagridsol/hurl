@@ -43,6 +43,7 @@ class City(models.Model):
 
 def get_image_filename(instance,filename):
     user_id=instance.user.id
+    print("userr_id",user_id)
     return 'media/'+str(user_id)+'/'+str(filename)
 
 class UserProfile(models.Model):

@@ -444,8 +444,6 @@ $(document).ready(function(){
           'contentType': false,
           'processData': false,
           success: function(response){
-            alert("response")
-            alert(response)
             if(response.status=='success')
             {
               toastr.success('user Created successfully.').delay(10000)
