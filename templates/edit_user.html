@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block body_block %}
 <style type="text/css">
+<<<<<<< HEAD
    #edituserForm label.error {
    display: inline-block;
    max-width: 100%;
@@ -45,6 +46,58 @@
          {# A more "HTML" way of creating the login form#}
          <br>
          <table width="80%">
+=======
+    #edituserForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    .spinner {
+        display: inline-block;
+        opacity: 0;
+        width: 0;
+        -webkit-transition: opacity 0.25s, width 0.25s;
+        -moz-transition: opacity 0.25s, width 0.25s;
+        -o-transition: opacity 0.25s, width 0.25s;
+        transition: opacity 0.25s, width 0.25s;
+    }
+
+
+
+    .has-spinner.active {
+        cursor:progress;
+    }
+
+    .has-spinner.active .spinner {
+        opacity: 1;
+        width: auto;
+    }
+
+    .has-spinner.btn.active .spinner {
+        /*min-width: 20px;*/
+    }
+  </style>
+  <script type="text/javascript">
+    {% autoescape off %}
+  //var device_not_reporting = {{ response }};
+    //var result_data = {{ data }};
+  {% endautoescape %}
+
+  </script>
+  <div class="content-wrapper" >
+    <div class="jumbotron">
+
+      <h1 style="margin-left: 30%;">Edit User{{data.user_type.id}}</h1>
+
+ <form method="post" id="edituserForm" style="margin-left:20%;" enctype="multipart/form-data" >
+          {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+          <br>
+          <table width="80%">
+>>>>>>> 747cdc46d714c8f84aad8682ff4c8526c9bcab77
             <tr>
                <td>
                   <label for="user_type">UserType:</label><br/>
@@ -172,6 +225,7 @@
             <tr>
                <td colspan="2"><input style="margin-left: 35%;margin-top: 7%;width: 19%;"  type="submit" value="Update"></td>
             </tr>
+<<<<<<< HEAD
          </table>
       </form>
    </div>
@@ -200,3 +254,13 @@
    });
    </script> -->
 {% endblock %}
+=======
+         
+
+</table>
+</form>
+    </div>
+  </div>
+
+{% endblock %}
+>>>>>>> 747cdc46d714c8f84aad8682ff4c8526c9bcab77

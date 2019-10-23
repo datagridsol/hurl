@@ -38,7 +38,6 @@ urlpatterns=[
     url(r'^user_logout/$',views.user_logout,name='user_logout'),
 
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
-    
 
 ]
 

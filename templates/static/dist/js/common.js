@@ -463,6 +463,10 @@ $(document).ready(function(){
         number: "Please enter valid price"
       }
     },
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
     submitHandler: function() {
        var productForm=document.getElementById('productForm');
        var formData = new FormData(productForm);
@@ -483,6 +487,25 @@ $(document).ready(function(){
             {
               alert(response.msg);
             }
+<<<<<<< HEAD
+=======
+    // submitHandler: function() {
+    //     $.ajax({
+    //       'method':'POST',
+    //       'url':'/add_user/',
+    //       'data': $('#userForm').serialize(),
+    //       success: function(response){
+    //         if(response.status=='success')
+    //         {
+    //           window.location.href="/add_user/";
+    //         }
+    //         else
+    //         {
+    //           alert(response.msg);
+    //         }
+>>>>>>> 445bd947136d1b34093e0704878db473e79ba5ee
+=======
+>>>>>>> 3eb6b732d3fd66842004722d378667f482b22229
 
           },
           error: function(xhr,status,errorThrown){

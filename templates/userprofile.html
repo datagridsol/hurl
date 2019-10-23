@@ -15,6 +15,7 @@
     }
     
   </style>
+<<<<<<< HEAD
 
  <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -160,6 +161,175 @@
                         <div class="custom-file">
                           <input type="file" class="custom-file-input" name="user_photo" id="user_photo">
                           <label class="custom-file-label" for="user_photo">Choose file</label>
+=======
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">General Form</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          
+          <!-- right column -->
+          <div class="col-md-8" style="margin: 0 auto;">
+            <!-- general form elements disabled -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Add User</h3>
+              </div>
+              <!-- /.card-header -->
+              <form role="form" method="post" id="userForm" enctype="multipart/form-data">
+              <div class="card-body">
+                  {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <!-- text input -->
+                      <div class="form-group">
+                        <label for="user_type">UserType</label>
+                        <select class="form-control" id="user_type" name="user_type">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for user_type in group_data %}
+                           <option value="{{user_type.id}}">{{user_type.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Langauge</label>
+                        <select class="form-control" id="language_id" name="language_id">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for lang_data in lang_data %}
+                           <option value="{{lang_data.id}}">{{lang_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name ...">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Email Id">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" class="form-control" name="mobile_number" id="mobile_number" placeholder="Mobile Number">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Aadhar No</label>
+                        <input type="text" class="form-control" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>State</label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="form-control" name="city" id="city" placeholder="City">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>District</label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for district_data in district_data %}
+                         <option value="{{district_data.id}}">{{district_data.name}}</option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Pincode</label>
+                        <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Pincode">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label>Address</label>
+                        <textarea class="form-control" name="address" id="address" rows="3" placeholder="Address ..."></textarea>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Photo</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="user_photo" id="user_photo">
+                          <label class="custom-file-label" for="user_photo">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Aadhar Photo</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="aadhar_card" id="aadhar_card">
+                          <label class="custom-file-label" for="aadhar_card">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Pancard</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="pan_card" id="pan_card">
+                          <label class="custom-file-label" for="pan_card">Choose file</label>
+>>>>>>> 747cdc46d714c8f84aad8682ff4c8526c9bcab77
                         </div>
                       </div>
                     </div>
@@ -185,7 +355,10 @@
                         </div>
                       </div>
                     </div>
+<<<<<<< HEAD
                     
+=======
+>>>>>>> 747cdc46d714c8f84aad8682ff4c8526c9bcab77
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label for="customFile">Vote Id</label>
