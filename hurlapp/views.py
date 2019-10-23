@@ -120,8 +120,8 @@ def add_user(request):
             response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
             return response
         password = request.POST.get('mobile_number')
-        username = request.POST.get('username')
-        password = request.POST.get('username')
+        username = request.POST.get('mobile_number')
+        
         email = request.POST.get('email')
         full_name = request.POST.get('name')
         if (' ' in full_name) == True:
@@ -162,10 +162,7 @@ def add_user(request):
         vote_id=request.POST.get('vote_id')
         land_area=request.POST.get('land_area')
     
-        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
-        land_area=request.POST.get('land_area')
-
-        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
+       
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
@@ -416,6 +413,41 @@ def edit_user(request, pk):
 
 @login_required
 @csrf_exempt
+def user_profile(request, pk):
+        user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
+        for i in user_info:
+            user_type=i[0],
+            language=i[1]
+            first_name=i[2]
+            last_name=i[3]
+            full_name=str(first_name)+" "+str(last_name)
+            email=i[4]
+            mobile_number=i[5]
+            aadhar_no=i[6]
+            state=i[7]
+            city=i[8]
+            district=i[9]
+            pincode=i[10]
+            address=i[11]
+            user_photo=i[12]
+            aadhar_card=i[13]
+            pan_card=i[14]
+            vote_id=i[15]
+            soil_card=i[16]
+            land_area=i[17]
+            group_id=i[18]
+            lang_id=i[19]
+            state_id=i[20]
+            district_id=i[21]
+            user_type={"name":user_type[0],'id':group_id}
+            language={"name":language,'id':lang_id}
+            state={"name":state,'id':state_id}
+            district={"name":district,'id':district_id}
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"aadhar_card":aadhar_card,"soil_card":soil_card,"land_area":land_area}
+            
+        return render(request, 'user_profile.html',{'data':data})
+@login_required
+@csrf_exempt
 def edit_retailer(request, pk):
     gr_no=[]
     first_name=''
@@ -427,6 +459,7 @@ def edit_retailer(request, pk):
     lang_data=get_langauge()
     state_data=get_state()
     city_data=get_city()
+    user_id =pk
     print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
@@ -516,9 +549,9 @@ def edit_retailer(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}],'user_id':user_id}
             # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
-        return render(request, 'edit_farmer.html',{'data':data})
+        return render(request, 'edit_retailer.html',{'data':data})
 
 @csrf_exempt
 def user_status(request):
@@ -702,7 +735,7 @@ def get_manage_user(request):
             btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-user-id="+str(user_id)+">Approve</button></div>"
         count+=1
         #user_id
-        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/edit_user/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_user.html', {'data':(data)})
 
 
@@ -720,7 +753,7 @@ def get_product(request):
         product_price=i[4]
         product_id=i[5]
         count+=1
-        data.append([count,str(product_image),str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
+        data.append([count,'<img src="'+str(product_image)+'">',str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
     return render(request, 'get_product.html', {'data':(data)})
 
     if request.method == 'POST':
@@ -821,6 +854,7 @@ def edit_farmer(request, pk):
     lang_data=get_langauge()
     state_data=get_state()
     city_data=get_city()
+    user_id =pk
     print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
@@ -910,7 +944,7 @@ def edit_farmer(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}],'user_id':user_id}
             # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
         return render(request, 'edit_farmer.html',{'data':data})
 
@@ -927,6 +961,7 @@ def edit_wholesaler(request, pk):
     lang_data=get_langauge()
     state_data=get_state()
     city_data=get_city()
+    user_id =pk
     print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
@@ -1014,7 +1049,7 @@ def edit_wholesaler(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}],'user_id':user_id}
             # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
         return render(request, 'edit_wholesaler.html',{'data':data})
 
@@ -1106,6 +1141,19 @@ def search_city(request):
     print(response)
 
     return response
+
+@csrf_exempt
+def check_user_mobile(request):
+    
+    mobile_number=request.POST.get('mobile_number')
+    if mobile_number:
+        if User.objects.filter(username=mobile_number).exists():
+            res="false"
+        else:
+            res="true"
+    else:
+        res="false"
+    return HttpResponse(res)
 
 # @csrf_exempt
 # def get_manage_user(request):
@@ -1203,7 +1251,7 @@ def get_manage_user(request):
             btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-user-id="+str(user_id)+">Approve</button></div>"
         count+=1
         #user_id
-        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/edit_user/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_user.html', {'data':(data)})
 
 
@@ -1211,7 +1259,7 @@ def get_manage_user(request):
 def get_product(request):
     data=[]
     count=0
-    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id','status')
     for i in product_info:
         product_image=i[0]
         product_name=i[1]
@@ -1219,8 +1267,13 @@ def get_product(request):
         product_unit=i[3]
         product_price=i[4]
         product_id=i[5]
+        status=i[6]
+        if status:
+            status="Active"
+        else:
+            status="Deactive"
         count+=1
-        data.append([count,str(product_image),str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
+        data.append([count,'<img src="'+str(product_image)+'" width="50" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
     return render(request, 'get_product.html', {'data':(data)})
 
 @csrf_exempt
@@ -1487,7 +1540,7 @@ def get_retailer(request):
 
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_retailer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-gift'></i> Layalty Points</a>"])
     return render(request, 'manage_retailer.html', {'data':(data)})
 
 
@@ -1609,7 +1662,7 @@ def get_farmer(request):
 
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_farmer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_farmer.html', {'data':(data)})
 
 @csrf_exempt
@@ -1730,7 +1783,7 @@ def get_wholesaler(request):
 
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_wholesaler/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_wholesaler.html', {'data':(data)})
 
 @csrf_exempt

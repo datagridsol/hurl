@@ -1,274 +1,138 @@
 {% extends "base.html" %}
 {% block body_block %}
 {% load staticfiles %}
-<!-- DataTables -->
-<div class="modal fade" id="cust_history_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-   <div style="width:60%; margin-left: 28%;">
-      <div class="modal-content">
-         <div class="modal-header" style="background-color:#000000;">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="background-color: red;
-               margin-left: -1%;">&times;</button>
-            <h4 class="modal-title text-center" id="myModalLabel"><span style="margin-left: -155%;font-weight:bold;color:#fff">Customer(Profile Summary)</span></h4>
-         </div>
-         <div class="modal-body pl-0 pr-0" style="background-color:ivory;color:black;padding:0px;">
-            <div class="container-fluid" style="padding-left:10px">
-               <div class="row" style="background-color:#f0f0f0">
-                  <div class="col-md-6">
-                     <div class="row" style="background-color:#f0f0f0;">
-                        <div class="col-md-6">
-                           <div class="form-group row">
-                              <div class="col-sm-12">
-                                 <div class="text-center" style="width:100px;margin:0 auto;">
-                                    <img  id="imgpathhistory" src="https://us.123rf.com/450wm/triken/triken1608/triken160800029/61320775-stock-vector-male-avatar-profile-picture-default-user-avatar-guest-avatar-simply-human-head-vector-illustration-i.jpg?ver=6" alt="No Images" style="background-color:transparent;max-width:100%;height: auto">
-                                 </div>
-                               
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</div>
+
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-   <!-- Content Header (Page header) -->
-   <section class="content-header">
-      <div class="container-fluid">
-         <div class="row mb-2">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
             <div class="col-sm-6">
-               <h1>Manage Retailers</h1>
+              <h1>Manage Retailers</h1>
             </div>
             <div class="col-sm-6">
-               <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item active" type="button">
-                     <a href="{% url 'add_retailer' %}">
-                        Add Retailer
-                  </li>
-                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-                  <li class="breadcrumb-item active">Manage Retailer</li>
-               </ol>
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                <li class="breadcrumb-item active">Manage Retailers</li>
+              </ol>
             </div>
-         </div>
-      </div>
-      <!-- /.container-fluid -->
-   </section>
-   <!-- Main content -->
-   <section class="content">
-      <div class="row">
-         <div class="col-12">
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <div class="col-12">
             <div class="card">
-               <div class="card-header">
-                  <h3 class="card-title">List of all users</h3>
-               </div>
-               <!-- /.card-header -->
-               <div class="card-body">
-                  <table id="shTable" class="table table-bordered table-striped">
-                     <thead>
-                        <tr>
-                           <th>Sr No</th>
-                           <th>Name</th>
-                           <th>Phone</th>
-                           <th>District</th>
-                           <th>State</th>
-                           <th>Status</th>
-                           <th>View</th>
-                           <th>Edit</th>
-                           <th>Loyality</th>
-                           
-                           <th>user_id</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr>
-                           <td>
-                           </td>
-                           <td></td>
-                           <td> </td>
-                           <td></td>
-                           <td></td>
-                           <td></td>
-                           <td></td>
-                           <td></td>
-                        </tr>
-                        </tfoot>
-                  </table>
-               </div>
-               <!-- /.card-body -->
+              <div class="card-header">
+                <h3 class="card-title">List of all retailers</h3>
+                <div class="card-tools">
+                  <a class="btn btn-block bg-gradient-primary btn-lg" href="{% url 'add_retailer' %}">Add Retailer</a>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="shTable" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Sr No</th>
+                    
+                    <th class="input-filter">Name</th>
+                    <th class="input-filter">Phone</th>
+                    <th class="input-filter">District</th>
+                    <th class="input-filter">State</th>
+                    <th class="select-filter">Status</th>
+                    <th>Action</th>                  
+                  </tr>
+                  </thead>
+                  <tfoot>
+                      <tr>
+                          <th>Sr No</th>
+                          <th class="input-filter">Name</th>
+                          <th class="input-filter">Phone</th>
+                          <th class="input-filter">District</th>
+                          <th class="input-filter">State</th>
+                          <th class="select-filter">Status</th>
+                          <th>Action</th>   
+                      </tr>
+                  </tfoot>
+                  
+                </table>
+              </div>
+              <!-- /.card-body -->
             </div>
             <!-- /.card -->
-         </div>
-         <!-- /.col -->
-      </div>
-      <!-- /.row -->
-   </section>
-   <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
-<!-- DataTables -->
-<script src="{% static "plugins/jquery/jquery.min.js" %}"></script>
-<script type="text/javascript">
-   {% autoescape off %}
-   //var device_not_reporting = {{ response }};
-     var result_data = {{ data}};
-   {% endautoescape %}
-   
-     $(document).ready(function() {
-   
-    
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+  <!-- DataTables -->
+  <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+  
+  <script type="text/javascript">
+    {% autoescape off %}
+      var result_data = {{ data}};
+    {% endautoescape %}
+  
+      $(document).ready(function() {
+  
+  
+        $('#shTable tfoot th.input-filter').each( function () {
+          var title = $(this).eq( $(this).index() ).text();
+          $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+      } );
      
-       var shTable=jQuery('#shTable').DataTable({
-         "aaData":result_data,
-         "scrollY":'200px',
-         "destroy": true,
-         "columnDefs": [
-             {
-                 "targets": [ -1 ],
-                 "visible": false,
-                 "searchable": false
-             }
-         ],
-         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                     if ( aData[5] == "Deactive" )
-                     {
-                         $('td', nRow).css('background-color', '#rgb(232, 194, 179) ');
-                         $('td:eq(8)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Loyality Point</button></div>");
-                          $('td:eq(6)', nRow).append("View");
-                           $('td:eq(7)', nRow).append("Edit");
-                     }
-                      if ( aData[5] == "Active" )
-                     {
-                         $('td:eq(8)', nRow).append("<div class='col1d'><button class='editBut'>Loyality Point</button></div>");
-                          $('td:eq(6)', nRow).append("View");
-                          $('td:eq(7)', nRow).append("Edit");
-                     }
+      
+        var shTable=jQuery('#shTable').DataTable({
+          "aaData":result_data,
+          "autoWidth": false,
+          "destroy": true,
+          "aoColumnDefs": [
+              { "bSortable": false, "aTargets": [ -1,-2 ] }, 
+              { "bSearchable": false, "aTargets": [ -1,-2 ] }
+          ],
+          initComplete: function () {
+                  this.api().columns('.select-filter').every( function () {
+                      var column = this;
+                      var select = $('<select><option value=""></option></select>')
+                              .appendTo( $(column.footer()).empty() )
+                              .on( 'change', function () {
+                                  var val = $.fn.dataTable.util.escapeRegex(
+                                          $(this).val()
+                                  );
    
-                 },
+                                  column
+                                          .search( val ? '^'+val+'$' : '', true, false )
+                                          .draw();
+                              } );
    
-               
-               
-       });
+                      column.data().unique().sort().each( function ( d, j ) {
+                          select.append( '<option value="'+d+'">'+d+'</option>' )
+                      } );
+                  } );
+                  this.api().columns('.input-filter').every( function () {
+                      var that = this;
    
-       
-   
-     $('#shTable tfoot th').each( function () {
-         var title = aData[5];
-         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-     } );
-     var table = $('#shTable').DataTable();
-     // Apply the search
-       table.columns().every( function () {
-           var that = this;
-    
-           $( 'input', this.footer() ).on( 'keyup change clear', function () {
-               if ( that.search() !== this.value ) {
-                   that
-                       .search( this.value )
-                       .draw();
-               }
-           } );
-       } );
-                   
-     // $('#shTable tbody').on('dblclick', 'tr td', function(){
-     //       var tr = $(this).closest('tr');
-     //       var row = shTable.row( tr );
-     //       // call_id_global = row.data()[1]
-     //       // history_flag = row.data()[20]
-     //       // caller_username = row.data()[21]
-     //       // caller_firstname = row.data()[22]
-     //       // user_status(row.data()[6],row.data()[9])
-     //     })
-   
-    
-   
-     $('#shTable tbody').on( 'click', 'button', function () {
-         var data = table.row( $(this).parents('tr') ).data();
-         user_status(data[ 5 ],data[ 9 ])
-     } );
-   
-    
-   
-   
-     function user_status(status,user_id) {
-         if (status=="Deactive"){
-           status1="Approve"
-         }
-         else
-           {
-                status1="Active"
-   
-           }
-         var result=confirm("Do You Want To "+' '+status1 +' '+'User');
-         if (result == true) { 
-                $.ajax({
-                   'method':'POST',
-                   'url':'/user_status/',
-                   'data':{"status":status,"user_id":user_id},
-                    success: function(response){
-                     if(response.status=='success')
-                     {
-                       alert(response.status)
-                       
-   
-                     }
-                     else
-                     {
-                      alert(response.msg)
-   
-                   }
-                 },
-                   error: function(xhr,status,errorThrown){
-                     toastr.error(xhr.responseText)
-                     $(btn).buttonLoader('stop')
-                   },
-                 });
-             } 
-   
-         else
-                     {
-                     
-   
-                   }
-       
-    }
-   
-   
-     $('#shTable tbody').on( 'click', 'tr td:eq(7)', function (){
-          var data = table.row( $(this).parents('tr') ).data();
-           window.location.href='/edit_retailer/'+data[9];
-           // $.ajax({
-           //   'method':'GET',
-           //   'url':'/edit_user/'+data[9]+'/',
-           //   'data':"",
-           //   'cache':false,
-           //   'contentType': false,
-           //   'processData': false,
-           //   success: function(response){
-           //     if(response.status=='success')
-           //     {
-           //       toastr.success('user Created successfully.').delay(10000)
-           //       window.location.href="/get_user/";
-           //     }
-           //     else
-           //     {
-           //       alert(response.msg);
-           //     }
-   
-           //   },
-           //   error: function(xhr,status,errorThrown){
-           //     alert(xhr.responseText)
-           //   },
-           // });
-         });
-   
-      $('#shTable tbody').on( 'click', 'tr td:eq(6)', function (){
-           $("#cust_history_modal").modal("show");
-         });
-   
-   });
-   
-</script>
+                      $( 'input', this.footer() ).on( 'keyup change clear', function () {
+                          if ( that.search() !== this.value ) {
+                              that
+                                  .search( this.value )
+                                  .draw();
+                          }
+                      } );
+                  } );
+              }
+        });
+  
+  });
+  
+   </script>
+
 {% endblock %}

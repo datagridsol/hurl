@@ -50,11 +50,12 @@
                   {% csrf_token %}
                   {# A more "HTML" way of creating the login form#}
                   <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.user_id}}">
+                  <input type="hidden" name="district_selct" id="district_selct" value="{{data.district.id}}">
                   <div class="row">
                     <div class="col-sm-6">
                       <!-- text input -->
                       <div class="form-group">
-                        <label for="user_type">UserType</label>
+                        <label for="user_type">User Type <span class="text-danger">*</span></label>
                         <select class="form-control" id="user_type" name="user_type" disabled>
                           <option  value="">---select---</option>
                            {% for user_type in data.group_data %}
@@ -78,7 +79,7 @@
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label>Name</label>
+                        <label>Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="name" id="name" placeholder="Name ..." value="{{data.full_name}}">
                       </div>
                     </div>
@@ -92,13 +93,13 @@
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label>Phone</label>
+                        <label>Phone <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="mobile_number" disabled id="mobile_number" placeholder="Mobile Number" value="{{data.mobile_number}}">
                       </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label>Aadhar No</label>
+                        <label>Aadhar No <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No" value="{{data.aadhar_no}}">
                       </div>
                     </div>
@@ -106,7 +107,7 @@
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label>State</label>
+                        <label>State <span class="text-danger">*</span></label>
                         <select class="form-control" id="state" name="state">
                           <option  value="">---select---</option>
                           {% for state_data in data.state_data %}
@@ -118,19 +119,16 @@
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label>City</label>
-                        <input type="text" class="form-control" name="city" id="city" placeholder="City" value="{{data.city}}">
+                        <input type="text" class="form-control typeahead" name="city" id="city" placeholder="City" value="{{data.city}}">
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label>District</label>
+                        <label>District <span class="text-danger">*</span></label>
                         <select class="form-control" id="district" name="district">
                           <option  value="">---select---</option>
-                          {% for district_data in data.district_data %}
-                           <option value="{{district_data.id}}" {% if district_data.id == data.district.id %} selected="selected" {% endif %} >{{district_data.name}} </option>
-                           {% endfor %}
                         </select>
                       </div>
                     </div>

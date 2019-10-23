@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Profile</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">User Profile</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content" >
+        <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6" style="margin:0 auto;">
+                  <!-- About Me Box -->
+            <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">About {{data.full_name}}</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">User Type</label>
+                        <p>{{data.user_type.name}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Language Preference</label>
+                        <p>{{data.language.name}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Name</label>
+                        <p>{{data.full_name}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Email</label>
+                        <p>{{data.email}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Phone</label>
+                        <p>{{data.mobile_number}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Aadhar No</label>
+                        <p>{{data.aadhar_no}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">State</label>
+                        <p>{{data.state.name}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">City</label>
+                        <p>{{data.city}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">District</label>
+                        <p>{{data.district.name}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Pincode</label>
+                        <p>{{data.pincode}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label for="user_type">Address</label>
+                        <p>{{data.address}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                        <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+                            {% if data.user_photo != "" %}
+                            <li>
+                              <span class="mailbox-attachment-icon has-img"><img src="{{data.user_photo}}" alt="Photo"></span>
+                              <div class="mailbox-attachment-info">
+                                <a href="#" class="mailbox-attachment-name"><i class="fas fa-camera"></i> Photo</a>
+                              </div>
+                            </li>
+                            {% endif %}
+                            {% if data.aadhar_card != "" %}
+                            <li>
+                              <span class="mailbox-attachment-icon has-img"><img src="{{data.aadhar_card}}" alt="Pan Card"></span>
+                              <div class="mailbox-attachment-info">
+                                <a href="#" class="mailbox-attachment-name"><i class="fas fa-camera"></i> Aadhar Card</a>
+                              </div>
+                            </li>
+                            {% endif %}
+                            {% if data.vote_id != "" %}
+                            <li>
+                              <span class="mailbox-attachment-icon has-img"><img src="{{data.vote_id}}" alt="Voter Id"></span>
+                              <div class="mailbox-attachment-info">
+                                <a href="#" class="mailbox-attachment-name"><i class="fas fa-camera"></i> Voter Id</a>
+                              </div>
+                            </li>
+                            {% endif %}
+                            {% if data.pan_card != "" %}
+                            <li>
+                              <span class="mailbox-attachment-icon has-img"><img src="{{data.pan_card}}" alt="Pan Card"></span>
+                              <div class="mailbox-attachment-info">
+                                <a href="#" class="mailbox-attachment-name"><i class="fas fa-camera"></i> Pan Card</a>
+                              </div>
+                            </li>
+                            {% endif %}
+                          </ul>
+
+                          <ul class="mailbox-attachments d-flex align-items-stretch clearfix" {% if data.user_type.name != "Farmer" %} style="display:none !important;" {% endif %}>
+                              {% if data.soil_card != "" %}
+                              <li>
+                                <span class="mailbox-attachment-icon has-img"><img src="{{data.soil_card}}" alt="Soil Card"></span>
+                                <div class="mailbox-attachment-info">
+                                  <a href="#" class="mailbox-attachment-name"><i class="fas fa-camera"></i> Soil Card</a>
+                                </div>
+                              </li>
+                              {% endif %}
+                              {% if data.land_area != "" %}
+                              <li>
+                                <span class="mailbox-attachment-icon has-img"><img src="{{data.land_area}}" alt="Land Area"></span>
+                                <div class="mailbox-attachment-info">
+                                  <a href="#" class="mailbox-attachment-name"><i class="fas fa-camera"></i> Land Area</a>
+                                </div>
+                              </li>
+                              {% endif %}
+                          </ul>
+                        
+                    </div>
+                    
+                  </div>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+              </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+{% endblock %}

@@ -34,7 +34,71 @@ $(document).on('change','#user_type',function(){
       $('#show_farmer').hide();
     }
   });
+  $(document).on('change','.custom-file-input',function(){
+    var img=$(this).val();
+    $(this).next('.custom-file-label').html(img);
+  });
+  $(document).on('change','#state',function(){
+    var state_id=$(this).val();
+    var select_state='';
+   
+    if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length)
+    {
+      var select_state=$('#district_selct').val();;
+    }
+    if(state_id!='')
+    {
+      $.ajax({
+        'method':'POST',
+        'url':'/get_district/',
+        'data': {'state_id':state_id},
+        success: function(response){
+          console.log(response);
+          if(response.status=='success')
+          {
+            $('#district').prop('disabled',true);
+            $('#district').html('<option  value="" selected="selected">---select---</option>');
+            $.each(response.district_data, function (i, item) {
+              if(select_state!='')
+              {
+                var selected=false;
+                if(select_state==item.id)
+                {
+                  selected=true;
+                }
+                $('#district').append($('<option>', { 
+                    value: item.id,
+                    text : item.name,
+                    selected:selected
+                }));
+              }
+              else
+              {
+                $('#district').append($('<option>', { 
+                    value: item.id,
+                    text : item.name,
+                    //selected:true
+                }));
+              }
+                
+            });
+            $('#district').prop('disabled',false);
+          }
+
+        },
+        error: function(xhr,status,errorThrown){
+          toastr.error(xhr.responseText)
+        },
+      });
+    }
+  });
+
 $(document).ready(function(){
+  if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length)
+  {
+    $('#state').trigger('change');
+  }
+  
   toastr.options = {
     "closeButton": false,
     "debug": false,
@@ -112,11 +176,10 @@ $(document).ready(function(){
   });
 
   $("#userForm").validate({
-   
+    ignore: ":hidden",
     rules: {
       user_type: {
         required: true,
-        
       },
       name: {
         required: true,
@@ -125,7 +188,16 @@ $(document).ready(function(){
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            }
+          }
+        }
       },
       email: {
         email: true,
@@ -139,6 +211,12 @@ $(document).ready(function(){
         required: true,
       },
       district: {
+        required: true,
+      },
+      soil_card: {
+        required: true,
+      },
+      land_area: {
         required: true,
       }
     },
@@ -156,7 +234,8 @@ $(document).ready(function(){
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
@@ -168,6 +247,12 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+      soil_card: {
+        required: "Please select a image",
+      },
+      land_area: {
+        required: "Please select a image",
       }
     },
     submitHandler: function() {
@@ -202,7 +287,7 @@ $(document).ready(function(){
   });
 
   $("#edituserForm").validate({
-   
+    ignore: ":hidden",
     rules: {
       user_type: {
         required: true,
@@ -295,11 +380,9 @@ $(document).ready(function(){
 
 
     $("#retailerForm").validate({
-   
     rules: {
       user_type: {
         required: true,
-        
       },
       name: {
         required: true,
@@ -308,7 +391,16 @@ $(document).ready(function(){
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
@@ -333,7 +425,8 @@ $(document).ready(function(){
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
@@ -348,7 +441,7 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
-      var userForm=document.getElementById('userForm');
+      var userForm=document.getElementById('retailerForm');
        var formData = new FormData(userForm);
         $.ajax({
           'method':'POST',
@@ -358,16 +451,14 @@ $(document).ready(function(){
           'contentType': false,
           'processData': false,
           success: function(response){
-            alert("response")
-            alert(response)
             if(response.status=='success')
             {
-              toastr.success('user Created successfully.').delay(10000)
+              toastr.success(response.msg).delay(10000)
               window.location.href="/get_retailer/";
             }
             else
             {
-              alert(response.msg);
+              toastr.error(response.msg).delay(10000)
             }
 
           },
@@ -532,7 +623,16 @@ $(document).ready(function(){
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
@@ -543,6 +643,12 @@ $(document).ready(function(){
         required: true,
       },
       district: {
+        required: true,
+      },
+      soil_card: {
+        required: true,
+      },
+      land_area: {
         required: true,
       }
     },
@@ -557,7 +663,8 @@ $(document).ready(function(){
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
@@ -569,29 +676,33 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+      soil_card: {
+        required: "Please select a image",
+      },
+      land_area: {
+        required: "Please select a image",
       }
     },
     submitHandler: function() {
-      var userForm=document.getElementById('userForm');
+      var userForm=document.getElementById('farmerForm');
        var formData = new FormData(userForm);
         $.ajax({
           'method':'POST',
-          'url':'/add_retailer/',
+          'url':'/add_farmer/',
           'data': formData,
           'cache':false,
           'contentType': false,
           'processData': false,
           success: function(response){
-            alert("response")
-            alert(response)
             if(response.status=='success')
             {
-              toastr.success('user Created successfully.').delay(10000)
-              window.location.href="/get_retailer/";
+              toastr.success(response.msg).delay(10000)
+              window.location.href="/get_farmer/";
             }
             else
             {
-              alert(response.msg);
+              toastr.error(response.msg).delay(10000)
             }
 
           },
@@ -658,11 +769,11 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
-      var userForm=document.getElementById('userForm');
+      var userForm=document.getElementById('editfarmerForm');
        var formData = new FormData(userForm);
         $.ajax({
           'method':'POST',
-          'url':'/edit_retailer/',
+          'url':'/edit_farmer/',
           'data': formData,
           'cache':false,
           'contentType': false,
@@ -673,7 +784,7 @@ $(document).ready(function(){
             if(response.status=='success')
             {
               toastr.success('user Created successfully.').delay(10000)
-              window.location.href="/get_retailer/";
+              window.location.href="/get_farmer/";
             }
             else
             {

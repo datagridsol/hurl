@@ -144,7 +144,7 @@
 
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product/" == request.path %} active {% endif %}">
+            <a href="{% url 'get_product' %}" class="nav-link {% if "/get_product/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-archive"></i>
               <p>
                 Manage Product
@@ -153,7 +153,7 @@
           </li>
           
           <li class="nav-item has-treeview ">
-            <a href="{% url 'get_wholesaler' %}" class="nav-link {% if "/get_wholesaler/" == request.path %} active {% endif %}">
+            <a href="{% url 'get_wholesaler' %}" class="nav-link {% if "/get_order/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Manage Order
