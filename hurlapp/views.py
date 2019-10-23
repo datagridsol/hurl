@@ -246,17 +246,21 @@ def edit_user(request, pk):
         langn_id=request.POST.get('language_id')
         #user_type = request.POST.get('user_type')
         aadhar_no=request.POST.get('aadhar_no')
-        print("aadhar_noaadhar_no",aadhar_no)
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
         pincode=request.POST.get('pincode')
         address=request.POST.get('address')
-        user_photo=request.POST.get('user_photo')
-        aadhar_card=request.POST.get('aadhar_card')
-        pan_card=request.POST.get('pan_card')
-        vote_id=request.POST.get('vote_id')
-        soil_card=request.POST.get('soil_card')
+        if request.FILES.get('user_photo'):
+            user_photo = request.FILES['user_photo']
+        if request.FILES.get('aadhar_card'):
+            aadhar_card = request.FILES['aadhar_card']
+        if request.FILES.get('pan_card'):
+            pan_card = request.FILES['pan_card']
+        if request.FILES.get('vote_id'):
+            vote_id = request.FILES['vote_id']
+        if request.FILES.get('soil_card'):
+            soil_card = request.FILES['soil_card']
         land_area=request.POST.get('land_area')
 
         MyProfileForm = forms.ProfileForm()
@@ -496,7 +500,7 @@ def edit_retailer(request, pk):
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
             # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
         return render(request, 'edit_farmer.html',{'data':data})
-        
+
 @csrf_exempt
 def user_status(request):
     status=request.POST.get('status')
@@ -1724,6 +1728,36 @@ def import_wholesaler(request):
     # userprofile.save()
     # response=JsonResponse({'status':'success'})
     # return response
+
+@login_required
+@csrf_exempt
+def get_order(request):
+    data=[]
+    user_type=""
+    district=""
+    state=""
+    count=0
+    row=[]
+    user_info=models.UserProfile.objects.filter(user_type=3).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+    for i in user_info:
+        user_type=i[0]
+        district=i[1]
+        state=i[2]
+        user_id=i[3]
+        first_name=i[4]
+        last_name=i[5]
+        full_name=str(first_name)+" "+str(last_name)
+        username=i[6]
+        status=i[7]
+        if status:
+            status="Active"
+        else:
+            status="Deactive"
+
+
+        count+=1
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
+    return render(request, 'manage_farmer.html', {'data':(data)})
 
 @csrf_exempt
 def addOrder(request):
