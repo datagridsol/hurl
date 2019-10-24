@@ -42,7 +42,7 @@ $(document).on('change','#user_type',function(){
     var state_id=$(this).val();
     var select_state='';
    
-    if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length)
+    if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length || $('#editwholeselerForm').length)
     {
       var select_state=$('#district_selct').val();;
     }
@@ -94,7 +94,7 @@ $(document).on('change','#user_type',function(){
   });
 
 $(document).ready(function(){
-  if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length)
+  if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length || $('#editwholeselerForm').length)
   {
     $('#state').trigger('change');
   }
@@ -270,12 +270,12 @@ $(document).ready(function(){
             
             if(response.status=='success')
             {
-              toastr.success(response.msg).delay(10000)
-              window.location.href="/get_user/";
+              toastr.success('User added successfully').delay(10000);
+              setTimeout(function(){  window.location.href="/get_user/"; }, 2000);
             }
             else
             {
-              toastr.error(response.msg).delay(10000)
+              toastr.error(response.msg).delay(10000);
             }
 
           },
@@ -361,8 +361,9 @@ $(document).ready(function(){
            
             if(response.status=='success')
             {
-              toastr.success(response.msg).delay(10000)
-              window.location.href="/get_user/";
+              toastr.success('User updated successfully').delay(10000);
+              setTimeout(function(){ window.location.href="/get_user/"; }, 2000);
+              
             }
             else
             {
@@ -457,8 +458,9 @@ $(document).ready(function(){
           
             if(response.status=='success')
             {
-              toastr.success(response.msg).delay(10000)
-              window.location.href="/get_retailer/";
+              toastr.success('Retailler added successfully').delay(10000);
+              
+              setTimeout(function(){ window.location.href="/get_retailer/"; }, 2000);
             }
             else
             {
@@ -529,11 +531,12 @@ $(document).ready(function(){
       }
     },
     submitHandler: function() {
-      var userForm=document.getElementById('userForm');
+      var userForm=document.getElementById('editretailerForm');
        var formData = new FormData(userForm);
+       var user_id_pk=document.getElementById('user_id_pk').value;
         $.ajax({
           'method':'POST',
-          'url':'/edit_retailer/',
+          'url':'/edit_retailer/'+user_id_pk,
           'data': formData,
           'cache':false,
           'contentType': false,
@@ -541,8 +544,8 @@ $(document).ready(function(){
           success: function(response){
             if(response.status=='success')
             {
-              toastr.success('user Created successfully.').delay(10000)
-              window.location.href="/get_retailer/";
+              toastr.success('Retailler updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_retailer/"; }, 2000);
             }
             else
             {
@@ -593,12 +596,65 @@ $(document).ready(function(){
            success: function(response){
             if(response.status=='success')
             {
-              toastr.success('Product Add successfully.').delay(10000)
-              window.location.href="/get_product/";
+              toastr.success('Product Add successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_product/"; }, 2000);
+              
             }
             else
             {
               alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+   $("#editproductForm").validate({
+    rules: {
+      product_name: {
+        required: true,
+        
+      },
+      product_price: {
+        required: true,
+        number: true
+      }
+    },
+    messages: {
+      product_name: {
+        required: "Please enter a name",
+      },
+      product_price: {
+        required: "Please enter a price",
+        number: "Please enter valid price"
+      }
+    },
+
+    submitHandler: function() {
+       var productForm=document.getElementById('editproductForm');
+       var formData = new FormData(productForm);
+       var product_id=$('#product_id').val();
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_product/'+product_id,
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+           success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Product updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_product/"; }, 2000);
+            }
+            else
+            {
+              toastr.error('Something went wrong.').delay(10000);
             }
 
           },
@@ -699,8 +755,9 @@ $(document).ready(function(){
           success: function(response){
             if(response.status=='success')
             {
-              toastr.success(response.msg).delay(10000)
-              window.location.href="/get_farmer/";
+              toastr.success('Farmer added successfully').delay(10000);
+              setTimeout(function(){ window.location.href="/get_farmer/"; }, 2000);
+              
             }
             else
             {
@@ -773,20 +830,211 @@ $(document).ready(function(){
     submitHandler: function() {
       var userForm=document.getElementById('editfarmerForm');
        var formData = new FormData(userForm);
+       var user_id_pk=document.getElementById('user_id_pk').value;
         $.ajax({
           'method':'POST',
-          'url':'/edit_farmer/',
+          'url':'/edit_farmer/'+user_id_pk,
           'data': formData,
           'cache':false,
           'contentType': false,
           'processData': false,
           success: function(response){
-            alert("response")
-            alert(response)
             if(response.status=='success')
             {
-              toastr.success('user Created successfully.').delay(10000)
-              window.location.href="/get_farmer/";
+              toastr.success('Farmer updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_farmer/"; }, 2000);
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+$("#wholesalerForm").validate({
+   
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      mobile_number: {
+        required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            }
+          }
+        }
+      },
+      aadhar_no: {
+        required: true,
+        minlength: 12,
+        maxlength: 12,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      },
+      soil_card: {
+        required: true,
+      },
+      land_area: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      mobile_number: {
+        required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      },
+      soil_card: {
+        required: "Please select a image",
+      },
+      land_area: {
+        required: "Please select a image",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('wholesalerForm');
+       var formData = new FormData(userForm);
+      
+        $.ajax({
+          'method':'POST',
+          'url':'/add_wholesaler/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Wholesaler added successfully').delay(10000);
+              setTimeout(function(){ window.location.href="/get_wholesaler/"; }, 2000);
+            }
+            else
+            {
+              toastr.error(response.msg).delay(10000)
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+
+$("#editwholeselerForm").validate({
+   
+    rules: {
+      user_type: {
+        required: true,
+        
+      },
+      name: {
+        required: true,
+      },
+      mobile_number: {
+        required: true,
+        minlength: 10,
+        maxlength: 10,
+        number: true
+      },
+      aadhar_no: {
+        required: true,
+        minlength: 12,
+        maxlength: 12,
+      },
+      state: {
+        required: true,
+      },
+      district: {
+        required: true,
+      }
+    },
+    messages: {
+      user_type: {
+        required: "Please enter a user type",
+      },
+      name: {
+        required: "Please enter a name",
+      },
+      mobile_number: {
+        required: "Please enter a mobile number",
+        minlength: "Your mobile number must consist of at least 10 digits",
+        maxlength: "Your mobile number must consist of at max 10 digits",
+        number: "Please enter valid mobile number"
+      },
+      aadhar_no: {
+        required: "Please enter a aadhar no",
+         minlength: "Your aadhar number must consist of at least 12 digits",
+        maxlength: "Your aadhar number must consist of at max 12 digits",
+      },
+      state: {
+        required: "Please enter a state",
+      },
+      district: {
+        required: "Please enter a district",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('editwholeselerForm');
+       var formData = new FormData(userForm);
+       var user_id_pk=document.getElementById('user_id_pk').value;
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_wholesaler/'+user_id_pk,
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Wholesaler updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_wholesaler/"; }, 2000);
+              
             }
             else
             {

@@ -23,7 +23,9 @@ urlpatterns=[
     url(r'^search_city/$',views.search_city,name='search_city'),
     url(r'^check_user_mobile/$',views.check_user_mobile,name='check_user_mobile'),
     url(r'^user_profile/(?P<pk>\d+)$',views.user_profile,name='user_profile'),
+    url(r'^edit_product/(?P<pk>\d+)$',views.edit_product,name='edit_product'),
 
+    # url(r'^add_state/$',views.add_state,name='add_state'),
     url(r'^add_product/$',views.add_product,name='add_product'),
     url(r'^get_product/$',views.get_product,name='get_product'),
     url(r'^add_order/$',views.addOrder,name='add_order'),
@@ -39,7 +41,8 @@ urlpatterns=[
     url(r'^get_state_list/$',mobilefunctions.get_state_list,name='get_state_list'),
     url(r'^get_city_list/$',mobilefunctions.get_city_list,name='get_city_list'),
     url(r'^user_logout/$',views.user_logout,name='user_logout'),
-
+    url(r'^manage_contain/$',mobilefunctions.all_manage_contain,name='all_manage_contain'),
+    url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),    
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
 
 ]

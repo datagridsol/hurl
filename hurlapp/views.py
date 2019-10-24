@@ -12,7 +12,7 @@ import json
 from hurlapp import models
 from django.db.models import Q
 from hurlapp.forms import ProfileForm
-from hurlapp.models import UserProfile
+from hurlapp.models import UserProfile,Product
 from hurlapp import forms
 from hurl import settings
 import os
@@ -45,8 +45,14 @@ def register(request):
     data=['amol','jamdade']
     return render(request,'registration.html',
                           {'data':data})
+@login_required
 def dashboard(request):
-    return render(request,'dashboard.html')
+    total_farmer=UserProfile.objects.filter(user_type_id='3').count()
+    total_wholeseler=UserProfile.objects.filter(user_type_id='4').count()
+    total_retailer=UserProfile.objects.filter(user_type_id='2').count()
+    total_product=Product.objects.filter(status='1').count()
+    data={'total_farmer':total_farmer,'total_wholeseler':total_wholeseler,"total_retailer":total_retailer,"total_product":total_product}
+    return render(request,'dashboard.html',{'data':data})
 
 @csrf_exempt
 def user_login(request):
@@ -176,6 +182,12 @@ def add_user(request):
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
        
 
+# def add_state(request):
+#     add = models.State.object.create(JAMMU & KASHMIR,HIMACHAL PRADESH,PUNJAB,CHANDIGARH,UTTARANCHAL,HARYANA,DELHI,RAJASTHAN,UTTAR PRADESH,BIHAR,SIKKIM,ARUNACHAL PRADESH,NAGALAND,MIZORAM,TRIPURA,MEGHALAYA,ASSAM,WEST BENGAL,JHARKHAND,CHHATTISGARH,MADHYA PRADESH,GUJARAT,DAMAN & DIU,DADRA & NAGAR HAVELI,MAHARASHTRA,ANDHRA PRADESH,KARNATAKA,LAKSHADWEEP,KERALA,TAMIL NADU,ANDAMAN & NICOBAR ISLANDS,)
+#     response = JsonResponse({'status':'success'})
+#         return response
+
+
 @login_required
 @csrf_exempt
 def edit_user(request, pk):
@@ -231,32 +243,32 @@ def edit_user(request, pk):
 
         if request.FILES.get('user_photo'):
             print("user_photo1",user_photo1)
-            if user_photo1:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
+            # if user_photo1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
             user_profile.user_photo = user_photo
             
         if request.FILES.get('aadhar_card'):
-            if aadhar_card1:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
+            # if aadhar_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
             aadhar_card = request.FILES['aadhar_card']
             user_profile.aadhar_card = aadhar_card
        
         if request.FILES.get('pan_card'):
-            if pan_card1:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
+            # if pan_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
             pan_card = request.FILES['pan_card']
             user_profile.pan_card = pan_card
         
         if request.FILES.get('vote_id'):
-            if vote_id1:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
+            # if vote_id1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
             vote_id = request.FILES['vote_id']
             user_profile.vote_id = vote_id
         
         if request.FILES.get('soil_card'):
-            if soil_card1:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
+            # if soil_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
             soil_card = request.FILES['soil_card']
             user_profile.soil_card = soil_card
         
@@ -378,36 +390,43 @@ def edit_retailer(request, pk):
             pan_card1=i[2]
             vote_id1=i[3]
             soil_card1=i[4]
+        user_info_photo=list(models.UserProfile.objects.filter(user=pk).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card'))
+        for i in user_info_photo:
+            user_photo1=i[0],
+            aadhar_card1=i[1]
+            pan_card1=i[2]
+            vote_id1=i[3]
+            soil_card1=i[4]
         user_profile = UserProfile.objects.get(user=user_id)
 
         if request.FILES.get('user_photo'):
             print("user_photo1",user_photo1)
-            if user_photo1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
+            # if user_photo1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
             user_profile.user_photo = user_photo
             
         if request.FILES.get('aadhar_card'):
-            if aadhar_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
+            # if aadhar_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
             aadhar_card = request.FILES['aadhar_card']
             user_profile.aadhar_card = aadhar_card
        
         if request.FILES.get('pan_card'):
-            if pan_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
+            # if pan_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
             pan_card = request.FILES['pan_card']
             user_profile.pan_card = pan_card
         
         if request.FILES.get('vote_id'):
-            if vote_id1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
+            # if vote_id1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
             vote_id = request.FILES['vote_id']
             user_profile.vote_id = vote_id
         
         if request.FILES.get('soil_card'):
-            if soil_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
+            # if soil_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
             soil_card = request.FILES['soil_card']
             user_profile.soil_card = soil_card
         
@@ -634,6 +653,7 @@ def get_city():
 
 #     return render(request, 'manage_user.html', {'data':(data)})
 
+@login_required
 @csrf_exempt
 def get_manage_user(request):
     data=[]
@@ -642,7 +662,7 @@ def get_manage_user(request):
     state=""
     count=0
     row=[]
-    user_info=models.UserProfile.objects.filter(~Q(user='1')).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+    user_info=models.UserProfile.objects.filter(~Q(user='1')).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active').order_by('-created_at')
     for i in user_info:
         user_type=i[0]
         district=i[1]
@@ -660,8 +680,10 @@ def get_manage_user(request):
             status="Deactive"
             btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-user-id="+str(user_id)+">Approve</button></div>"
         count+=1
-        #user_id
-        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
+        if full_name=="Hurl Admin":
+            pass
+        else:
+            data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(btn),"<a href='/edit_user/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_user.html', {'data':(data)})
 
 
@@ -670,19 +692,60 @@ def get_manage_user(request):
 def get_product(request):
     data=[]
     count=0
-    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+    product_image="/media/default/placeholder.png"
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','status','id')
     for i in product_info:
-        product_image=i[0]
+        if i[0]!= "":
+            product_image='/'+i[0]
         product_name=i[1]
         product_code=i[2]
         product_unit=i[3]
         product_price=i[4]
-        product_id=i[5]
+        product_id=i[6]
+        status=i[5]
+        if status:
+            status="Active"
+        else:
+            status="Deactive"
         count+=1
-        data.append([count,str(product_image),str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
+        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+#     return render(request, 'get_product.html', {'data':(data)})
     return render(request, 'get_product.html', {'data':(data)})
 
-        
+@csrf_exempt
+def edit_product(request,pk):
+    print("Add USer")
+    product_id=pk
+    if request.method == 'POST':
+        data={}
+        product_image=''
+        product_name = request.POST.get('product_name')
+        product_code = request.POST.get('product_code')
+        product_unit = request.POST.get('product_unit')
+        sub_code = request.POST.get('sub_code')
+        product_unit1=product_unit+' '+sub_code
+        product_price = request.POST.get('product_price')
+        if request.FILES.get('product_image'):
+            product_image = request.FILES['product_image']
+
+        product = Product.objects.get(id=pk)
+        product.product_name=product_name
+        product.product_code=product_code
+        product.product_unit=product_unit
+        product.product_price=product_price
+        product.product_image=product_image
+        product.save()
+        # data={'product_name':product_name,'product_unit':product_unit,"status":True}
+        # return render(request, 'product.html', {})
+        response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        product_info=models.Product.objects.filter(id=pk).values_list('product_image','product_name','product_code','product_unit','product_price','status','id')
+        print(product_info)
+        data={'product_image':'/'+product_info[0][0],'product_name':product_info[0][1],'product_code':product_info[0][2],'product_unit':product_info[0][3],'product_price':product_info[0][4],'product_id':product_info[0][6]}
+        print(data)
+        return render(request, 'edit_product.html',{'data':data})
 
 @login_required
 @csrf_exempt
@@ -735,36 +798,43 @@ def edit_farmer(request, pk):
             pan_card1=i[2]
             vote_id1=i[3]
             soil_card1=i[4]
+        user_info_photo=list(models.UserProfile.objects.filter(user=pk).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card'))
+        for i in user_info_photo:
+            user_photo1=i[0],
+            aadhar_card1=i[1]
+            pan_card1=i[2]
+            vote_id1=i[3]
+            soil_card1=i[4]
         user_profile = UserProfile.objects.get(user=user_id)
 
         if request.FILES.get('user_photo'):
             print("user_photo1",user_photo1)
-            if user_photo1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
+            # if user_photo1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
             user_profile.user_photo = user_photo
             
         if request.FILES.get('aadhar_card'):
-            if aadhar_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
+            # if aadhar_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
             aadhar_card = request.FILES['aadhar_card']
             user_profile.aadhar_card = aadhar_card
        
         if request.FILES.get('pan_card'):
-            if pan_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
+            # if pan_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
             pan_card = request.FILES['pan_card']
             user_profile.pan_card = pan_card
         
         if request.FILES.get('vote_id'):
-            if vote_id1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
+            # if vote_id1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
             vote_id = request.FILES['vote_id']
             user_profile.vote_id = vote_id
         
         if request.FILES.get('soil_card'):
-            if soil_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
+            # if soil_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
             soil_card = request.FILES['soil_card']
             user_profile.soil_card = soil_card
         
@@ -879,7 +949,7 @@ def edit_retailer(request, pk):
         district=request.POST.get('district')
         pincode=request.POST.get('pincode')
         address=request.POST.get('address')
-        user_info_photo=models.UserProfile.objects.filter(user=pk).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card')
+        user_info_photo=list(models.UserProfile.objects.filter(user=pk).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card'))
         for i in user_info_photo:
             user_photo1=i[0],
             aadhar_card1=i[1]
@@ -890,32 +960,33 @@ def edit_retailer(request, pk):
 
         if request.FILES.get('user_photo'):
             print("user_photo1",user_photo1)
-            if user_photo1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
+            # if user_photo1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
             user_profile.user_photo = user_photo
             
         if request.FILES.get('aadhar_card'):
-            if aadhar_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
+            # if aadhar_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
             aadhar_card = request.FILES['aadhar_card']
+            print("sssssss",aadhar_card)
             user_profile.aadhar_card = aadhar_card
        
         if request.FILES.get('pan_card'):
-            if pan_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
+            # if pan_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
             pan_card = request.FILES['pan_card']
             user_profile.pan_card = pan_card
         
         if request.FILES.get('vote_id'):
-            if vote_id1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
+            # if vote_id1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
             vote_id = request.FILES['vote_id']
             user_profile.vote_id = vote_id
         
         if request.FILES.get('soil_card'):
-            if soil_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
+            # if soil_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
             soil_card = request.FILES['soil_card']
             user_profile.soil_card = soil_card
         
@@ -1041,34 +1112,35 @@ def edit_wholesaler(request, pk):
 
         if request.FILES.get('user_photo'):
             print("user_photo1",user_photo1)
-            if user_photo1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
+            # if user_photo1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
             user_profile.user_photo = user_photo
             
         if request.FILES.get('aadhar_card'):
-            if aadhar_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
+            # if aadhar_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
             aadhar_card = request.FILES['aadhar_card']
+            print("sssssss",aadhar_card)
             user_profile.aadhar_card = aadhar_card
        
         if request.FILES.get('pan_card'):
-            if pan_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
+            # if pan_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
             pan_card = request.FILES['pan_card']
             user_profile.pan_card = pan_card
         
         if request.FILES.get('vote_id'):
-            if vote_id1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
+            # if vote_id1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
             vote_id = request.FILES['vote_id']
             user_profile.vote_id = vote_id
         
         if request.FILES.get('soil_card'):
-            if soil_card1[0]:
-                os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
+            # if soil_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
             soil_card = request.FILES['soil_card']
-            user_profile.soil_card = soil_card
+            user_profile.soil_card = soil_cardser_profile.soil_card = soil_card
         
         land_area=request.POST.get('land_area')
 
@@ -1401,106 +1473,22 @@ def search_city(request):
 
 
 
-@csrf_exempt
-def get_product(request):
-    data=[]
-    count=0
-    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
-    for i in product_info:
-        product_image=i[0]
-        product_name=i[1]
-        product_code=i[2]
-        product_unit=i[3]
-        product_price=i[4]
-        product_id=i[5]
-        count+=1
-        data.append([count,'<img src="'+str(product_image)+'">',str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
+#@csrf_exempt
+#def get_product(request):
+#    data=[]
+#    count=0
+#    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+#    for i in product_info:
+#        product_image=i[0]
+#        product_name=i[1]
+#        product_code=i[2]
+#        product_unit=i[3]
+#        product_price=i[4]
+#        product_id=i[5]
+#        count+=1
+#        data.append([count,'<img src="'+str(product_image)+'">',str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
     return render(request, 'get_product.html', {'data':(data)})
 
-    if request.method == 'POST':
-        data={}
-        user_id =pk
-        #password = request.POST.get('mobile_number')
-        email = request.POST.get('email')
-        full_name = request.POST.get('name')
-        if (' ' in full_name) == True:
-            full_name_split=full_name.split(' ')
-            if len(full_name_split)==2:
-                first_name=full_name_split[0]
-                last_name=full_name_split[1]
-            if len(full_name_split)==3:
-                first_name=full_name_split[0]
-                last_name=full_name_split[2]
-        else:
-            first_name=full_name
-        langn_id=request.POST.get('language_id')
-        #user_type = request.POST.get('user_type')
-        aadhar_no=request.POST.get('aadhar_no')
-        state=request.POST.get('state')
-        print("aadhar_noaadhar_no",state)
-        city=request.POST.get('city')
-        district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
-        address=request.POST.get('address')
-        user_photo=request.POST.get('user_photo')
-        aadhar_card=request.POST.get('aadhar_card')
-        pan_card=request.POST.get('pan_card')
-        vote_id=request.POST.get('vote_id')
-        soil_card=request.POST.get('soil_card')
-        land_area=request.POST.get('land_area')
-
-        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,is_active=0,email=email)
-        
-        #user_type=Group.objects.get(id=user_type)
-        print("langn_idlangn_id",langn_id)
-        langn_id=models.Language.objects.get(id=langn_id)
-        state=models.State.objects.get(id=state)
-        district=models.District.objects.get(id=district)
-        if city:
-            if models.City.objects.filter(city_name=city).exists():
-                city_name=city
-            else:
-                new_city = models.City.objects.create(city_name =city,status=1)
-                new_city.save()
-                city_name=new_city.city_name
-        print("aadhar_no11111111",user_id)
-        models.UserProfile.objects.filter(user_id=user_id).update(parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
-        response=JsonResponse({'status':'success'})
-        return response
-
-    else:
-        user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
-        for i in user_info:
-            user_type=i[0],
-            language=i[1]
-            first_name=i[2]
-            last_name=i[3]
-            full_name=str(first_name)+" "+str(last_name)
-            email=i[4]
-            mobile_number=i[5]
-            aadhar_no=i[6]
-            state=i[7]
-            city=i[8]
-            district=i[9]
-            pincode=i[10]
-            address=i[11]
-            user_photo=i[12]
-            aadhar_card=i[13]
-            pan_card=i[14]
-            vote_id=i[15]
-            soil_card=i[16]
-            land_area=i[17]
-            group_id=i[18]
-            lang_id=i[19]
-            state_id=i[20]
-            district_id=i[21]
-            user_type={"name":user_type[0],'id':group_id}
-            language={"name":language,'id':lang_id}
-            state={"name":state,'id':state_id}
-            district={"name":district,'id':district_id}
-            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
-            # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
-        return render(request, 'edit_retailer.html',{'data':data})
 
 @csrf_exempt
 def add_product(request):
@@ -1648,6 +1636,7 @@ def add_product(request):
 #     return render(request, 'manage_retailer.html', {'data':(data)})
 
 
+@login_required
 @csrf_exempt
 def add_retailer(request):
     gr_no=[]
@@ -1740,6 +1729,7 @@ def add_retailer(request):
         #MyProfileForm = forms.ProfileForm()
         return render(request, 'add_retailer.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
+@login_required
 @csrf_exempt
 def get_retailer(request):
     data=[]
@@ -1748,7 +1738,7 @@ def get_retailer(request):
     state=""
     count=0
     row=[]
-    user_info=models.UserProfile.objects.filter(user_type=2).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+    user_info=models.UserProfile.objects.filter(user_type=2).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active').order_by('-created_at')
     for i in user_info:
         user_type=i[0]
         district=i[1]
@@ -1770,6 +1760,7 @@ def get_retailer(request):
     return render(request, 'manage_retailer.html', {'data':(data)})
 
 
+@login_required
 @csrf_exempt
 def add_farmer(request):
     gr_no=[]
@@ -1862,6 +1853,7 @@ def add_farmer(request):
         MyProfileForm = forms.ProfileForm()
         return render(request, 'add_farmer.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
+@login_required
 @csrf_exempt
 def get_farmer(request):
     data=[]
@@ -1870,7 +1862,7 @@ def get_farmer(request):
     state=""
     count=0
     row=[]
-    user_info=models.UserProfile.objects.filter(user_type=3).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+    user_info=models.UserProfile.objects.filter(user_type=3).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active').order_by('-created_at')
     for i in user_info:
         user_type=i[0]
         district=i[1]
@@ -1891,6 +1883,7 @@ def get_farmer(request):
         data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_farmer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_farmer.html', {'data':(data)})
 
+@login_required
 @csrf_exempt
 def add_wholesaler(request):
     gr_no=[]
@@ -1983,6 +1976,8 @@ def add_wholesaler(request):
         MyProfileForm = forms.ProfileForm()
         return render(request, 'add_wholesaler.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
 
+
+@login_required
 @csrf_exempt
 def get_wholesaler(request):
     data=[]
@@ -1991,7 +1986,7 @@ def get_wholesaler(request):
     state=""
     count=0
     row=[]
-    user_info=models.UserProfile.objects.filter(user_type=4).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+    user_info=models.UserProfile.objects.filter(user_type=4).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active').order_by('-created_at')
     for i in user_info:
         user_type=i[0]
         district=i[1]
@@ -2009,7 +2004,10 @@ def get_wholesaler(request):
 
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_wholesaler/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
+        if full_name=="Hurl Admin":
+            pass
+        else:
+            data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_wholesaler/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_wholesaler.html', {'data':(data)})
 
 @csrf_exempt
@@ -2159,6 +2157,11 @@ def check_user_mobile(request):
 @login_required
 @csrf_exempt
 def user_profile(request, pk):
+        user_photo="/media/default/placeholder.png"
+        aadhar_card="/media/default/placeholder.png"
+        pan_card="/media/default/placeholder.png"
+        vote_id="/media/default/placeholder.png"
+        soil_card="/media/default/placeholder.png"
         user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
         for i in user_info:
             user_type=i[0],
@@ -2174,11 +2177,16 @@ def user_profile(request, pk):
             district=i[9]
             pincode=i[10]
             address=i[11]
-            user_photo=i[12]
-            aadhar_card=i[13]
-            pan_card=i[14]
-            vote_id=i[15]
-            soil_card=i[16]
+            if i[12]!= "":
+                user_photo='/'+i[12]
+            if i[13]!= "":
+                aadhar_card='/'+i[13]
+            if i[14]!= "":
+                pan_card='/'+i[14]
+            if i[15]!= "": 
+                vote_id='/'+i[15]
+            if i[16]!= "": 
+                soil_card='/'+i[16]
             land_area=i[17]
             group_id=i[18]
             lang_id=i[19]

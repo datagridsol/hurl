@@ -45,3 +45,10 @@ from django import forms
 class ProfileForm(forms.Form):
    name = forms.CharField(max_length = 100)
    picture = forms.ImageField()
+
+
+class ManageContainForm(forms.ModelForm):
+    class Meta:
+        model = ManageContent
+        fields = '__all__'
+

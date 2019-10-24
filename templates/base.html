@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="{% static "plugins/overlayScrollbars/css/OverlayScrollbars.min.css" %}">
 
   <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
+  <link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.css" %}">
 
   <link rel="stylesheet" href="{% static "plugins/toastr/toastr.min.css" %}">
   
@@ -38,14 +39,14 @@
       
       <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-          <img src="{% static "dist/img/user2-160x160.jpg" %}" class="user-image img-circle elevation-2" alt="User Image">
+          <img src="/media/logo/logo.png" class="user-image img-circle elevation-2" alt="User Image">
           <span class="d-none d-md-inline">{{request.user.first_name}} {{request.user.last_name}}</span>
         </a>
        <!--  <a class="btn btn-block bg-gradient-primary btn-lg" href="/user_logout/">logout</a> -->
         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <!-- User image -->
           <li class="user-header bg-primary">
-            <img src="{% static "dist/img/user2-160x160.jpg" %}" class="img-circle elevation-2" alt="User Image">
+            <img src="/media/logo/logo.png" class="img-circle elevation-2" alt="User Image">
 
             <p>
              {{request.user.first_name}} {{request.user.last_name}} - Admin
@@ -72,7 +73,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{% url 'dashboard' %}" class="brand-link">
-      <img src="{% static "dist/img/AdminLTELogo.png" %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+      <img src="/media/logo/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
       <span class="brand-text font-weight-light">HURL</span>
     </a>
@@ -153,7 +154,7 @@
           </li>
           
           <li class="nav-item has-treeview ">
-            <a href="{% url 'get_wholesaler' %}" class="nav-link {% if "/get_order/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/get_order/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Manage Order
@@ -162,17 +163,17 @@
           </li>
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product3/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product3/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-award"></i>
               <p>
-                Loyality Configration
+                Loyality Configuration
               </p>
             </a>
           </li>
 
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product4/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product4/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Retailer
@@ -181,7 +182,7 @@
           </li>
           
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product5/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product5/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Farmers
@@ -190,7 +191,7 @@
           </li>
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product6/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product6/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-mobile-alt"></i>
               <p>
                 Manage Recharge
@@ -200,7 +201,7 @@
 
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product7/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product7/" == request.path %} active {% endif %}">
              <i class="nav-icon fas fa-clone"></i>
               <p>
                 Manage Content
@@ -209,7 +210,7 @@
           </li>
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product8/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product8/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-headset"></i>
               <p>
                 Support
@@ -218,7 +219,7 @@
           </li>
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product9/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product9/" == request.path %} active {% endif %}">
               <i class="nav-icon far fa-comments"></i>
               <p>
                 Notification
@@ -227,7 +228,7 @@
           </li>
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product10/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product10/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-chart-area"></i>
               <p>
                 Manage Area
@@ -236,7 +237,7 @@
           </li>
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'add_product' %}" class="nav-link {% if "/add_product11/" == request.path %} active {% endif %}">
+            <a href="#" class="nav-link {% if "/add_product11/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-chart-area"></i>
               <p>
                 Reports
@@ -262,7 +263,7 @@
 
 <!-- /.content-wrapper -->
   <footer class="main-footer">
-    <strong>Copyright &copy; {% now "Y" %} <a href="http://adminlte.io">Datagrid</a>.</strong>
+    <strong>Copyright &copy; {% now "Y" %} <a href="https://www.datagrid.co.in/">Datagrid</a>.</strong>
     All rights reserved.
     
   </footer>
@@ -290,6 +291,7 @@
 
 <script src="{% static "plugins/datatables/jquery.dataTables.js" %}"></script>
 <script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.js" %}"></script>
 <script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static "dist/js/adminlte.js" %}"></script>

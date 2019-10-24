@@ -1,4 +1,3 @@
-
 import math, random
 from django.shortcuts import render
 from hurlapp.forms import UserForm
@@ -60,7 +59,7 @@ def generateOTP() :
 @csrf_exempt
 def get_wholesaler(request):
     whole_data=[]
-    wholesaler_data=models.UserProfile.objects.filter(user_type=3).values_list('user','user__first_name','user__last_name','parent_id')
+    wholesaler_data=models.UserProfile.objects.filter(user_type=3).values_list('user','user__first_naime','user__last_name','parent_id')
     for i in wholesaler_data:
         full_name=i[1]+' '+i[2]
         case1 = {'user_id': i[0], 'name': full_name}
@@ -68,67 +67,106 @@ def get_wholesaler(request):
     response=JsonResponse({'status':'success','data':whole_data})
     return response
 
-@csrf_exempt
-def add_user_mobile(request):
-    gr_no=[]
+def get_group():
+    group_data=[]
 
+    gr_no=[]
     first_name=''
     last_name=''
     city_name=''
-    fertilizer_photo=''
-    print(request.user.id)
+    state=''
+    data={}
+#    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
+#    print(request.user.id)
+    user_type=Group.objects.all().values_list('id', 'name')
+    for i in user_type:
+        gr_no.append(i[1])
+
+#    my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
+#    if my_user_type:
+#        print(my_user_type[0][0])
+
+        case = {'id': i[0], 'name': i[1]}
+        group_data.append(case)
+    return group_data
+
+
+
+#@login_required
+#@csrf_exempt
+def add_user_mobile(request):
+    gr_no=[]
+    first_name=''
+    last_name=''
+    city_name=''
+    user_photo=''
+    aadhar_card=''
+    pan_card=''
+    vote_id=''
+    soil_card=''
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
         gr_no.append(i[1])
     my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
     if my_user_type:
         print(my_user_type[0][0])
-
     if request.method == 'POST':
         data={}
-        full_name = request.POST.get('name')
-        company_name = request.POST.get('company_name')
-        email = request.POST.get('email')
         username = request.POST.get('mobile_number')
+        if User.objects.filter(username=username).exists():
+            response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+            return response
         password = request.POST.get('mobile_number')
+        email = request.POST.get('email')
+        full_name = request.POST.get('name')
+#        if (' ' in full_name) == True:
+#            full_name_split=full_name.split(' ')
+#            if len(full_name_split)==2:
+#                first_name=full_name_split[0]
+#                last_name=full_name_split[1]
+#            if len(full_name_split)==3:
+#                first_name=full_name_split[0]
+#                last_name=full_name_split[2]
+#        else:
+#            first_name=full_name
+        langn_id=request.POST.get('language_id')
+        user_type = request.POST.get('user_type')
+        aadhar_no=request.POST.get('aadhar_no')
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
         pincode=request.POST.get('pincode')
         address=request.POST.get('address')
-        aadhar_no=request.POST.get('aadhar_no')
-        langn_id=request.POST.get('language_id')
-        aadhar_card=request.POST.get('aadhar_card')
-        user_photo=request.POST.get('user_photo')
-        fertilizer_photo=request.POST.get('fertilizer_photo')
-        wholesaler_id=request.POST.get('wholesaler_id')
-        
-        if (' ' in full_name) == True:
-            full_name_split=full_name.split(' ')
-            if len(full_name_split)==2:
-                first_name=full_name_split[0]
-                last_name=full_name_split[1]
-            if len(full_name_split)==3:
-                first_name=full_name_split[0]
-                last_name=full_name_split[2]
-        else:
-            first_name=full_name
 
-        if request.POST.get('user_type'):
-        	user_type=request.POST.get('user_type')
-        else:
-        	user_type="2"
+        if request.FILES.get('user_photo'):
+            user_photo = request.FILES['user_photo']
+        if request.FILES.get('aadhar_card'):
+            aadhar_card = request.FILES['aadhar_card']
+        if request.FILES.get('pan_card'):
+            pan_card = request.FILES['pan_card']
+        if request.FILES.get('vote_id'):
+            vote_id = request.FILES['vote_id']
+        if request.FILES.get('soil_card'):
+            soil_card = request.FILES['soil_card']
+        land_area=request.POST.get('land_area')
 
-       	
-        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=0,email=email)
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
+
         user_type=Group.objects.get(id=user_type)
         user_type.user_set.add(new_Uid)
-        langn_id1=models.Language.objects.get(id=langn_id)
-        state1=models.State.objects.get(id=state)
-        district1=models.District.objects.get(id=district)
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
         if city:
             if models.City.objects.filter(city_name=city).exists():
                 city_name=city
@@ -136,12 +174,54 @@ def add_user_mobile(request):
                 new_city = models.City.objects.create(city_name =city,status=1)
                 new_city.save()
                 city_name=new_city.city_name
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=wholesaler_id,company_name=company_name,language=langn_id1,aadhar_no=aadhar_no,state=state1,city=city_name,district=district1,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,fertilizer_photo=fertilizer_photo)
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
         userprofile.save()
-        data={"user_id":new_Uid,"name":full_name,"company_name":company_name,"mobile_number":username,"email":email,"language":langn_id,"aadhar_no":aadhar_no,"state":state,"city":city_name,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"fertilizer_photo":fertilizer_photo}
-        response=JsonResponse({'status':'success','data':data})
+        response=JsonResponse({'status':'success'})
         return response
 
+    else:
+        response = JsonResponse({"status":"error"})
+    return response
+
+
+def get_langauge():
+    lang_data=[]
+    lang_type=models.Language.objects.all().values_list('id', 'lang_name')
+    for i in lang_type:
+        case1 = {'id': i[0], 'name': i[1],}
+        lang_data.append(case1)
+    return lang_data
+
+
+@csrf_exempt
+def get_state():
+    state_data=[]
+    state_list=models.State.objects.all().values_list('id', 'state_name')
+    for i in state_list:
+        case2 = {'id': i[0], 'name': i[1]}
+        state_data.append(case2)
+    return state_data
+
+@csrf_exempt
+def get_district(request):
+    if request.method == 'POST':
+        district_data=[]
+        state_id=request.POST.get('state_id')
+        district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
+        for i in district_list:
+            case2 = {'id': i[0], 'name': i[1]}
+            district_data.append(case2)
+        response=JsonResponse({'status':'success','district_data':district_data})
+        return response
+
+def get_city():
+    city_data=[]
+    city_list=models.City.objects.all().values_list('id', 'city_name')
+    for i in city_list:
+        case2 = {'id': i[0], 'name': i[1]}
+        city_data.append(case2)
+    return city_data
+################################################################################
 
 @csrf_exempt
 def get_state_list(request):
@@ -162,6 +242,7 @@ def get_district_list(request):
         district_data.append(case2)
     response=JsonResponse({'status':'success','district_data':district_data})
     return response
+
 @csrf_exempt
 def get_city_list(request):
     city_data=[]
@@ -171,6 +252,21 @@ def get_city_list(request):
         city_data.append(case2)
     response=JsonResponse({'status':'success','data':city_data})
     return response
+
+
+@csrf_exempt
+def all_manage_contain(request):
+    data=[]
+    list=models.ManageContent.objects.all().values_list('id', 'title_eng','title_hnd','date','state','district','group',
+    'contains_eng','contains_hnd','user_id_admin_id','status','created_at','updated_at','feature_image')
+    for i in list:
+        case2 = {'id': i[0], 'title_eng': i[1], 'title_hnd': i[2],'date':i[3],'state':i[4],'district':i[5],'group':i[6],
+        'contains_eng':i[7],'contains_hnd':i[8],'user_id_admin_id':i[9],'status':i[10],'created_at':i[11],'updated_at':i[12],
+        'feature_image':i[13]}
+        data.append(case2)
+    response=JsonResponse({'status':'success','data':data})
+    return response
+
 
 @csrf_exempt
 def get_product_mobile(request):

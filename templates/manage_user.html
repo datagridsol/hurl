@@ -34,7 +34,8 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-              <table id="shTable" class="table table-bordered table-striped">
+              <div class="table-responsive">
+              <table id="shTable" class="table table-bordered table-striped ">
                 <thead>
                 <tr>
                   <th>Sr No</th>
@@ -63,6 +64,7 @@
                 </tfoot>
                 
               </table>
+            </div>
             </div>
             <!-- /.card-body -->
           </div>
@@ -94,8 +96,9 @@
     
       var shTable=jQuery('#shTable').DataTable({
         "aaData":result_data,
+        "responsive": true,
         "autoWidth": false,
-        "destroy": true,
+        
         "aoColumnDefs": [
             { "bSortable": false, "aTargets": [ -1,-2 ] }, 
             { "bSearchable": false, "aTargets": [ -1,-2 ] }

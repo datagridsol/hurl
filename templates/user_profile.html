@@ -104,12 +104,19 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6">
                       <div class="form-group">
                         <label for="user_type">Address</label>
                         <p>{{data.address}}</p>
                       </div>
                     </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Land Area</label>
+                        <p>{{data.land_area}}</p>
+                      </div>
+                    </div>
+                    
                   </div>
                   <div class="row">
                     <div class="col-sm-12">
@@ -157,14 +164,7 @@
                                 </div>
                               </li>
                               {% endif %}
-                              {% if data.land_area != "" %}
-                              <li>
-                                <span class="mailbox-attachment-icon has-img"><img src="{{data.land_area}}" alt="Land Area"></span>
-                                <div class="mailbox-attachment-info">
-                                  <a href="#" class="mailbox-attachment-name"><i class="fas fa-camera"></i> Land Area</a>
-                                </div>
-                              </li>
-                              {% endif %}
+                              
                           </ul>
                         
                     </div>

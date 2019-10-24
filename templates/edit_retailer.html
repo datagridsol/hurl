@@ -162,44 +162,95 @@
                              <label class="custom-file-label" for="user_photo">Choose file</label>
                            </div>
                            <div class="input-group-append">
-                              <span><img src="{{'/media/media/160/user.png'}}" width="50" height="50"></span>
+                              <span><img src={{data.user_photo}} width="50" height="50"></span>
                            </div>
                         </div>
                       </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label for="customFile">Aadhar Photo</label>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="aadhar_card" id="aadhar_card">
-                          <label class="custom-file-label" for="aadhar_card">Choose file</label>
+                        <label for="customFile">Aadhar Card</label>
+                        <div class="input-group">
+                           <div class="custom-file">
+                             <input type="file" class="custom-file-input" name="aadhar_card" id="aadhar_card">
+                             <label class="custom-file-label" for="aadhar_card">Choose file</label>
+                           </div>
+                           <div class="input-group-append">
+                              <span><img src={{data.aadhar_card}} width="50" height="50"></span>
+                           </div>
                         </div>
+                      </div>
+                    
+                  </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Pancard</label>
+                        <div class="input-group">
+                           <div class="custom-file">
+                             <input type="file" class="custom-file-input" name="pan_card" id="pan_card">
+                             <label class="custom-file-label" for="pan_card">Choose file</label>
+                           </div>
+                           <div class="input-group-append">
+                              <span><img src={{data.pan_card}} width="50" height="50"></span>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                     <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Vote Id</label>
+                        <div class="input-group">
+                           <div class="custom-file">
+                             <input type="file" class="custom-file-input" name="vote_id" id="vote_id">
+                             <label class="custom-file-label" for="vote_id">Choose file</label>
+                           </div>
+                           <div class="input-group-append">
+                              <span><img src={{data.vote_id}} width="50" height="50"></span>
+                           </div>
+                        </div>
+                      </div>
+                    
+                  </div>
+
+                 
+                    
+                  </div>
+
+                  
+
+                  <div class="row" id="show_farmer" {% if data.user_type.id != 3 %} style="display: none" {% endif %}>
+                     <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Soil Card</label>
+                        <div class="input-group">
+                           <div class="custom-file">
+                             <input type="file" class="custom-file-input" name="soil_card" id="soil_card">
+                             <label class="custom-file-label" for="soil_card">Choose file</label>
+                           </div>
+                           <div class="input-group-append">
+                              <span><img src={{data.soil_card}} width="50" height="50"></span>
+                           </div>
+                        </div>
+                      </div>
+                    
+                  </div>
+                   
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Land Area</label>
+                        <div class="form-group">
+                       
+                        <input type="text" class="form-control" name="land_area"  placeholder="Land Area" value="{{data.land_area}}">
+                      </div>
+
                       </div>
                     </div>
                     
                   </div>
 
-                  
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label for="customFile">Pancard</label>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="pan_card" id="pan_card">
-                          <label class="custom-file-label" for="pan_card">Choose file</label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label for="customFile">Vote Id</label>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="vote_id" id="vote_id">
-                          <label class="custom-file-label" for="vote_id">Choose file</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
                  
 
