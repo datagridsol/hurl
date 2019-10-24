@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+
+{% block body_block %}
+<style type="text/css">
+    #productForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    
+  </style>
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Edit Product</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          
+          <!-- right column -->
+          <div class="col-md-8" style="margin: 0 auto;">
+            <!-- general form elements disabled -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Edit Product</h3>
+              </div>
+              <!-- /.card-header -->
+              <form role="form" method="post" id="editproductForm" enctype="multipart/form-data">
+                <input type="hidden" id="product_id" name="product_id" value="{{data.product_id}}">
+              <div class="card-body">
+                  {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Product Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="product_name" id="product_name" placeholder="Product Name" value="{{data.product_name}}">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                          <label>Product Code <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" name="product_code" id="product_code" placeholder="Product Code" value="{{data.product_code}}">
+                        </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Product Unit <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="product_unit" id="product_unit" placeholder="Product Unit" value="{{data.product_unit}}">
+                        <select class="form-control" id="sub_code" name="sub_code">
+                            <option value="Kg" >Kg</option>
+                            <option value="Gram">Gram</option>
+                            <option value="Tan">Tan</option>
+                          </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                     <div class="form-group">
+                        <label>Product Price <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="product_price" id="product_price" placeholder="Product Price" value="{{data.product_price}}">
+                     </div>
+                     </div>
+                  </div>
+                  
+                  
+                  
+                 
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Product Image</label>
+                        <div class="input-group">
+                          <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="product_image" id="product_image">
+                            <label class="custom-file-label" for="product_image">Choose file</label>
+                          </div>
+                          <div class="input-group-append">
+                              <span><img src="{{data.product_image}}" width="50" height="50"></span>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  
+
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </form>
+            <!-- /.card -->
+            
+          </div>
+          <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}

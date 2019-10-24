@@ -12,7 +12,7 @@ import json
 from hurlapp import models
 from django.db.models import Q
 from hurlapp.forms import ProfileForm
-from hurlapp.models import UserProfile
+from hurlapp.models import UserProfile,Product
 from hurlapp import forms
 from hurl import settings
 import os
@@ -46,7 +46,12 @@ def register(request):
     return render(request,'registration.html',
                           {'data':data})
 def dashboard(request):
-    return render(request,'dashboard.html')
+    total_farmer=UserProfile.objects.filter(user_type_id='3').count()
+    total_wholeseler=UserProfile.objects.filter(user_type_id='4').count()
+    total_retailer=UserProfile.objects.filter(user_type_id='2').count()
+    total_product=Product.objects.filter(status='1').count()
+    data={'total_farmer':total_farmer,'total_wholeseler':total_wholeseler,"total_retailer":total_retailer,"total_product":total_product}
+    return render(request,'dashboard.html',{'data':data})
 
 @csrf_exempt
 def user_login(request):
@@ -1405,102 +1410,23 @@ def search_city(request):
 def get_product(request):
     data=[]
     count=0
-    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','status','id')
+    print(product_info)
     for i in product_info:
         product_image=i[0]
         product_name=i[1]
         product_code=i[2]
         product_unit=i[3]
         product_price=i[4]
-        product_id=i[5]
-        count+=1
-        data.append([count,'<img src="'+str(product_image)+'">',str(product_name),str(product_code),str(product_unit),str(product_price),'',product_id])
-    return render(request, 'get_product.html', {'data':(data)})
-
-    if request.method == 'POST':
-        data={}
-        user_id =pk
-        #password = request.POST.get('mobile_number')
-        email = request.POST.get('email')
-        full_name = request.POST.get('name')
-        if (' ' in full_name) == True:
-            full_name_split=full_name.split(' ')
-            if len(full_name_split)==2:
-                first_name=full_name_split[0]
-                last_name=full_name_split[1]
-            if len(full_name_split)==3:
-                first_name=full_name_split[0]
-                last_name=full_name_split[2]
+        product_id=i[6]
+        status=i[5]
+        if status:
+            status="Active"
         else:
-            first_name=full_name
-        langn_id=request.POST.get('language_id')
-        #user_type = request.POST.get('user_type')
-        aadhar_no=request.POST.get('aadhar_no')
-        state=request.POST.get('state')
-        print("aadhar_noaadhar_no",state)
-        city=request.POST.get('city')
-        district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
-        address=request.POST.get('address')
-        user_photo=request.POST.get('user_photo')
-        aadhar_card=request.POST.get('aadhar_card')
-        pan_card=request.POST.get('pan_card')
-        vote_id=request.POST.get('vote_id')
-        soil_card=request.POST.get('soil_card')
-        land_area=request.POST.get('land_area')
-
-        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,is_active=0,email=email)
-        
-        #user_type=Group.objects.get(id=user_type)
-        print("langn_idlangn_id",langn_id)
-        langn_id=models.Language.objects.get(id=langn_id)
-        state=models.State.objects.get(id=state)
-        district=models.District.objects.get(id=district)
-        if city:
-            if models.City.objects.filter(city_name=city).exists():
-                city_name=city
-            else:
-                new_city = models.City.objects.create(city_name =city,status=1)
-                new_city.save()
-                city_name=new_city.city_name
-        print("aadhar_no11111111",user_id)
-        models.UserProfile.objects.filter(user_id=user_id).update(parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
-        response=JsonResponse({'status':'success'})
-        return response
-
-    else:
-        user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
-        for i in user_info:
-            user_type=i[0],
-            language=i[1]
-            first_name=i[2]
-            last_name=i[3]
-            full_name=str(first_name)+" "+str(last_name)
-            email=i[4]
-            mobile_number=i[5]
-            aadhar_no=i[6]
-            state=i[7]
-            city=i[8]
-            district=i[9]
-            pincode=i[10]
-            address=i[11]
-            user_photo=i[12]
-            aadhar_card=i[13]
-            pan_card=i[14]
-            vote_id=i[15]
-            soil_card=i[16]
-            land_area=i[17]
-            group_id=i[18]
-            lang_id=i[19]
-            state_id=i[20]
-            district_id=i[21]
-            user_type={"name":user_type[0],'id':group_id}
-            language={"name":language,'id':lang_id}
-            state={"name":state,'id':state_id}
-            district={"name":district,'id':district_id}
-            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":"media/media/Screenshot_from_2019-10-18_16-21-35.png","pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]}
-            # data.append([str(user_type),str(language),str(full_name),str(email),str(mobile_number),str(state),str(city),str(district),str(pincode),str(address),str(user_photo),str(pan_card),str(vote_id),str(soil_card),str(land_area)])
-        return render(request, 'edit_retailer.html',{'data':data})
+            status="Deactive"
+        count+=1
+        data.append([count,'<img src="'+str(product_image)+'" width="70" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+    return render(request, 'get_product.html', {'data':(data)})
 
 @csrf_exempt
 def add_product(request):
@@ -1526,6 +1452,41 @@ def add_product(request):
 
     else:
         return render(request, 'product.html', {})
+
+@csrf_exempt
+def edit_product(request,pk):
+    print("Add USer")
+    product_id=pk
+    if request.method == 'POST':
+        data={}
+        product_image=''
+        product_name = request.POST.get('product_name')
+        product_code = request.POST.get('product_code')
+        product_unit = request.POST.get('product_unit')
+        sub_code = request.POST.get('sub_code')
+        product_unit1=product_unit+' '+sub_code
+        product_price = request.POST.get('product_price')
+        if request.FILES.get('product_image'):
+            product_image = request.FILES['product_image']
+
+        product = Product.objects.get(id=pk)
+        product.product_name=product_name
+        product.product_code=product_code
+        product.product_unit=product_unit
+        product.product_price=product_price
+        product.product_image=product_image
+        product.save()
+        # data={'product_name':product_name,'product_unit':product_unit,"status":True}
+        # return render(request, 'product.html', {})
+        response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        product_info=models.Product.objects.filter(id=pk).values_list('product_image','product_name','product_code','product_unit','product_price','status','id')
+        print(product_info)
+        data={'product_image':'/'+product_info[0][0],'product_name':product_info[0][1],'product_code':product_info[0][2],'product_unit':product_info[0][3],'product_price':product_info[0][4],'product_id':product_info[0][6]}
+        print(data)
+        return render(request, 'edit_product.html',{'data':data})
 
 # @csrf_exempt
 # def add_retailer(request):

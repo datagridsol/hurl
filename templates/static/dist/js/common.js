@@ -610,6 +610,58 @@ $(document).ready(function(){
     }
   });
 
+  $("#editproductForm").validate({
+    rules: {
+      product_name: {
+        required: true,
+        
+      },
+      product_price: {
+        required: true,
+        number: true
+      }
+    },
+    messages: {
+      product_name: {
+        required: "Please enter a name",
+      },
+      product_price: {
+        required: "Please enter a price",
+        number: "Please enter valid price"
+      }
+    },
+
+    submitHandler: function() {
+       var productForm=document.getElementById('editproductForm');
+       var formData = new FormData(productForm);
+       var product_id=$('#product_id').val();
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_product/'+product_id,
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+           success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Product updated successfully.').delay(10000)
+              window.location.href="/get_product/";
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
 
    $("#farmerForm").validate({
    

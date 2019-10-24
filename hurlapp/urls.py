@@ -23,6 +23,7 @@ urlpatterns=[
     url(r'^search_city/$',views.search_city,name='search_city'),
     url(r'^check_user_mobile/$',views.check_user_mobile,name='check_user_mobile'),
     url(r'^user_profile/(?P<pk>\d+)$',views.user_profile,name='user_profile'),
+    url(r'^edit_product/(?P<pk>\d+)$',views.edit_product,name='edit_product'),
 
     url(r'^add_product/$',views.add_product,name='add_product'),
     url(r'^get_product/$',views.get_product,name='get_product'),
