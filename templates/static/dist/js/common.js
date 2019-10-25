@@ -332,23 +332,18 @@ $(document).ready(function(){
         required: true,
         minlength: 12,
         maxlength: 12,
-        aadhar_no: {
-          required: true,
-          minlength: 12,
-          maxlength: 12,
-          remote: {
-            url: "/check_aadhar_card/",
-            type: "post",
-            data: {
-              aadhar_no: function() {
-                return $( "#aadhar_no" ).val();
-              },
-              user_id: function() {
-                return $( "#user_id_pk" ).val();
-              }
+        remote: {
+          url: "/check_aadhar_card/",
+          type: "post",
+          data: {
+            aadhar_no: function() {
+              return $( "#aadhar_no" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
             }
           }
-        },
+        }
       },
       state: {
         required: true,
