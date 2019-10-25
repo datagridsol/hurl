@@ -143,15 +143,38 @@
                     </div>
                   </div>
                   <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Gst Number</label>
+                        <input type="text" class="form-control" name="gst_number" id="gst_number" placeholder="Gst Number" value="{{data.gst_number}}">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Fertilizer Licence</label>
+                        <input type="text" class="form-control" name="fertilizer_licence" id="fertilizer_licence" placeholder="Fertilizer Licence" value="{{data.fertilizer_licence}}">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label>Address</label>
                         <textarea class="form-control" name="address" id="address" rows="3" placeholder="Address ...">{{data.address}}</textarea>
                       </div>
                     </div>
-                    
-                    
+                    </div>
+                    <div class="row" id="show_retailer_wholersaler">
+                  <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Fms Id</label>
+                        <input type="text" class="form-control" name="fms_id" id="fms_id" placeholder="Fms Id" value="{{data.fms_id}}">
+                      </div>
+                    </div>
                   </div>
+
+                  
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
@@ -218,6 +241,35 @@
                  
                     
                   </div>
+
+                   <div class="row"  id="show_retailer_wholersaler">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Gst Photo</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="gst_photo" id="gst_photo">
+                          <label class="custom-file-label" for="gst_photo">Choose file</label>
+                        </div>
+                        <div class="input-group-append">
+                              <span><img src={{data.gst_photo}} width="50" height="50"></span>
+                           </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Fertilizer Licence</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="fertilizer_photo" id="fertilizer_photo">
+                          <label class="custom-file-label" for="fertilizer_photo">Choose file</label>
+                        </div>
+                         <div class="input-group-append">
+                              <span><img src={{data.fertilizer_photo}} width="50" height="50"></span>
+                           </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                   
 

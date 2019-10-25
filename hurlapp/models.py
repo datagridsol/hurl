@@ -14,14 +14,17 @@ class Language(models.Model):
     status = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
-    # class Meta:
-    #     db_table='tbl_product'
+    def __str__(self):
+        return self.lang_name
+
 
 class State(models.Model):
     state_name = models.CharField(max_length = 255)
     status = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return self.state_name
 
 class District(models.Model):
     state_id=models.ForeignKey(State,on_delete=models.CASCADE)
@@ -30,21 +33,43 @@ class District(models.Model):
     status = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return self.district_name
 
 class City(models.Model):
     city_name = models.CharField(max_length = 255)
     status = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return self.city_name
 
 # def get_image_filename(instance,filename):
 #     user_id = 3
 #     return 'media/'+'user_photo/'+str(user_id)+
 
+class ProductUnit(models.Model):
+    unit_name = models.CharField(max_length = 255)
+    status = models.IntegerField(default=1)
+    created_at = models.DateTimeField(default=datetime.datetime.now())
+    updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return self.unit_name
+
+class UserLinkage(models.Model):
+    retailer_user_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='to_user_retailer')
+    wholesaler_user_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='to_user_wholsaler')
+    created_at = models.DateTimeField(default=datetime.datetime.now())
+    updated_at = models.DateTimeField(default=datetime.datetime.now())
+    status = models.IntegerField(default=1)
+    def __str__(self):
+        return str(self.retailer_user_id)
+
 def get_image_filename(instance,filename):
     user_id=instance.user.id
     print("userr_id",user_id)
     return 'media/'+str(user_id)+'/'+str(filename)
+
 
 class UserProfile(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE)
@@ -64,15 +89,22 @@ class UserProfile(models.Model):
     vote_id=models.ImageField(upload_to=get_image_filename,blank=True)
     soil_card=models.ImageField(upload_to=get_image_filename,blank=True)
     fertilizer_photo=models.ImageField(upload_to=get_image_filename,blank=True)
+    gst_photo=models.ImageField(upload_to=get_image_filename,blank=True)
     land_area=models.CharField(max_length=255,null=True, blank=True)
     otp=models.CharField(max_length=10,null=True, blank=True)
     fcm_id=models.TextField(null=True, blank=True)
+    fms_id=models.CharField(max_length=255,null=True, blank=True)
+    gst_number=models.CharField(max_length=255,null=True, blank=True)
+    fertilizer_licence=models.CharField(max_length=255,null=True, blank=True)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.user_type)
 
 class Product(models.Model):
     product_name = models.CharField(max_length = 255)
     product_code = models.CharField(max_length = 100)
+    product_unit_name = models.CharField(max_length = 255)
     product_unit = models.CharField(max_length = 10)
     product_price = models.FloatField(null=True, blank=True)
     product_image = models.ImageField(upload_to='media',blank=True)
@@ -80,6 +112,8 @@ class Product(models.Model):
     status = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return self.product_name
     # class Meta:
     #     db_table='tbl_product'
 
@@ -90,6 +124,8 @@ class Order(models.Model):
     status = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.id)
 
     # class Meta:
     #     db_table='tbl_order'
@@ -108,6 +144,8 @@ class ManageContent(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     feature_image=models.ImageField(upload_to='media',blank=True)
+    def __str__(self):
+        return str(self.id)
 
 
 class Notification(models.Model):
@@ -125,6 +163,8 @@ class Notification(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     status = models.IntegerField(default=1)
+    def __str__(self):
+        return str(self.id)
 
 class Support(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -132,6 +172,8 @@ class Support(models.Model):
     query=models.CharField(max_length=255)
     created_at =models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.id)
 
 class SupportReply(models.Model):
     support_id=models.ForeignKey(Support,on_delete=models.CASCADE)
@@ -140,6 +182,8 @@ class SupportReply(models.Model):
     query=models.CharField(max_length=255)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.support_id)
 
 
 class Recharge(models.Model):
@@ -152,6 +196,8 @@ class Recharge(models.Model):
     transation_response=models.TextField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.id)
 
 class MobileLang(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -160,6 +206,8 @@ class MobileLang(models.Model):
     lang_lab=models.TextField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.user)
 
 class Scratch(models.Model):
     user_id_farmer_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='to_user_auth')
@@ -168,6 +216,8 @@ class Scratch(models.Model):
     amount = models.FloatField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.id)
 
 
 class OrderProductsDetail(models.Model):
@@ -178,6 +228,8 @@ class OrderProductsDetail(models.Model):
     product_total_price=models.FloatField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.order)
 
 class LoyaltyPoints(models.Model):
     loyalty_type= models.CharField(max_length=255)
@@ -186,6 +238,9 @@ class LoyaltyPoints(models.Model):
     status = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.order)
+
 
 
 class UserLoyaltyPoints(models.Model):
@@ -200,9 +255,6 @@ class UserLoyaltyPoints(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     status = models.IntegerField(default=1)
+    def __str__(self):
+        return str(self.order)
 
-
-
-# class Hotel(models.Model): 
-#     name = models.CharField(max_length=50) 
-#     hotel_Main_Img = models.ImageField(upload_to='media/') 
