@@ -21,7 +21,7 @@
           </div>
         </div><!-- /.container-fluid -->
       </section>
-  
+      {% csrf_token %}
       <!-- Main content -->
       <section class="content">
         <div class="row">
@@ -46,6 +46,7 @@
                     <th class="input-filter">Quantity</th>
                     <th class="input-filter">Price</th>
                     <th class="select-filter">Status</th>
+                    <th>Approval</th>
                     <th>Action</th>                  
                   </tr>
                   </thead>
@@ -58,6 +59,7 @@
                           <th class="input-filter">Quantity</th>
                           <th class="input-filter">Price</th>
                           <th class="select-filter">Status</th>
+                          <th>Approval</th>
                           <th>Action</th>   
                       </tr>
                   </tfoot>
@@ -133,6 +135,78 @@
                   } );
               }
         });
+
+
+    $(document).on( 'click', '.editBut .disapprove', function () {
+      var $this=$(this);
+      var product_id=$this.data('product-id');
+      var status='Active';
+      var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+      var result=confirm("Are you sure, You want to product approve?");
+      var btn = $this;
+      $(btn).buttonLoader('start');
+      if (result == true) { 
+        $.ajax({
+          'method':'POST',
+          'url':'/product_status/',
+          'data':{"status":status,"product_id":product_id,"csrftoken":csrftoken},
+           success: function(response){
+            $(btn).buttonLoader('stop')
+            if(response.status=='success')
+            {
+              toastr.success(response.msg).delay(10000)
+              $this.parent('.editBut').parent('td').prev('td').html('Deactive');
+              $this.parent('.editBut').html("<button class='btn btn-block btn-success btn-sm approve' data-product-id="+product_id+">Approve</button>");
+            }
+            else
+            {
+             toastr.success(response.msg).delay(10000)
+            }
+
+        },
+          error: function(xhr,status,errorThrown){
+            toastr.error(xhr.responseText)
+            $(btn).buttonLoader('stop')
+          },
+        });
+      }
+
+   });
+
+   $(document).on( 'click', '.editBut .approve', function () {
+      var $this=$(this);
+      var product_id=$this.data('product-id');
+      var status='Deactive';
+      var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+      var result=confirm("Are you sure, You want to product Disapprove?");
+      var btn = $this;
+      $(btn).buttonLoader('start');
+      if (result == true) { 
+        $.ajax({
+          'method':'POST',
+          'url':'/product_status/',
+          'data':{"status":status,"product_id":product_id,"csrftoken":csrftoken},
+           success: function(response){
+            $(btn).buttonLoader('stop')
+            if(response.status=='success')
+            {
+              toastr.success(response.msg).delay(10000)
+              $this.parent('.editBut').parent('td').prev('td').html('Active');
+              $this.closest('.editBut').html("<button class='btn btn-block btn-danger btn-sm disapprove' data-product-id="+product_id+">Disapprove</button>");
+            }
+            else
+            {
+             toastr.success(response.msg).delay(10000)
+            }
+
+        },
+          error: function(xhr,status,errorThrown){
+            toastr.error(xhr.responseText)
+            $(btn).buttonLoader('stop')
+          },
+        });        
+      }
+   });
   
   });
   

@@ -705,10 +705,12 @@ def get_product(request):
         status=i[5]
         if status:
             status="Active"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-product-id="+str(product_id)+">Disapprove</button></div>"
         else:
             status="Deactive"
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-product-id="+str(product_id)+">Approve</button></div>"
         count+=1
-        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,btn,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
 #     return render(request, 'get_product.html', {'data':(data)})
     return render(request, 'get_product.html', {'data':(data)})
 
@@ -2145,11 +2147,38 @@ def success(request):
 def check_user_mobile(request):
     
     mobile_number=request.POST.get('mobile_number')
+    user_id=request.POST.get('user_id')
     if mobile_number:
-        if User.objects.filter(username=mobile_number).exists():
-            res="false"
+        if user_id:
+            if User.objects.filter(~Q(id = user_id),username=mobile_number).exists():
+                res="false"
+            else:
+                res="true"
         else:
-            res="true"
+            if User.objects.filter(username=mobile_number).exists():
+                res="false"
+            else:
+                res="true"
+    else:
+        res="false"
+    return HttpResponse(res)
+
+@csrf_exempt
+def check_aadhar_card(request):
+    
+    aadhar_no=request.POST.get('aadhar_no')
+    user_id=request.POST.get('user_id')
+    if aadhar_no:
+        if user_id:
+            if UserProfile.objects.filter(~Q(user = user_id),aadhar_no=aadhar_no).exists():
+                res="false"
+            else:
+                res="true"
+        else:
+            if UserProfile.objects.filter(aadhar_no=aadhar_no).exists():
+                res="false"
+            else:
+                res="true"
     else:
         res="false"
     return HttpResponse(res)
@@ -2199,3 +2228,20 @@ def user_profile(request, pk):
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"aadhar_card":aadhar_card,"soil_card":soil_card,"land_area":land_area}
             
         return render(request, 'user_profile.html',{'data':data})
+
+@csrf_exempt
+def product_status(request):
+    status=request.POST.get('status')
+    product_id=request.POST.get('product_id')
+    if status=="Deactive":
+        user_details=Product.objects.get(id=product_id)
+        user_details.status=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Product Approved Successfuly'})
+        return response
+    else:
+        user_details=Product.objects.get(id=product_id)
+        user_details.status=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Product Disapproved Successfuly'})
+        return response
