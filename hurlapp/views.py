@@ -715,22 +715,25 @@ def get_product(request):
     data=[]
     count=0
     product_image="/media/default/placeholder.png"
-    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','status','id')
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_unit_name','product_price','status','id')
     for i in product_info:
         if i[0]!= "":
             product_image='/'+i[0]
         product_name=i[1]
         product_code=i[2]
         product_unit=i[3]
-        product_price=i[4]
-        product_id=i[6]
-        status=i[5]
+        product_unit_name=i[4]
+        product_price=i[5]
+        status=i[6]
+        product_id=i[7]
         if status:
             status="Active"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-product-id="+str(product_id)+">Disapprove</button></div>"
         else:
             status="Deactive"
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-product-id="+str(product_id)+">Approve</button></div>"
         count+=1
-        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,btn,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
 #     return render(request, 'get_product.html', {'data':(data)})
     return render(request, 'get_product.html', {'data':(data)})
 
@@ -744,8 +747,7 @@ def edit_product(request,pk):
         product_name = request.POST.get('product_name')
         product_code = request.POST.get('product_code')
         product_unit = request.POST.get('product_unit')
-        sub_code = request.POST.get('sub_code')
-        product_unit1=product_unit+' '+sub_code
+        product_unit_name = request.POST.get('product_unit_name')
         product_price = request.POST.get('product_price')
         if request.FILES.get('product_image'):
             product_image = request.FILES['product_image']
@@ -754,11 +756,10 @@ def edit_product(request,pk):
         product.product_name=product_name
         product.product_code=product_code
         product.product_unit=product_unit
+        product.product_unit_name=product_unit_name
         product.product_price=product_price
         product.product_image=product_image
         product.save()
-        # data={'product_name':product_name,'product_unit':product_unit,"status":True}
-        # return render(request, 'product.html', {})
         response=JsonResponse({'status':'success'})
         return response
 
@@ -1390,16 +1391,21 @@ def add_product(request):
         product_name = request.POST.get('product_name')
         product_code = request.POST.get('product_code')
         product_unit = request.POST.get('product_unit')
-        sub_code = request.POST.get('sub_code')
-        product_unit1=product_unit+' '+sub_code
+        product_unit_name = request.POST.get('product_unit_name')
+        print("product_unit_name",product_unit_name)
+        if product_unit_name:
+            if models.ProductUnit.objects.filter(unit_name=product_unit_name).exists():
+                product_unit_name=product_unit_name
+            else:
+                new_product_unit = models.ProductUnit.objects.create(unit_name =product_unit_name,status=1)
+                new_product_unit.save()
+                product_unit_name=new_product_unit.unit_name
         product_price = request.POST.get('product_price')
         if request.FILES.get('product_image'):
             product_image = request.FILES['product_image']
 
-        product = models.Product.objects.create(product_name=product_name,product_code=product_code,product_unit=product_unit,product_price=product_price,product_image=product_image)
+        product = models.Product.objects.create(product_name=product_name,product_code=product_code,product_unit=product_unit,product_unit_name=product_unit_name,product_price=product_price,product_image=product_image)
         product.save()
-        # data={'product_name':product_name,'product_unit':product_unit,"status":True}
-        # return render(request, 'product.html', {})
         response=JsonResponse({'status':'success'})
         return response
 
@@ -1931,11 +1937,38 @@ def success(request):
 def check_user_mobile(request):
     
     mobile_number=request.POST.get('mobile_number')
+    user_id=request.POST.get('user_id')
     if mobile_number:
-        if User.objects.filter(username=mobile_number).exists():
-            res="false"
+        if user_id:
+            if User.objects.filter(~Q(id = user_id),username=mobile_number).exists():
+                res="false"
+            else:
+                res="true"
         else:
-            res="true"
+            if User.objects.filter(username=mobile_number).exists():
+                res="false"
+            else:
+                res="true"
+    else:
+        res="false"
+    return HttpResponse(res)
+
+@csrf_exempt
+def check_aadhar_card(request):
+    
+    aadhar_no=request.POST.get('aadhar_no')
+    user_id=request.POST.get('user_id')
+    if aadhar_no:
+        if user_id:
+            if UserProfile.objects.filter(~Q(user = user_id),aadhar_no=aadhar_no).exists():
+                res="false"
+            else:
+                res="true"
+        else:
+            if UserProfile.objects.filter(aadhar_no=aadhar_no).exists():
+                res="false"
+            else:
+                res="true"
     else:
         res="false"
     return HttpResponse(res)
@@ -1985,3 +2018,20 @@ def user_profile(request, pk):
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"pan_card":pan_card,"vote_id":vote_id,"aadhar_card":aadhar_card,"soil_card":soil_card,"land_area":land_area}
             
         return render(request, 'user_profile.html',{'data':data})
+
+@csrf_exempt
+def product_status(request):
+    status=request.POST.get('status')
+    product_id=request.POST.get('product_id')
+    if status=="Deactive":
+        user_details=Product.objects.get(id=product_id)
+        user_details.status=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Product Approved Successfuly'})
+        return response
+    else:
+        user_details=Product.objects.get(id=product_id)
+        user_details.status=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Product Disapproved Successfuly'})
+        return response

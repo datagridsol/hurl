@@ -104,7 +104,7 @@ class UserProfile(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length = 255)
     product_code = models.CharField(max_length = 100)
-    product_unit_name = models.CharField(max_length = 255)
+    product_unit_name = models.CharField(max_length = 255,blank=True)
     product_unit = models.CharField(max_length = 10)
     product_price = models.FloatField(null=True, blank=True)
     product_image = models.ImageField(upload_to='media',blank=True)
@@ -113,7 +113,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     def __str__(self):
-        return self.product_name
+        return str(self.id)
+
     # class Meta:
     #     db_table='tbl_product'
 
@@ -239,7 +240,7 @@ class LoyaltyPoints(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     def __str__(self):
-        return str(self.order)
+        return str(self.loyalty_type)
 
 
 

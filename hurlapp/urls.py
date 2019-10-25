@@ -24,6 +24,7 @@ urlpatterns=[
     url(r'^check_user_mobile/$',views.check_user_mobile,name='check_user_mobile'),
     url(r'^user_profile/(?P<pk>\d+)$',views.user_profile,name='user_profile'),
     url(r'^edit_product/(?P<pk>\d+)$',views.edit_product,name='edit_product'),
+    url(r'^check_aadhar_card/$',views.check_aadhar_card,name='check_aadhar_card'),
 
     # url(r'^add_state/$',views.add_state,name='add_state'),
     url(r'^add_product/$',views.add_product,name='add_product'),
@@ -31,6 +32,7 @@ urlpatterns=[
     url(r'^add_order/$',views.addOrder,name='add_order'),
     url(r'^user_login/$',views.user_login,name='user_login'),
     url(r'^user_status/$',views.user_status,name='user_status'),
+    url(r'^product_status/$',views.product_status,name='product_status'),
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
     url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),
@@ -42,7 +44,11 @@ urlpatterns=[
     url(r'^get_city_list/$',mobilefunctions.get_city_list,name='get_city_list'),
     url(r'^user_logout/$',views.user_logout,name='user_logout'),
     url(r'^manage_contain/$',mobilefunctions.all_manage_contain,name='all_manage_contain'),
-    url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),    
+    url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),
+    url(r'^check_phone_no/$',mobilefunctions.get_username,name='check_phone_no'),
+    url(r'^get_farmer_list/$',mobilefunctions.get_farmer_list,name='get_farmer_list'),
+    url(r'^add_order_list/$',mobilefunctions.add_order_list,name='add_order_list'),
+    
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
 
 ]

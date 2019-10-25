@@ -59,7 +59,7 @@ def generateOTP() :
 @csrf_exempt
 def get_wholesaler(request):
     whole_data=[]
-    wholesaler_data=models.UserProfile.objects.filter(user_type=3).values_list('user','user__first_naime','user__last_name','parent_id')
+    wholesaler_data=models.UserProfile.objects.filter(user_type=3).values_list('user','user__first_name','user__last_name','parent_id')
     for i in wholesaler_data:
         full_name=i[1]+' '+i[2]
         case1 = {'user_id': i[0], 'name': full_name}
@@ -272,16 +272,82 @@ def all_manage_contain(request):
 def get_product_mobile(request):
     data=[]
     count=0
-    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_unit_name','product_price','id','status')
     for i in product_info:
         product_image=i[0]
         product_name=i[1]
         product_code=i[2]
         product_unit=i[3]
-        product_price=i[4]
-        product_id=i[5]
+        product_unit_name=i[4]
+        product_price=i[5]
+        product_id=i[6]
+        status=i[7]
         count+=1
-        case1 = {'product_id':product_id, 'product_name': product_name,'product_code':product_code,'product_unit':product_unit,'product_unit':product_unit,'product_price':product_price}
+        case1 = {'product_id':product_id, 'product_name': product_name,'product_code':product_code,'product_unit':product_unit,'product_unit_name':product_unit_name,'product_price':product_price,'status':status}
         data.append(case1)
     response=JsonResponse({'status':'success','data':data})
+    return response
+
+@csrf_exempt
+def get_username(request):
+    username=request.POST.get('mobile_number')
+    if User.objects.filter(username=username).exists():
+        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        return response
+    else:
+        response=JsonResponse({'status':'success'})
+        return response
+
+@csrf_exempt
+def get_farmer_list(request):
+    farmer_data=[]
+    username=request.POST.get('mobile_number')
+    farmer_list=models.UserProfile.objects.filter(user_type=3,user__username=username).values_list('id', 'user__first_name','user__last_name')
+    for i in farmer_list:
+        first_name=i[1]
+        last_name=i[2]
+        full_name=first_name+' '+ last_name
+        case2 = {'id': i[0], 'name': full_name}
+        farmer_data.append(case2)
+    response=JsonResponse({'status':'success','data':farmer_data})
+    return response
+    
+
+@csrf_exempt
+def add_order_list(request):
+    # if request.user.groups.filter(name="admin").exists():
+    #     print("in")
+    # else:
+    #     print ("out")
+    if request.method == 'POST':
+        data={}
+        product_list = request.POST.get('product_list')
+        total_price=request.POST.get('total_price') 
+        user_id_farmer_id = request.POST.get('farmer_id')
+        user_id_retailer_id = request.POST.get('retailer_id')
+        product_quantity=request.POST.get('product_quantity')
+        product_price=request.POST.get('product_price')
+        product_total_price=request.POST.get('product_total_price')
+        user_id_farmer_id=User.objects.get(id=user_id_farmer_id)
+        user_id_retailer_id=User.objects.get(id=user_id_retailer_id)
+
+        order_data= models.Order.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,total_price=total_price)
+        order_data.save()
+        new_order_id = order_data.id
+
+        product_list = [{"id":"1","name":"Ferti"},{"id":"2","name":"Ammonium Sulphate"}] #[{"id":"1","name":"Ferti"},{"name":"Ammonium Sulphate","id":"2"}]
+        for product in product_list:
+            product_id=product['id']
+            product_name=product['name']
+            product_id=models.Product.objects.get(id=product_id)
+            new_order_id=models.Order.objects.get(id=new_order_id)
+            product_order_data= models.OrderProductsDetail.objects.create(product=product_id,order=new_order_id,product_quantity=product_quantity,product_price=product_price,product_total_price=product_total_price)
+        product_order_data.save()
+        loyalty_data= models.LoyaltyPoints.objects.filter(loyalty_type='Order').values_list('id', 'loyalty_point')
+        for i in loyalty_data:
+            loyalty_point=i[1]
+        user_loyalty_data= models.UserLoyaltyPoints.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,from_user_id=user_id_retailer_id,order_id=new_order_id,loyalty_point=loyalty_point)
+        user_loyalty_data.save()
+        data={'order_id':new_order_id,"status":True}
+    response=JsonResponse({'status':'success','msg':'Order Placed Successfully','data':data})
     return response
