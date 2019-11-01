@@ -25,6 +25,7 @@ urlpatterns=[
     url(r'^user_profile/(?P<pk>\d+)$',views.user_profile,name='user_profile'),
     url(r'^edit_product/(?P<pk>\d+)$',views.edit_product,name='edit_product'),
     url(r'^check_aadhar_card/$',views.check_aadhar_card,name='check_aadhar_card'),
+    url(r'^download_sample/$',views.download_pdf,name='download_sample'),
 
     # url(r'^add_state/$',views.add_state,name='add_state'),
     url(r'^add_product/$',views.add_product,name='add_product'),
@@ -48,6 +49,8 @@ urlpatterns=[
     url(r'^check_phone_no/$',mobilefunctions.get_username,name='check_phone_no'),
     url(r'^get_farmer_list/$',mobilefunctions.get_farmer_list,name='get_farmer_list'),
     url(r'^add_order_list/$',mobilefunctions.add_order_list,name='add_order_list'),
+    url(r'^generateOTP/$',mobilefunctions.generateOTP,name='generateOTP'),
+    
     
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
 

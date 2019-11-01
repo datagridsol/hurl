@@ -16,6 +16,7 @@ from hurlapp.models import UserProfile,Product
 from hurlapp import forms
 from hurl import settings
 import os
+# import xlsxwriter 
 
 def index(request):
     return render(request,'index.html')
@@ -2035,3 +2036,50 @@ def product_status(request):
         user_details.save()
         response=JsonResponse({'status':'success','msg':'Product Disapproved Successfuly'})
         return response
+
+@csrf_exempt
+def download_sample(request):
+    # import xlsxwriter module 
+    import xlsxwriter 
+    workbook = xlsxwriter.Workbook('add_wholesaler.xlsx')
+
+      
+    # By default worksheet names in the spreadsheet will be  
+    # Sheet1, Sheet2 etc., but we can also specify a name. 
+    worksheet = workbook.add_worksheet("My sheet") 
+      
+    worksheet1 = workbook.add_worksheet()        # Defaults to Sheet1.
+    worksheet3 = workbook.add_worksheet() 
+      
+    # Start from the first cell. Rows and 
+    # columns are zero indexed. 
+    expenses = (
+    ['Rent', 1000],
+    ['Gas',   100],
+    ['Food',  300],
+    ['Gym',    50],
+    )
+
+    # Start from the first cell. Rows and columns are zero indexed.
+    row = 0
+    col = 0
+
+    # Iterate over the data and write it out row by row.
+    for item, cost in (expenses):
+        worksheet.write(row, col,     item)
+        worksheet.write(row, col + 1, cost)
+        row += 1
+
+    # Write a total using a formula.
+    worksheet.write(row, 0, 'Total')
+    worksheet.write(row, 1, '=SUM(B1:B4)')
+
+    workbook.close()
+
+from wsgiref.util import FileWrapper
+@csrf_exempt
+def download_pdf(request):
+    filename = 'add_wholesaler.xlsx'
+    content = FileWrapper(filename)
+    response = HttpResponse(content, content_type='application/xlsx')
+    return response

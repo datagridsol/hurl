@@ -18,7 +18,7 @@ def login(request):
 		mobile_number = request.POST.get('mobile_number')
 		if User.objects.filter(username=mobile_number).exists():
 			userprofile=models.UserProfile.objects.get(user__username=mobile_number)
-			genotp=generateOTP()
+			genotp=generateOTP(mobile_number)
 			userprofile.otp = genotp
 			userprofile.save()
 			data={"mobile_number":mobile_number,"opt":genotp}
@@ -48,13 +48,23 @@ def check_login(request):
 			response=JsonResponse({'status':'error','msg':'Invalid Otp'})
 			return response
 
-# function to generate OTP 
-def generateOTP() : 
+# function to generate OTP
+@csrf_exempt 
+def generateOTP(mobile_number) :
+    import requests
+    
     digits = "0123456789"
     OTP = "" 
     for i in range(4) : 
-        OTP += digits[math.floor(random.random() * 10)] 
+        OTP += digits[math.floor(random.random() * 10)]
+    Phone_number=mobile_number
+    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+    data = {"user":"datagrid","password":"Dat$Fagt&","sender":"DATAGR","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Otp For Login"+" "+OTP}
+    requests.packages.urllib3.disable_warnings() 
+    r = requests.post(sms_url,data = data)
+    response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
     return OTP 
+    # return OTP 
 
 @csrf_exempt
 def get_wholesaler(request):
@@ -335,7 +345,7 @@ def add_order_list(request):
         order_data.save()
         new_order_id = order_data.id
 
-        product_list = [{"id":"1","name":"Ferti"},{"id":"2","name":"Ammonium Sulphate"}] #[{"id":"1","name":"Ferti"},{"name":"Ammonium Sulphate","id":"2"}]
+        #product_list = [{"id":"1","name":"Ferti"},{"id":"2","name":"Ammonium Sulphate"}] #[{"id":"1","name":"Ferti"},{"name":"Ammonium Sulphate","id":"2"}]
         for product in product_list:
             product_id=product['id']
             product_name=product['name']
