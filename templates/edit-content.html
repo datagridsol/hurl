@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block body_block %}
+<style type="text/css">
+    #contentForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    
+  </style>
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Edit Content</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          
+          <!-- right column -->
+          <div class="col-md-8" style="margin: 0 auto;">
+            <!-- general form elements disabled -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Edit Content</h3>
+              </div>
+              <!-- /.card-header -->
+              <form role="form" method="post" id="editcontentForm" enctype="multipart/form-data">
+                <input type="hidden" id="content_id" name="content_id" value="{{data.content_id}}">
+                <input type="hidden" name="district_selct" id="district_selct" value="{{data.district}}">
+                <input type="hidden" name="old_feature_image" id="old_feature_image" value="{{data.feature_image}}">
+              <div class="card-body">
+                  {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+                {% for language in data.languages %}
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label for="user_type">Title {{language.name}} <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="title_{{language.code}}" id="title_{{language.code}}" placeholder="Title {{language.name}}"
+                        {% if language.code == 'eng' %} value="{{data.title_eng}}" {% else %} value="{{data.title_hnd}}" {% endif %}>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="form-group">
+                      <label for="user_type">Date & Time <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="datetime" id="reservationtime" placeholder="Date & Time" value="{{data.date|date:'d/m/Y H:i'}}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>State</label>
+                      <select class="form-control" id="state" name="state">
+                        <option  value="" selected="selected">---select---</option>
+                        {% for state_data in data.state_data %}
+                         <option value="{{state_data.id}}" {% if state_data.id == data.state %} selected="selected" {% endif %}>{{state_data.name}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>District</label>
+                      <select class="form-control" id="district" name="district">
+                        <option  value="" selected="selected">---select---</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>For Users <span class="text-danger">*</span></label>
+                      </div>
+                    </div>
+                  <div class="col-sm-3">
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" type="checkbox" name="user_type[]" id="wholesaler" value="4" {% if '4' in data.group_id %} checked {% endif %}>
+                        <label for="wholesaler" class="custom-control-label">Wholesaler</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" type="checkbox" name="user_type[]" id="retailer" value="2" {% if '2' in data.group_id %} checked {% endif %}>
+                        <label for="retailer" class="custom-control-label">Retailer</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" type="checkbox" name="user_type[]" id="farmer" value="3" {% if '3' in data.group_id %} checked {% endif %}>
+                        <label for="farmer" class="custom-control-label">Farmer</label>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                {% for language in data.languages %}
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="content">News Content {{language.name}} <span class="text-danger">*</span></label>
+                        <textarea class="textarea ckeditoredit" name="content_{{language.code}}" id="content" placeholder="Place some text here"
+                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{% if language.code == 'eng' %} {{data.contains_eng}} {% else %} {{data.contains_hnd}} {% endif %}</textarea>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="form-group">
+                      <label for="customFile">Image</label>
+                      <div class="input-group">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="feature_image" id="feature_image">
+                          <label class="custom-file-label" for="feature_image">Choose file</label>
+                        </div>
+                        <div class="input-group-append">
+                          <span><img src={{data.feature_image}} width="50" height="50"></span>
+                       </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </form>
+            <!-- /.card -->
+            
+          </div>
+          <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}

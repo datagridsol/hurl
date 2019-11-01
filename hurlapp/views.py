@@ -12,9 +12,12 @@ import json
 from hurlapp import models
 from django.db.models import Q
 from hurlapp.forms import ProfileForm
-from hurlapp.models import UserProfile,Product
+from hurlapp.models import UserProfile,Product,ManageContent
 from hurlapp import forms
 from hurl import settings
+from django.utils.timezone import get_current_timezone
+from datetime import datetime
+import dateutil.parser
 import os
 
 def index(request):
@@ -613,9 +616,9 @@ def user_status(request):
 
 def get_langauge():
     lang_data=[]
-    lang_type=models.Language.objects.all().values_list('id', 'lang_name')
+    lang_type=models.Language.objects.all().values_list('id', 'lang_name', 'lang_code')
     for i in lang_type:
-        case1 = {'id': i[0], 'name': i[1],}
+        case1 = {'id': i[0], 'name': i[1],'code':i[2]}
         lang_data.append(case1)
     return lang_data
 
@@ -733,7 +736,7 @@ def get_product(request):
             status="Deactive"
             btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-product-id="+str(product_id)+">Approve</button></div>"
         count+=1
-        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit),str(product_price),status,btn,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit_name),str(product_price),status,btn,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
 #     return render(request, 'get_product.html', {'data':(data)})
     return render(request, 'get_product.html', {'data':(data)})
 
@@ -746,7 +749,7 @@ def edit_product(request,pk):
         product_image=''
         product_name = request.POST.get('product_name')
         product_code = request.POST.get('product_code')
-        product_unit = request.POST.get('product_unit')
+        product_unit = '0'
         product_unit_name = request.POST.get('product_unit_name')
         product_price = request.POST.get('product_price')
         if request.FILES.get('product_image'):
@@ -764,9 +767,9 @@ def edit_product(request,pk):
         return response
 
     else:
-        product_info=models.Product.objects.filter(id=pk).values_list('product_image','product_name','product_code','product_unit','product_price','status','id')
+        product_info=models.Product.objects.filter(id=pk).values_list('product_image','product_name','product_code','product_unit','product_price','status','id','product_unit_name')
         print(product_info)
-        data={'product_image':'/'+product_info[0][0],'product_name':product_info[0][1],'product_code':product_info[0][2],'product_unit':product_info[0][3],'product_price':product_info[0][4],'product_id':product_info[0][6]}
+        data={'product_image':'/'+product_info[0][0],'product_name':product_info[0][1],'product_code':product_info[0][2],'product_unit':product_info[0][3],'product_price':product_info[0][4],'product_id':product_info[0][6],'product_unit_name':product_info[0][7]}
         print(data)
         return render(request, 'edit_product.html',{'data':data})
 
@@ -1318,9 +1321,9 @@ def user_status(request):
 
 def get_langauge():
     lang_data=[]
-    lang_type=models.Language.objects.all().values_list('id', 'lang_name')
+    lang_type=models.Language.objects.all().values_list('id', 'lang_name', 'lang_code')
     for i in lang_type:
-        case1 = {'id': i[0], 'name': i[1],}
+        case1 = {'id': i[0], 'name': i[1],'code':i[2]}
         lang_data.append(case1)
     return lang_data
 
@@ -1379,7 +1382,22 @@ def search_city(request):
 
     return response
 
+def product_unit(request):
+    print("Call")
+    #print(request.GET)
+    unit_name=request.GET.get('query')
+    #print(city_name)
+    city_list=models.ProductUnit.objects.filter(unit_name__startswith=unit_name).values_list('unit_name')
+    
+    results = []
+    for i in city_list:
+        results.append(i[0])
+    
+    mimetype = 'application/json'
+    response=HttpResponse(json.dumps(results),mimetype)
+    print(response)
 
+    return response
 
 
 @csrf_exempt
@@ -1390,7 +1408,7 @@ def add_product(request):
         product_image=''
         product_name = request.POST.get('product_name')
         product_code = request.POST.get('product_code')
-        product_unit = request.POST.get('product_unit')
+        product_unit = '0'
         product_unit_name = request.POST.get('product_unit_name')
         print("product_unit_name",product_unit_name)
         if product_unit_name:
@@ -1843,26 +1861,26 @@ def get_order(request):
     state=""
     count=0
     row=[]
-    user_info=models.UserProfile.objects.filter(user_type=3).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active')
+    user_info=models.Order.objects.all().values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_retailer_id__first_name','user_id_retailer_id__last_name','created_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','total_price','id')
     for i in user_info:
-        user_type=i[0]
-        district=i[1]
-        state=i[2]
-        user_id=i[3]
-        first_name=i[4]
-        last_name=i[5]
+        first_name=i[0]
+        last_name=i[1]
         full_name=str(first_name)+" "+str(last_name)
-        username=i[6]
-        status=i[7]
-        if status:
-            status="Active"
-        else:
-            status="Deactive"
 
+        first_name_retailer=i[2]
+        last_name_retailer=i[3]
+        full_name_retailer=str(first_name_retailer)+" "+str(last_name_retailer)
+
+        created_at=i[4]
+        formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+        state=i[5]
+        district=i[6]
+        amount=i[7]
+        id=i[8]
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"","","",user_id])
-    return render(request, 'manage_farmer.html', {'data':(data)})
+        data.append([count,str(full_name),str(full_name_retailer),str(formatedDate),str(state),str(district),str(amount),"<a class='btn' href='/order_details/"+str(id)+"'><i class='fas fa-eye'></i> View</a>"])
+    return render(request, 'manage_orders.html', {'data':(data)})
 
 @csrf_exempt
 def addOrder(request):
@@ -1888,6 +1906,49 @@ def addOrder(request):
     else:
         #return render(request, 'login.html', {})
         return render(request, 'order.html', {})
+
+
+@csrf_exempt
+def order_details(request,pk):
+    data_prod=[]
+    count=0
+    order_info=models.Order.objects.filter(id=pk).values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_retailer_id__first_name','user_id_retailer_id__last_name','created_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','total_price','id','user_id_retailer_id__userprofile__address','user_id_farmer_id__username')
+
+    first_name=order_info[0][0]
+    last_name=order_info[0][1]
+    full_name=str(first_name)+" "+str(last_name)
+
+    first_name_retailer=order_info[0][2]
+    last_name_retailer=order_info[0][3]
+    full_name_retailer=str(first_name_retailer)+" "+str(last_name_retailer)
+
+    created_at=order_info[0][4]
+    formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+    state=order_info[0][5]
+    district=order_info[0][6]
+    amount=order_info[0][7]
+    id=order_info[0][8]
+    address=order_info[0][9]
+    phone=order_info[0][10]
+
+    product_image="/media/default/placeholder.png"
+    order_details=models.OrderProductsDetail.objects.filter(order_id=id).values_list('product_id','product_price','product_quantity','product_total_price','product__product_name','product__product_image','product__product_unit')
+    
+    for i in order_details:
+        product_id=i[0]
+        product_price=i[1]
+        product_quantity=i[2]
+        product_total_price=i[3]
+        product_name=i[4]
+        if i[5]!= "":
+            product_image=i[5]
+        product_unit=i[6]
+        count+=1
+        data_prod.append([count,'<img src="/'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_quantity)+' '+str(product_unit),str(product_price),str(product_total_price)])
+    
+    data={'full_name':full_name,'full_name_retailer':full_name_retailer,'created_at':formatedDate,'state':state,'district':district,'amount':amount,'id':id,'address':address,'phone':phone,'data_prod':data_prod}
+    
+    return render(request, 'order-details.html',{'data':data})
 
 # Create your views here. 
 def hotel_image_view(request): 
@@ -2035,3 +2096,230 @@ def product_status(request):
         user_details.save()
         response=JsonResponse({'status':'success','msg':'Product Disapproved Successfuly'})
         return response
+
+
+@csrf_exempt
+def get_content(request):
+    data=[]
+    count=0
+    feature_image="/media/default/placeholder.png"
+    #product_info=models.ManageContent.objects.all().values_list('title_eng','title_hnd','date','status','feature_image','district_id','state_id','group_id','id')
+    user_info=models.ManageContent.objects.all().values_list('title_eng','title_hnd','date','status','feature_image','district_id','state_id','group_id','id').order_by('-created_at')
+    print(user_info)
+    for i in user_info:
+        if i[4]!= "":
+            feature_image='/'+i[4]
+        title_eng=i[0]
+        title_hnd=i[1]
+        district=i[5]
+        if district != 0:
+            district=models.District.objects.get(id=district)
+        else:
+            district="-"
+        state=i[6]
+        if state != 0:
+            state=models.State.objects.get(id=state)
+        else:
+            state="-"
+        status=i[3]
+        group=i[7]
+        grouTxt=''
+        if(group):
+            Arr=group.split(',')
+            for gid in Arr:
+                grouTxt=str(Group.objects.get(id=gid))+','+str(grouTxt)
+
+        id=i[8]
+        if status:
+            status="Active"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-content-id="+str(id)+">Disapprove</button></div>"
+        else:
+            status="Deactive"
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-content-id="+str(id)+">Approve</button></div>"
+        count+=1
+        data.append([count,'<img src="'+str(feature_image)+'"  width="70" height="50">',str(title_eng),str(title_hnd),str(district),str(state),str(grouTxt[:-1]),status,btn,"<a href='/edit_content/"+str(id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+    return render(request, 'manage_content.html', {'data':(data)})
+
+
+@csrf_exempt
+def add_content(request):
+    lang_data=get_langauge()
+    state_data=get_state()
+    if request.method == 'POST':
+        data={}
+        
+        feature_image=''
+        group_id = ','.join(request.POST.getlist('user_type[]'))
+        title_eng = request.POST.get('title_eng')
+        title_hnd = request.POST.get('title_hnd')
+        date = request.POST.get('datetime')+':00'
+        dt = dateutil.parser.parse(date)
+        print(dt)
+        contains_eng = request.POST.get('content_eng')
+        contains_hnd = request.POST.get('content_hnd')
+        status = '1'
+        district_id = request.POST.get('district')
+        if district_id == '':
+           district_id=0
+        else:
+           district_id=district_id  
+        state_id = request.POST.get('state')
+        if state_id == '':
+           state_id=0
+        else:
+           state_id=state_id
+        user_id_admin_id_id = request.user.id
+
+        if request.FILES.get('feature_image'):
+            feature_image = request.FILES['feature_image']
+        
+
+        Content = models.ManageContent.objects.create(title_eng=title_eng,title_hnd=title_hnd,date=dt,contains_eng=contains_eng,contains_hnd=contains_hnd,feature_image=feature_image,status=status,district_id=district_id,group_id=group_id,state_id=state_id,user_id_admin_id_id=user_id_admin_id_id)
+        Content.save()
+        response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        data={'languages':lang_data,'state_data':state_data}
+        return render(request, 'add-content.html', {'data':data})
+
+@csrf_exempt
+def content_status(request):
+    status=request.POST.get('status')
+    content_id=request.POST.get('content_id')
+    if status=="Deactive":
+        user_details=ManageContent.objects.get(id=content_id)
+        user_details.status=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Content Approved Successfuly'})
+        return response
+    else:
+        user_details=ManageContent.objects.get(id=content_id)
+        user_details.status=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Content Disapproved Successfuly'})
+        return response
+
+
+@csrf_exempt
+def edit_content(request,pk):
+    lang_data=get_langauge()
+    state_data=get_state()
+    content_id=pk
+    if request.method == 'POST':
+        data={}
+        
+        feature_image=''
+        group_id = ','.join(request.POST.getlist('user_type[]'))
+        title_eng = request.POST.get('title_eng')
+        title_hnd = request.POST.get('title_hnd')
+        date = request.POST.get('datetime')+':00'
+        dt = dateutil.parser.parse(date)
+        print(dt)
+        contains_eng = request.POST.get('content_eng')
+        contains_hnd = request.POST.get('content_hnd')
+
+        district_id = request.POST.get('district')
+        if district_id == '':
+           district_id=0
+        else:
+           district_id=district_id  
+        state_id = request.POST.get('state')
+        if state_id == '':
+           state_id=0
+        else:
+           state_id=state_id
+        user_id_admin_id_id = request.user.id
+
+        if request.FILES.get('feature_image'):
+            feature_image = request.FILES['feature_image']
+        
+
+        #Content = models.ManageContent.objects.create(title_eng=title_eng,title_hnd=title_hnd,date=dt,contains_eng=contains_eng,contains_hnd=contains_hnd,feature_image=feature_image,status=status,district_id=district_id,group_id=group_id,state_id=state_id,user_id_admin_id_id=user_id_admin_id_id)
+
+
+        content = ManageContent.objects.get(id=content_id)
+        content.title_eng=title_eng
+        content.title_hnd=title_hnd
+        content.date=dt
+        content.contains_eng=contains_eng
+        content.contains_hnd=contains_hnd
+        content.feature_image=feature_image
+        content.district_id=district_id
+        content.group_id=group_id
+        content.state_id=state_id
+        content.user_id_admin_id_id=user_id_admin_id_id
+
+        content.save()
+        response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        content_info=models.ManageContent.objects.filter(id=content_id).values_list('title_eng','title_hnd','date','feature_image','district_id','state_id','group_id','id','contains_eng','contains_hnd')
+        
+        data={'feature_image':'/'+content_info[0][3],'title_eng':content_info[0][0],'title_hnd':content_info[0][1],'date':content_info[0][2],'district':content_info[0][4],'state':content_info[0][5],'group_id':content_info[0][6],'content_id':content_info[0][7],'languages':lang_data,'state_data':state_data,'contains_eng':content_info[0][8],'contains_hnd':content_info[0][9]}
+        print(data)
+        return render(request, 'edit-content.html',{'data':data})
+
+@csrf_exempt
+def get_support(request):
+    data=[]
+    count=0
+    
+    user_info=models.Support.objects.all().values_list('id','query','subject','created_at','user__first_name','user__last_name','user__groups__name').order_by('-updated_at')
+    print(user_info)
+    for i in user_info:
+        id=i[0]
+        query=i[1]
+        subject=i[2]
+        created_at=i[3]
+        formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+        first_name=i[4]
+        last_name=i[5]
+        user_type=i[6]
+
+        count+=1
+        data.append([count,str(first_name)+' '+str(last_name),str(user_type),str(subject),str(formatedDate),"<a href='/view_support/"+str(id)+"' class='btn'><i class='fas fa-eye'></i> Reply Now</a>"])
+    return render(request, 'manage_support.html', {'data':(data)})
+
+@csrf_exempt
+def view_support(request,pk):
+    count=0
+    data_reply=[]
+
+    if request.method == 'POST':
+       
+        reply = request.POST.get('message')
+        user_id_admin_id_id = request.user.id
+        
+        support = models.SupportReply.objects.create(reply=reply,support_id_id=pk,user_id_admin_id_id=user_id_admin_id_id)
+        support.save()
+        response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        user_info=models.Support.objects.filter(id=pk).values_list('id','query','subject','created_at','user__first_name','user__last_name','user__groups__name')
+        id=user_info[0][0]
+        query=user_info[0][1]
+        subject=user_info[0][2]
+        created_at=user_info[0][3]
+        formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+        first_name=user_info[0][4]
+        last_name=user_info[0][5]
+        user_type=user_info[0][6]
+
+        user_chats=models.SupportReply.objects.filter(support_id_id=pk).values_list('id','query','reply','created_at','user_id_admin_id')
+        for i in user_chats:
+            chat_id=i[0]
+            chat_query=i[1]
+            reply=i[2]
+            chat_created_at=i[3]
+            chat_formatedDate = chat_created_at.strftime("%d/%m/%Y %H:%M")
+            user_id_admin_id=i[4]
+
+            count+=1
+            data_reply.append({'count':count,'chat_id':chat_id,'chat_query':chat_query,'reply':reply,'created_at':chat_formatedDate,'user_id_admin_id':user_id_admin_id})
+
+
+        data={'full_name':str(first_name)+' '+str(last_name),'id':id,'subject':subject,'date':formatedDate,'user_type':user_type,'data_reply':data_reply}
+        return render(request, 'view_support.html', {'data':data})

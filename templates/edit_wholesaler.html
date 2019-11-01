@@ -242,37 +242,38 @@
                     
                   </div>
 
-                   <div class="row"  id="show_retailer_wholersaler">
-                  <div class="row">
+                  
+                  <div class="row show_retailer_wholersaler">
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label for="customFile">Gst Photo</label>
+                        <div class="input-group">
                         <div class="custom-file">
                           <input type="file" class="custom-file-input" name="gst_photo" id="gst_photo">
                           <label class="custom-file-label" for="gst_photo">Choose file</label>
                         </div>
                         <div class="input-group-append">
-                              <span><img src={{data.gst_photo}} width="50" height="50"></span>
-                           </div>
+                            <span><img src={{data.gst_photo}} width="50" height="50"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label for="customFile">Fertilizer Licence</label>
+                        <div class="input-group">
                         <div class="custom-file">
                           <input type="file" class="custom-file-input" name="fertilizer_photo" id="fertilizer_photo">
                           <label class="custom-file-label" for="fertilizer_photo">Choose file</label>
                         </div>
-                         <div class="input-group-append">
-                              <span><img src={{data.fertilizer_photo}} width="50" height="50"></span>
-                           </div>
+                        <div class="input-group-append">
+                            <span><img src={{data.fertilizer_photo}} width="50" height="50"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                  
-
+                
                   <div class="row" id="show_farmer" {% if data.user_type.id != 3 %} style="display: none" {% endif %}>
                      <div class="col-sm-6">
                       <div class="form-group">

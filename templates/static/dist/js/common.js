@@ -28,10 +28,12 @@ $(document).on('change','#user_type',function(){
     if(user=='3')
     {
       $('#show_farmer').show();
+      $('.show_retailer_wholersaler').hide()
     }
     else
     {
       $('#show_farmer').hide();
+      $('.show_retailer_wholersaler').show()
     }
   });
   $(document).on('change','.custom-file-input',function(){
@@ -42,7 +44,7 @@ $(document).on('change','#user_type',function(){
     var state_id=$(this).val();
     var select_state='';
    
-    if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length || $('#editwholeselerForm').length)
+    if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length || $('#editwholeselerForm').length || $('#editcontentForm').length)
     {
       var select_state=$('#district_selct').val();;
     }
@@ -94,7 +96,7 @@ $(document).on('change','#user_type',function(){
   });
 
 $(document).ready(function(){
-  if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length || $('#editwholeselerForm').length)
+  if($('#edituserForm').length || $('#editretailerForm').length || $('#editfarmerForm').length || $('#editwholeselerForm').length || $('#editcontentForm').length)
   {
     $('#state').trigger('change');
   }
@@ -1086,24 +1088,245 @@ $("#editwholeselerForm").validate({
     }
   });
 
+  var summernoteValidator = $("#contentForm").validate({
+    errorElement: "div",
+    errorClass: 'is-invalid',
+    validClass: 'is-valid',
+    ignore: ':hidden:not(.ckeditor),.note-editable.card-block',
+    errorPlacement: function (error, element) {
+        // Add the `help-block` class to the error element
+        error.addClass("invalid-feedback");
+        console.log(element);
+        if (element.prop("type") === "checkbox") {
+            error.insertAfter(element.siblings("label"));
+        } else if (element.hasClass("ckeditor")) {
+            error.insertAfter(element.siblings(".note-editor"));
+        } else {
+            error.insertAfter(element);
+        }
+    },
+    rules:{
+      title_eng: {
+        required: true,
+      },
+      title_hnd: {
+        required: true,
+      },
+      datetime:{
+        required: true,
+      },
+      'user_type[]':
+      {
+        required:true,
+      },   
+      content_eng: {
+        required: true,
+      },
+      content_hnd: {
+        required: true,
+      }            
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('contentForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_content/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Content added successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_content/"; }, 2000);
+              
+            }
+            else
+            {
+              alert(response.msg);
+            }
 
-    $('.typeahead').typeahead(
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+
+  var summernoteValidatorEdit = $("#editcontentForm").validate({
+    errorElement: "div",
+    errorClass: 'is-invalid',
+    validClass: 'is-valid',
+    ignore: ':hidden:not(.ckeditor),.note-editable.card-block',
+    errorPlacement: function (error, element) {
+        // Add the `help-block` class to the error element
+        error.addClass("invalid-feedback");
+        console.log(element);
+        if (element.prop("type") === "checkbox") {
+            error.insertAfter(element.siblings("label"));
+        } else if (element.hasClass("ckeditor")) {
+            error.insertAfter(element.siblings(".note-editor"));
+        } else {
+            error.insertAfter(element);
+        }
+    },
+    rules:{
+      title_eng: {
+        required: true,
+      },
+      title_hnd: {
+        required: true,
+      },
+      datetime:{
+        required: true,
+      },
+      'user_type[]':
+      {
+        required:true,
+      },   
+      content_eng: {
+        required: true,
+      },
+      content_hnd: {
+        required: true,
+      }            
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('editcontentForm');
+       var formData = new FormData(userForm);
+       var content_id=document.getElementById('content_id').value;
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_content/'+content_id,
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Content updated successfully.').delay(10000);
+             setTimeout(function(){ window.location.href="/get_content/"; }, 2000);
+              
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+  $("#supportChat").validate({
+    rules: {
+      message: {
+        required: true,
+        
+      }
+    },
+    messages: {
+      message: {
+        required: "Please enter a message",
+      }
+    },
+    errorPlacement: function(error, element) {
+      error.appendTo(element.parent("div"));
+    },
+    submitHandler: function() {
+        var btn = $('#submitBtn');
+        var support_id=document.getElementById('support_id').value;
+        $(btn).buttonLoader('start');
+        $.ajax({
+          'method':'POST',
+          'url':'/view_support/'+support_id,
+          'data': $('#supportChat').serialize(),
+          success: function(response){
+            if(response.status=='success')
+            {
+              $(btn).buttonLoader('stop')
+              //toastr.success('Content updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/view_support/"+support_id; }, 1000);
+
+            }
+            else
+            {
+              $(btn).buttonLoader('stop')
+              toastr.error(response.msg)
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            toastr.error(xhr.responseText)
+            $(btn).buttonLoader('stop')
+          },
+        });
+      return false;
+    }
+  });
+
+  $('.typeahead').typeahead(
+  {  
+      source: function(query, result)
+      {
+        $.ajax({
+        url:"/search_city/",
+        method:"GET",
+        data:{query:query},
+        //dataType:"json",
+        success:function(data)
+        {
+          result($.map(data, function(item){
+          return item;
+          }));
+        }
+        })
+      }
+  });
+
+  $('#product_unit_name').typeahead(
     {  
         source: function(query, result)
         {
-         $.ajax({
-          url:"/search_city/",
+          $.ajax({
+          url:"/product_unit/",
           method:"GET",
           data:{query:query},
           //dataType:"json",
           success:function(data)
           {
-           result($.map(data, function(item){
+            result($.map(data, function(item){
             return item;
-           }));
+            }));
           }
-         })
+          })
         }
+    });
+
+  $('#reservationtime').daterangepicker({
+    timePicker: true,
+    timePicker24Hour:true,
+    singleDatePicker:true,
+    locale: {
+      format: 'DD/MM/YYYY HH:mm'
     }
-  );
+  });
+  var summernoteElement = $('.ckeditor');
+  var summernoteElementEdit = $('.ckeditoredit');
+  summernoteElement.summernote({
+    height: 200,
+  });
+  summernoteElementEdit.summernote({
+    height: 200,
+  });
 });

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Order Details</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Order Details</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content" >
+        <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6" style="margin:0 auto;">
+                  <!-- About Me Box -->
+            <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Details</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Order Id</label>
+                        <p>{{data.id}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Order Date</label>
+                        <p>{{data.created_at}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Farmer Name</label>
+                        <p>{{data.full_name}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Address</label>
+                        <p>{{data.address}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">State</label>
+                        <p>{{data.state}}</p>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">District</label>
+                        <p>{{data.district}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Phone</label>
+                        <p>{{data.phone}}</p>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  
+                  
+                  
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">List of products</h3>
+                    
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <div class="table-responsive">
+                    <table id="shTable" class="table table-bordered table-striped">
+                      <thead>
+                      <tr>
+                        <th>Sr No</th>
+                        
+                        <th>Product Image</th>
+                        <th class="input-filter">Product Name</th>
+                        <th class="input-filter">Quantity</th>
+                        <th class="input-filter">Price</th>
+                        <th class="input-filter">Total</th>                 
+                      </tr>
+                      </thead>
+                      <tfoot>
+                          <tr>
+                              <th>Sr No</th>
+                              <th>Product Image</th>
+                              <th class="input-filter">Product Name</th>
+                              <th class="input-filter">Quantity</th>
+                              <th class="input-filter">Price</th>
+                              <th class="input-filter">Total</th>       
+                          </tr>
+                      </tfoot>
+                      
+                    </table>
+                  </div>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+        </div>
+    </section>
+</div>
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+  
+<script type="text/javascript">
+  {% autoescape off %}
+    var result_data = {{ data.data_prod }};
+    console.log(result_data);
+  {% endautoescape %}
+
+    $(document).ready(function() {
+
+
+   
+    
+      var shTable=jQuery('#shTable').DataTable({
+        "aaData":result_data,
+        "responsive": true,
+        "autoWidth": false,
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+
+        "aoColumnDefs": [
+            { "bSortable": false, "aTargets": [ -1,-2 ] }, 
+            { "bSearchable": false, "aTargets": [ -1,-2 ] }
+        ],
+        
+      });
+
+});
+
+ </script>
+
+{% endblock %}

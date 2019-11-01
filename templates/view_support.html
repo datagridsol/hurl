@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+<style type="text/css">
+  #supportChat label.error {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color:#e82d2d;
+    width: 100%;
+  }
+  
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Support Reply</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Support Reply</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content" >
+        <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6" style="margin:0 auto;">
+                 
+                <div class="card card-primary cardutline direct-chat direct-chat-primary" >
+                  <div class="card-header">
+                    <h3 class="card-title">{{data.subject}}</h3>
+    
+                  </div>
+                  
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <!-- Conversations are loaded here -->
+                    <div class="direct-chat-messages" id="chatView" style="height:500px;">
+                      {% for chat in data.data_reply %}
+                        {% if chat.chat_query != '' %}
+                      <!-- Message. Default to the left -->
+                      <div class="direct-chat-msg">
+                        <div class="direct-chat-infos clearfix">
+                          <span class="direct-chat-name float-left">{{data.full_name}}</span>
+                          <span class="direct-chat-timestamp float-right">{{chat.created_at}}</span>
+                        </div>
+                        <!-- /.direct-chat-infos -->
+                        <img class="direct-chat-img" src="{% static "/dist/img/user1-128x128.jpg" %}" alt="{{data.full_name}}">
+                        <!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">
+                            {{chat.chat_query|linebreaksbr}}
+                        </div>
+                        <!-- /.direct-chat-text -->
+                      </div>
+                      <!-- /.direct-chat-msg -->
+                      {% else %}
+                      <!-- Message to the right -->
+                      <div class="direct-chat-msg right">
+                        <div class="direct-chat-infos clearfix">
+                          <span class="direct-chat-name float-right">Me</span>
+                          <span class="direct-chat-timestamp float-left">{{chat.created_at}}</span>
+                        </div>
+                        <!-- /.direct-chat-infos -->
+                        <img class="direct-chat-img" src="{% static "/dist/img/user5-128x128.jpg" %}" alt="Message User Image">
+                        <!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">
+                            {{chat.reply|linebreaksbr}}
+                        </div>
+                        <!-- /.direct-chat-text -->
+                      </div>
+                      <!-- /.direct-chat-msg -->
+                      {% endif %}
+                      {% endfor %}
+                    </div>
+                    <!--/.direct-chat-messages-->
+    
+                    
+                  </div>
+                  <!-- /.card-body -->
+                  <div class="card-footer">
+                      <form role="form" method="post" id="supportChat" enctype="multipart/form-data">
+                        <input type="hidden" name="support_id" id="support_id" value="{{data.id}}">
+                        <div class="input-group">
+                          <!-- <input type="text" name="message" id="message" placeholder="Type Message ..." class="form-control"> -->
+                          <textarea class="form-control" rows="3" name="message" id="message" placeholder="Type Message ..."></textarea>
+                          <span class="input-group-append">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Send</button>
+                          </span>
+                        </div>
+                    </form>
+                  </div>
+                  <!-- /.card-footer-->
+                </div>
+                <!--/.direct-chat -->
+           
+              </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+  var objDiv = document.getElementById("chatView");
+objDiv.scrollTop = objDiv.scrollHeight;
+
+</script>
+
+{% endblock %}
