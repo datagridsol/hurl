@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block body_block %}
+{% load staticfiles %}
+<!-- DataTables -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Manage Products</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active" type="button"> <a href="{% url 'get_product' %}">Show Product</li>
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <div class="content-wrapper" >
+    <div class="jumbotron">
+    <form method="post" id="productForm" style="margin-left:20%;" enctype="multipart/form-data" >
+          {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+          <br>  
+
+              <h1 style="margin-top: -9%;" >Add Product</h1>
+            </br>
+              <div>
+              <label style="margin-left:-17%" for="product_name">Product Name:</label>
+              <input  style="width: 27%;"  type="" name="product_name" id="product_name" placeholder="Product Name">
+              </div>
+              <div>
+              </br>
+              <label style="margin-left:-17%" for="product_code">Product Code:</label>
+              <input  style="width: 27%; margin-left: 1%;"  type="" name="product_code" id="product_code" placeholder="Product Code"> 
+              
+              </div>
+              </br>
+              <div>
+              <label style="margin-left:-17%" for="product_unit">Product Unit:</label>
+              <input  style="width: 18%; margin-left: 2%;"  type="" name="product_unit" id="product_unit" placeholder="Product Unit">
+              <select id="sub_code" name="sub_code">
+                <option value="Kg" >Kg</option>
+                <option value="Gram">Gram</option>
+                <option value="Tan">Tan</option>
+              </select>
+              </div>
+              </br>
+              <div>
+              <label style="margin-left:-17%" for="product_price">Product Price:</label>
+              <input  style="width: 27%; margin-left: 1%;"  type="" name="product_price" id="product_price" placeholder="Product Price">
+              </div>
+              </br>
+              <div>
+              <label style="margin-left:-17%" for="product_image">Product Image:</label>
+              <input  style="width: 27% margin-left: 1%;;"  type="file" name="product_image" id="product_image" placeholder="Product Image">
+              </div>
+            
+            <td></td><td></td>
+            <tr>
+              <td colspan="2"><input style="margin-left: -17%;
+    margin-top: 4%;
+    width: 19%;"  type="submit" value="Add"></td>
+            </tr>
+         
+
+</form>
+</div>
+</div>
+{% endblock %}
+
+

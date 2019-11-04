@@ -198,6 +198,7 @@ class Recharge(models.Model):
     transation_id=models.IntegerField()
     transation_request=models.TextField()
     transation_response=models.TextField()
+    status = models.IntegerField(default=0)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     def __str__(self):
@@ -216,7 +217,7 @@ class MobileLang(models.Model):
 class Scratch(models.Model):
     user_id_farmer_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='to_user_auth')
     user_id_retailer_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='from_user_auth')
-    order_id =models.ForeignKey(Order, on_delete=models.CASCADE)
+    order=models.ForeignKey(Order, on_delete=models.CASCADE)
     amount = models.FloatField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())

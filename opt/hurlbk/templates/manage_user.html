@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block body_block %}
+{% load staticfiles %}
+<!-- DataTables -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Manage Users</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active" type="button"> <a href="{% url 'add_user' %}">Add Users</li>
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Manage Users</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">List of all users</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="shTable" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Sr No</th>
+                  <th>UserType</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>District</th>
+                  <th>State</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <th>Edit</th>
+                  <th>user_id</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td></td>
+                  <td>
+                  </td>
+                  <td></td>
+                  <td> </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                   <td></td>
+                </tr>
+
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<!-- DataTables -->
+<script src="{% static "plugins/jquery/jquery.min.js" %}"></script>
+
+<script type="text/javascript">
+  {% autoescape off %}
+  //var device_not_reporting = {{ response }};
+    var result_data = {{ data}};
+  {% endautoescape %}
+
+    $(document).ready(function() {
+
+   
+    
+      var shTable=jQuery('#shTable').DataTable({
+        "aaData":result_data,
+        "scrollY":'200px',
+        "destroy": true,
+        "columnDefs": [
+            {
+                "targets": [ -1 ],
+                "visible": false,
+                "searchable": false
+            }
+        ],
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    if ( aData[6] == "Deactive" )
+                    {
+                        $('td', nRow).css('background-color', '#rgb(232, 194, 179) ');
+                        $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut' style='width: 89%;'>Approve</button></div>");
+                         $('td:eq(8)', nRow).append("Edit");
+                    }
+                     if ( aData[6] == "Active" )
+                    {
+                        $('td:eq(7)', nRow).append("<div class='col1d'><button class='editBut'>Disapproved</button></div>");
+                         $('td:eq(8)', nRow).append("Edit");
+                    }
+
+                },
+
+              
+              
+      });
+
+      
+    $('#shTable tfoot th').each( function () {
+        var title = aData[6];
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+    var table = $('#shTable').DataTable();
+    // Apply the search
+      table.columns().every( function () {
+          var that = this;
+   
+          $( 'input', this.footer() ).on( 'keyup change clear', function () {
+              if ( that.search() !== this.value ) {
+                  that
+                      .search( this.value )
+                      .draw();
+              }
+          } );
+      } );
+                  
+    // $('#shTable tbody').on('dblclick', 'tr td', function(){
+    //       var tr = $(this).closest('tr');
+    //       var row = shTable.row( tr );
+    //       // call_id_global = row.data()[1]
+    //       // history_flag = row.data()[20]
+    //       // caller_username = row.data()[21]
+    //       // caller_firstname = row.data()[22]
+    //       // user_status(row.data()[6],row.data()[9])
+    //     })
+
+   
+
+    $('#shTable tbody').on( 'click', 'button', function () {
+        var data = table.row( $(this).parents('tr') ).data();
+        user_status(data[ 6 ],data[ 9 ])
+    } );
+
+   
+
+
+    function user_status(status,user_id) {
+        if (status=="Deactive"){
+          status1="Approve"
+        }
+        else
+          {
+               status1="Active"
+
+          }
+        var result=confirm("Do You Want To "+' '+status1 +' '+'User');
+        if (result == true) { 
+               $.ajax({
+                  'method':'POST',
+                  'url':'/user_status/',
+                  'data':{"status":status,"user_id":user_id},
+                   success: function(response){
+                    if(response.status=='success')
+                    {
+                      alert(response.msg)
+                      window.location.href="/get_user/";
+
+                    }
+                    else
+                    {
+                     alert(response.msg)
+
+                  }
+                },
+                  error: function(xhr,status,errorThrown){
+                    toastr.error(xhr.responseText)
+                    $(btn).buttonLoader('stop')
+                  },
+                });
+            } 
+
+        else
+                    {
+                    
+
+                  }
+      
+   }
+
+
+    $('#shTable tbody').on( 'click', 'tr td:eq(8)', function (){
+         var data = table.row( $(this).parents('tr') ).data();
+          window.location.href="/edit_user/";
+          $.ajax({
+            'method':'POST',
+            'url':'/edit_user/',
+            'data': {"user_id":data[9]},
+            'cache':false,
+            'contentType': false,
+            'processData': false,
+            success: function(response){
+              if(response.status=='success')
+              {
+                toastr.success('user Created successfully.').delay(10000)
+                window.location.href="/get_user/";
+              }
+              else
+              {
+                alert(response.msg);
+              }
+
+            },
+            error: function(xhr,status,errorThrown){
+              alert(xhr.responseText)
+            },
+          });
+        });
+
+});
+
+ </script>
+
+{% endblock %}
+

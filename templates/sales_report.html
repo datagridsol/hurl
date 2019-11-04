@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% block body_block %}
+{% load staticfiles %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Retailer Wise Sales Report</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                <li class="breadcrumb-item active">Retailer Wise Sales Report</li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+      {% csrf_token %}
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <!-- <div class="row">
+                <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>Select State <span class="text-danger">*</span></label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>Select District <span class="text-danger">*</span></label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>Select Retailer <span class="text-danger">*</span></label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>Select Product <span class="text-danger">*</span></label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>From Date <span class="text-danger">*</span></label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>To Date <span class="text-danger">*</span></label>
+                        <select class="form-control" id="state" name="state">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for state_data in state_data %}
+                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                   <!--  <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>&nbsp;</label></br>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                      </div>
+                    </div> -->
+
+              <!--   </div>  -->
+            
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="table-responsive">
+                <table id="shTable" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Sr No</th>
+                    <th class="input-filter">Retailer Name</th>
+                    <th class="select-filter">Retailer Phone</th>
+                    <th class="input-filter">Farmer Name</th>
+                    <th class="input-filter">Farmer Phone</th>
+                    <th class="input-filter">Date</th>
+                    <th class="input-filter">Amount</th>               
+                                 
+                  </tr>
+                   <tr id="filters">
+                      <th class="first_filter" style="visibility: hidden;"></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                  </tr>
+                  </thead>
+                  <tfoot>
+                      <tr>
+                        <th>Sr No</th>
+                        <th class="input-filter">Retailer Name</th>
+                        <th class="select-filter">Retailer Phone</th>
+                        <th class="input-filter">Farmer Name</th>
+                        <th class="input-filter">Farmer Phone</th>
+                        <th class="input-filter">Date</th>
+                        <th class="input-filter">Amount</th>               
+                          
+                      </tr>
+                  </tfoot>
+                  
+                </table>
+              </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+  <!-- DataTables -->
+  <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+  
+  <script type="text/javascript">
+    {% autoescape off %}
+      var result_data = {{ data}};
+    {% endautoescape %}
+  
+      $(document).ready(function() {
+  
+  
+        $('#shTable tfoot th.input-filter').each( function () {
+          var title = $(this).eq( $(this).index() ).text();
+          $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+      } );
+     
+      
+        var shTable=jQuery('#shTable').DataTable({
+          "aaData":result_data,
+          "dom": 'Bfrtip',
+            "buttons": [
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5',
+            ],
+          
+          initComplete: function () {
+
+
+
+            this.api().columns().every(function () {
+                var column = this;
+
+                if (column.index() == 0) {
+                    
+                    input = $('<input type="text" />').appendTo($(column.header())).on('keyup change', function () {
+                        if (column.search() !== this.value) {
+                            column.search(this.value)
+                                .draw();
+                        }
+                    });
+                    return;
+                }
+
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo($("#filters").find("th").eq(column.index()))
+                    .on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val());                                     
+
+                    column.search(val ? '^' + val + '$' : '', true, false)
+                        .draw();
+                });
+                
+                console.log(select);
+
+                column.data().unique().sort().each(function (d, j) {
+                    select.append('<option value="' + d + '">' + d + '</option>')
+                });
+            });
+        }
+        });
+
+    
+  });
+  
+  </script>
+
+{% endblock %}

@@ -18,7 +18,9 @@ from hurl import settings
 from django.utils.timezone import get_current_timezone
 from datetime import datetime
 import dateutil.parser
+#from django.utils.encoding import smart_str, smart_unicode
 import os
+from operator import itemgetter
 
 def index(request):
     return render(request,'index.html')
@@ -193,10 +195,14 @@ def add_user(request):
         return render(request, 'userprofile.html', {'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':'1','name':'Thane'}]})
        
 
-# def add_state(request):
-#     add = models.State.object.create(JAMMU & KASHMIR,HIMACHAL PRADESH,PUNJAB,CHANDIGARH,UTTARANCHAL,HARYANA,DELHI,RAJASTHAN,UTTAR PRADESH,BIHAR,SIKKIM,ARUNACHAL PRADESH,NAGALAND,MIZORAM,TRIPURA,MEGHALAYA,ASSAM,WEST BENGAL,JHARKHAND,CHHATTISGARH,MADHYA PRADESH,GUJARAT,DAMAN & DIU,DADRA & NAGAR HAVELI,MAHARASHTRA,ANDHRA PRADESH,KARNATAKA,LAKSHADWEEP,KERALA,TAMIL NADU,ANDAMAN & NICOBAR ISLANDS,)
-#     response = JsonResponse({'status':'success'})
-#         return response
+def add_state(request):
+    states = ['JAMMU & KASHMIR','HIMACHAL PRADESH' ,'PUNJAB','CHANDIGARH','UTTARANCHAL','HARYANA','DELHI','RAJASTHAN','UTTAR PRADESH','BIHAR','SIKKIM','ARUNACHAL PRADESH','NAGALAND','MIZORAM','TRIPURA','MEGHALAYA','ASSAM','WEST BENGAL','JHARKHAND','CHHATTISGARH','MADHYA PRADESH','GUJARAT','DAMAN & DIU','DADRA & NAGAR HAVELI','MAHARASHTRA','ANDHRA PRADESH','KARNATAKA','LAKSHADWEEP','KERALA','TAMIL NADU','ANDAMAN & NICOBAR ISLANDS']
+    for i in states:
+        data = models.State.objects.create(state_name=i)
+    data.save()    
+    response = JsonResponse({'status':'success'})
+    print(data)
+    return response
 
 
 @login_required
@@ -307,7 +313,7 @@ def edit_user(request, pk):
         
         land_area=request.POST.get('land_area')
 
-        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email)
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email,username=password)
 
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
@@ -495,7 +501,7 @@ def edit_retailer(request, pk):
         
         land_area=request.POST.get('land_area')
 
-        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email)
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email,username=password)
 
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
@@ -655,7 +661,9 @@ def get_state():
     for i in state_list:
         case2 = {'id': i[0], 'name': i[1]}
         state_data.append(case2)
+    state_data=sorted(state_data, key=itemgetter('name'))
     return state_data
+
 @csrf_exempt
 def get_district(request):
     if request.method == 'POST':
@@ -665,6 +673,7 @@ def get_district(request):
         for i in district_list:
             case2 = {'id': i[0], 'name': i[1]}
             district_data.append(case2)
+            district_data=sorted(district_data, key=itemgetter('name'))
         response=JsonResponse({'status':'success','district_data':district_data})
         return response
 
@@ -718,7 +727,7 @@ def get_product(request):
     data=[]
     count=0
     product_image="/media/default/placeholder.png"
-    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_unit_name','product_price','status','id')
+    product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_unit_name','product_price','status','id').order_by('-created_at')
     for i in product_info:
         if i[0]!= "":
             product_image='/'+i[0]
@@ -867,7 +876,7 @@ def edit_farmer(request, pk):
         
         land_area=request.POST.get('land_area')
 
-        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email)
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email,username=password)
 
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
@@ -1218,7 +1227,7 @@ def edit_wholesaler(request, pk):
 
         land_area=request.POST.get('land_area')
 
-        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email)
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email,username=password)
 
         langn_id=models.Language.objects.get(id=langn_id)
         state=models.State.objects.get(id=state)
@@ -1344,7 +1353,9 @@ def get_state():
     for i in state_list:
         case2 = {'id': i[0], 'name': i[1]}
         state_data.append(case2)
+    state_data=sorted(state_data, key=itemgetter('name'))
     return state_data
+
 @csrf_exempt
 def get_district(request):
     if request.method == 'POST':
@@ -1354,6 +1365,7 @@ def get_district(request):
         for i in district_list:
             case2 = {'id': i[0], 'name': i[1]}
             district_data.append(case2)
+        district_data=sorted(district_data, key=itemgetter('name'))
         response=JsonResponse({'status':'success','district_data':district_data})
         return response
 
@@ -1445,6 +1457,8 @@ def add_retailer(request):
     pan_card=''
     vote_id=''
     soil_card=''
+    fertilizer_photo=''
+    gst_photo=''
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -1605,7 +1619,7 @@ def add_farmer(request):
         else:
             first_name=full_name
         langn_id=request.POST.get('language_id')
-        user_type = 2
+        user_type = 3
         aadhar_no=request.POST.get('aadhar_no')
         state=request.POST.get('state')
         city=request.POST.get('city')
@@ -1700,6 +1714,8 @@ def add_wholesaler(request):
     pan_card=''
     vote_id=''
     soil_card=''
+    fertilizer_photo=''
+    gst_photo=''
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -1861,7 +1877,7 @@ def get_order(request):
     state=""
     count=0
     row=[]
-    user_info=models.Order.objects.all().values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_retailer_id__first_name','user_id_retailer_id__last_name','created_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','total_price','id')
+    user_info=models.Order.objects.all().values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_retailer_id__first_name','user_id_retailer_id__last_name','created_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','total_price','id').order_by('-created_at')
     for i in user_info:
         first_name=i[0]
         last_name=i[1]
@@ -2137,7 +2153,7 @@ def get_content(request):
             status="Deactive"
             btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-content-id="+str(id)+">Approve</button></div>"
         count+=1
-        data.append([count,'<img src="'+str(feature_image)+'"  width="70" height="50">',str(title_eng),str(title_hnd),str(district),str(state),str(grouTxt[:-1]),status,btn,"<a href='/edit_content/"+str(id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        data.append([count,'<img src="'+str(feature_image)+'"  width="70" height="50">',str(title_eng),str(district),str(state),str(grouTxt[:-1]),status,btn,"<a href='/edit_content/"+str(id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
     return render(request, 'manage_content.html', {'data':(data)})
 
 
@@ -2231,10 +2247,17 @@ def edit_content(request,pk):
            state_id=state_id
         user_id_admin_id_id = request.user.id
 
-        if request.FILES.get('feature_image'):
-            feature_image = request.FILES['feature_image']
-        
+        user_info_photo=list(models.ManageContent.objects.filter(id=pk).values_list('feature_image'))
+        for i in user_info_photo:
+            feature_image=i[0]
+            
 
+        if request.FILES.get('feature_image'):
+            print("feature_image",feature_image)
+            feature_image=request.FILES.get('feature_image')
+            # if feature_image:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(feature_image))
+           	
         #Content = models.ManageContent.objects.create(title_eng=title_eng,title_hnd=title_hnd,date=dt,contains_eng=contains_eng,contains_hnd=contains_hnd,feature_image=feature_image,status=status,district_id=district_id,group_id=group_id,state_id=state_id,user_id_admin_id_id=user_id_admin_id_id)
 
 
@@ -2323,3 +2346,26 @@ def view_support(request,pk):
 
         data={'full_name':str(first_name)+' '+str(last_name),'id':id,'subject':subject,'date':formatedDate,'user_type':user_type,'data_reply':data_reply}
         return render(request, 'view_support.html', {'data':data})
+
+
+@csrf_exempt
+def get_reports(request):
+    data=[]
+    count=0
+    state_data=get_state()
+    user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    for i in user_info:
+        id=i[0]
+        retailer_first_name=i[1]
+        retailer_username=i[2]
+        farmer__first_name=i[3]
+        farmer_username=i[4]
+        created_at=i[5]
+        total_price=i[6]
+        retailer_last_name=i[7]
+        farmer_last_name=i[8]
+        formatedDate = created_at.strftime("%d-%m-%Y")
+
+        count+=1
+        data.append([count,str(retailer_first_name)+' '+str(retailer_last_name),str(retailer_username),str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(formatedDate),str(total_price)])
+    return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'district_data':[{'id':'1','name':'Thane'}]})

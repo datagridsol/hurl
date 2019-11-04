@@ -1,4 +1,5 @@
-# dappx/urls.py
+
+
 from django.conf.urls import url
 from hurlapp import views,mobilefunctions
 # SET THE NAMESPACE!
@@ -34,8 +35,8 @@ urlpatterns=[
     url(r'^get_support/$',views.get_support,name='get_support'),
     url(r'^view_support/(?P<pk>\d+)$',views.view_support,name='view_support'),
     url(r'^product_unit/$',views.product_unit,name='product_unit'),
-
-    # url(r'^add_state/$',views.add_state,name='add_state'),
+    url(r'^get_reports/$',views.get_reports,name='get_reports'),
+    url(r'^add_state/$',views.add_state,name='add_state'),
     url(r'^add_product/$',views.add_product,name='add_product'),
     url(r'^get_product/$',views.get_product,name='get_product'),
     url(r'^add_order/$',views.addOrder,name='add_order'),
@@ -44,8 +45,8 @@ urlpatterns=[
     url(r'^product_status/$',views.product_status,name='product_status'),
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
-    url(r'^add_user_mobile/$',mobilefunctions.add_user_mobile,name='add_user_mobile'),
-    url(r'^get_wholesaler_list/$',mobilefunctions.get_wholesaler,name='get_wholesaler_list'),
+    #url(r'^add_mobile_user/$',mobilefunctions.add_mobile_user,name='add_mobile_user'),
+    url(r'^get_wholesaler_list/$',mobilefunctions.get_wholesaler_mobile,name='get_wholesaler_list'),
     url(r'^get_product_list/$',mobilefunctions.get_product_mobile,name='get_product_mobile'),
     url(r'^get_district/$',views.get_district,name='get_district'),
     url(r'^get_district_list/$',mobilefunctions.get_district_list,name='get_district_list'),
@@ -57,9 +58,12 @@ urlpatterns=[
     url(r'^check_phone_no/$',mobilefunctions.get_username,name='check_phone_no'),
     url(r'^get_farmer_list/$',mobilefunctions.get_farmer_list,name='get_farmer_list'),
     url(r'^add_order_list/$',mobilefunctions.add_order_list,name='add_order_list'),
-    
+    url(r'^add_mobile_user/$',mobilefunctions.add_user_mobile,name='add_mobile_user'),
+    url(r'^send_opt_farmer/$',mobilefunctions.send_opt_farmer,name='send_opt_farmer'),
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
-
+    url(r'^recharge_done/$',mobilefunctions.recharge_done,name='recharge_done'),   url(r'^get_farmer_mobile/$',mobilefunctions.get_farmer_mobile,name='get_farmer_mobile'),
+    url(r'^save_farmer_mobile/$',mobilefunctions.save_farmer_mobile,name='save_farmer_mobile'),
 ]
+
 
 

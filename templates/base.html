@@ -109,7 +109,7 @@
             </a>
           </li>
 
-         <li class="nav-item has-treeview ">
+	 <li class="nav-item has-treeview ">
             <a href="{% url 'get_user' %}" class="nav-link {% if "/get_user/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-users"></i>
               <p>
@@ -232,25 +232,25 @@
             </a>
           </li>
 
-          <li class="nav-item has-treeview ">
+          <!-- <li class="nav-item has-treeview ">
             <a href="#" class="nav-link {% if "/add_product10/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-chart-area"></i>
               <p>
                 Manage Area
               </p>
             </a>
-          </li>
+          </li> -->
 
-          <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product11/" == request.path %} active {% endif %}">
-              <i class="nav-icon fas fa-chart-area"></i>
+         
+
+
+       <li class="nav-item has-treeview ">
+            <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
               <p>
                 Reports
               </p>
             </a>
-          </li>
-
-         
+          </li> 
 
         </ul>
       </nav>

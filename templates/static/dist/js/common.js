@@ -230,6 +230,7 @@ $(document).ready(function(){
       },
       land_area: {
         required: true,
+	number: true,
       }
     },
     messages: {
@@ -265,7 +266,8 @@ $(document).ready(function(){
         required: "Please select a image",
       },
       land_area: {
-        required: "Please select a image",
+        required: "Please enter a land area",
+	number: "Please enter valid number",
       }
     },
     submitHandler: function() {
@@ -746,6 +748,7 @@ $(document).ready(function(){
       },
       land_area: {
         required: true,
+	number: true,
       }
     },
     messages: {
@@ -777,7 +780,8 @@ $(document).ready(function(){
         required: "Please select a image",
       },
       land_area: {
-        required: "Please select a image",
+        required: "Please enter a land area",
+	number: "Please enter valid number",
       }
     },
     submitHandler: function() {
@@ -937,6 +941,7 @@ $("#wholesalerForm").validate({
       },
       land_area: {
         required: true,
+	number: "Please enter valid mobile number",
       }
     },
     messages: {
@@ -968,7 +973,7 @@ $("#wholesalerForm").validate({
         required: "Please select a image",
       },
       land_area: {
-        required: "Please select a image",
+        required: "Please enter land area",
       }
     },
     submitHandler: function() {

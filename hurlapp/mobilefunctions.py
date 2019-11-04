@@ -11,23 +11,31 @@ from django.contrib.auth.models import User,Group
 import json
 from hurlapp import models
 from django.db.models import Q
+from operator import itemgetter
 
+# For login
 @csrf_exempt
 def login(request):
-	if request.method == 'POST':
-		mobile_number = request.POST.get('mobile_number')
-		if User.objects.filter(username=mobile_number).exists():
-			userprofile=models.UserProfile.objects.get(user__username=mobile_number)
-			genotp=generateOTP(mobile_number)
-			userprofile.otp = genotp
-			userprofile.save()
-			data={"mobile_number":mobile_number,"opt":genotp}
-			response=JsonResponse({'status':'success','msg':'Opt Added Successfully','data':data})
-			return response
-		else:
-			response=JsonResponse({'status':'error','msg':'Mobile Number Not Exits'})
-			return response
+    if request.method == 'POST':
+        mobile_number = request.POST.get('mobile_number')
+        if User.objects.filter(username=mobile_number).exists():
+            if User.objects.filter(username=mobile_number,is_active=1).exists():
+                userprofile=models.UserProfile.objects.get(user__username=mobile_number)
+                genotp=generateOTP(mobile_number)
+                userprofile.otp = genotp
+                userprofile.save()
+                data={"mobile_number":mobile_number,"opt":genotp}
+                response=JsonResponse({'status':'success','msg':'OTP Send Successfully','data':data})
+                return response
+            else:
+                response=JsonResponse({'status':'error','msg':'Your account is not approved by admin'})
+                return response
+        else:
+            response=JsonResponse({'status':'error','msg':'Mobile Number Not Exist'})
+            return response
 
+
+# For check_login
 @csrf_exempt
 def check_login(request):
 	if request.method == 'POST':
@@ -48,28 +56,34 @@ def check_login(request):
 			response=JsonResponse({'status':'error','msg':'Invalid Otp'})
 			return response
 
-# function to generate OTP
-@csrf_exempt 
-def generateOTP(mobile_number) :
-    import requests
-    
-    digits = "0123456789"
-    OTP = "" 
-    for i in range(4) : 
-        OTP += digits[math.floor(random.random() * 10)]
-    Phone_number=mobile_number
-    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-    data = {"user":"datagrid","password":"Dat$Fagt&","sender":"DATAGR","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Otp For Login"+" "+OTP}
-    requests.packages.urllib3.disable_warnings() 
-    r = requests.post(sms_url,data = data)
-    response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
-    return OTP 
-    # return OTP 
-
+# function to generate OTP 
 @csrf_exempt
-def get_wholesaler(request):
+# def generateOTP() : 
+#     digits = "0123456789"
+#     OTP = "123" 
+# #    for i in range(4) : 
+# #        OTP += digits[math.floor(random.random() * 10)] 
+#     return OTP
+
+# function to generate OTP
+@csrf_exempt
+def generateOTP(mobile_number) :
+   import requests
+   digits = "0123456789"
+   OTP = random.randint(1000,9999)
+   Phone_number=mobile_number
+   sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+   data = {"user":"datagrid","password":"Dat$Fagt&","sender":"DATAGR","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Otp For Login"+" "+str(OTP)}
+   requests.packages.urllib3.disable_warnings()
+   r = requests.post(sms_url,data = data)
+   response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
+   return OTP
+
+# For get_wholesaler
+@csrf_exempt
+def get_wholesaler_mobile(request):
     whole_data=[]
-    wholesaler_data=models.UserProfile.objects.filter(user_type=3).values_list('user','user__first_name','user__last_name','parent_id')
+    wholesaler_data=models.UserProfile.objects.filter(user_type=4).values_list('user','user__first_name','user__last_name','parent_id')
     for i in wholesaler_data:
         full_name=i[1]+' '+i[2]
         case1 = {'user_id': i[0], 'name': full_name}
@@ -77,6 +91,64 @@ def get_wholesaler(request):
     response=JsonResponse({'status':'success','data':whole_data})
     return response
 
+# For user_status
+@csrf_exempt
+def user_status(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
+        return response
+
+# For get_username
+def get_username(request):
+    username=request.POST.get('username')
+    if User.objects.filter(username=username).exists():
+        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        return response
+    else:
+        response=JsonResponse({'status':'success'})
+        return response
+
+# For user_status
+@csrf_exempt
+def user_status(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
+        return response
+
+# For get_langauge
+@csrf_exempt
+def get_langauge():
+    lang_data=[]
+    lang_type=models.Language.objects.all().values_list('id', 'lang_name')
+    for i in lang_type:
+        case1 = {'id': i[0], 'name': i[1],}
+        lang_data.append(case1)
+    return lang_data
+
+# For get_group
+@csrf_exempt
 def get_group():
     group_data=[]
 
@@ -98,17 +170,204 @@ def get_group():
 #    my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
 #    if my_user_type:
 #        print(my_user_type[0][0])
-
         case = {'id': i[0], 'name': i[1]}
         group_data.append(case)
     return group_data
 
+# For Get_state
+@csrf_exempt
+def get_state():
+    state_data=[]
+    state_list=models.State.objects.all().values_list('id', 'state_name')
+    for i in state_list:
+        case2 = {'id': i[0], 'name': i[1]}
+        state_data.append(case2)
+    state_data=sorted(state_data, key=itemgetter('name'))
+    return state_data
+
+# For get_district
+@csrf_exempt
+def get_district(request):
+    if request.method == 'POST':
+        district_data=[]
+        state_id=request.POST.get('state_id')
+        district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
+        for i in district_list:
+            case2 = {'id': i[0], 'name': i[1]}
+            district_data.append(case2)
+        district_data=sorted(district_data, key=itemgetter('name'))
+        response=JsonResponse({'status':'success','district_data':district_data})
+        return response
 
 
-#@login_required
-#@csrf_exempt
+#For Getting city name
+@csrf_exempt
+def get_city():
+    city_data=[]
+    city_list=models.City.objects.all().values_list('id', 'city_name')
+    for i in city_list:
+        case2 = {'id': i[0], 'name': i[1]}
+        city_data.append(case2)
+    return city_data
+
+# For Adding user from mobile
+@csrf_exempt
 def add_user_mobile(request):
     gr_no=[]
+    first_name=''
+    last_name=''
+    city_name=''
+    user_photo=''
+    aadhar_card=''
+    city=''
+    pan_card=''
+    vote_id=''
+    soil_card=''
+    vote_card=''
+    land_area=''
+    pincode=0
+    address=''
+    gst_photo=''
+    fertilizer_photo=''
+    fms_id=''
+    fertilizer_licence=''
+    gst_number=''
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
+    user_type=Group.objects.all().values_list('id', 'name')
+    for i in user_type:
+        gr_no.append(i[1])
+#    my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
+#    if my_user_type:
+#        print(my_user_type[0][0])
+    if request.method == 'POST':
+        data={}
+        status=1
+        username = request.POST.get('mobile_number')
+        if User.objects.filter(username=username).exists():
+            response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+            return response
+        password = request.POST.get('mobile_number')
+        company_name = request.POST.get('company_name')
+        email = request.POST.get('email')
+        full_name = request.POST.get('name')
+        if (' ' in full_name) == True:
+            full_name_split=full_name.split(' ')
+            if len(full_name_split)==2:
+                first_name=full_name_split[0]
+                last_name=full_name_split[1]
+            if len(full_name_split)==3:
+                first_name=full_name_split[0]
+                last_name=full_name_split[2]
+        else:
+            first_name=full_name
+        langn_id=request.POST.get('language_id')
+#        user_type = request.POST.get('user_type')
+        if request.POST.get('user_type'):
+        	user_type=request.POST.get('user_type')
+        else:
+            user_type="2"
+            status=0
+
+        if request.POST.get('fms_id'):
+            fms_id=request.POST.get('fms_id')
+        if request.POST.get('fertilizer_licence'):
+            fertilizer_licence=request.POST.get('fertilizer_licence')
+        if request.POST.get('gst_number'):
+            gst_number=request.POST.get('gst_number')
+        
+
+        aadhar_no=request.POST.get('aadhar_no')
+        state=request.POST.get('state')
+        if request.POST.get('city'):
+            city=request.POST.get('city')
+        district=request.POST.get('district')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
+        if request.POST.get('address'):
+            address=request.POST.get('address')
+
+        if request.FILES.get('user_photo'):
+            user_photo = request.FILES['user_photo']
+        if request.FILES.get('aadhar_card'):
+            aadhar_card = request.FILES['aadhar_card']
+        if request.FILES.get('pan_card'):
+           pan_card = request.FILES['pan_card']
+        if request.FILES.get('vote_id'):
+           vote_card = request.FILES['vote_id']
+        if request.FILES.get('soil_card'):
+           soil_card = request.FILES['soil_card']
+        if request.FILES.get('fertilizer_photo'):
+            fertilizer_photo = request.FILES['fertilizer_photo']
+
+        if request.FILES.get('land_area'):
+            land_area=request.POST.get('land_area')
+
+        if request.FILES.get('gst_photo'):
+            gst_photo = request.FILES['gst_photo']
+        if request.POST.get('retailer_id'):
+            parent_id=request.POST.get('retailer_id')
+        else:
+            parent_id=0
+
+        new_user = User.objects.create(username = username,password = username,first_name=first_name,last_name=last_name,is_active=status,email=email)
+        new_user.set_password(password)
+        new_user.save()
+        new_Uid = new_user.id
+
+        if request.POST.get('wholesaler_id'):
+            listdata=request.POST.get('wholesaler_id')
+            x=listdata.split(",")
+            for i in x:
+                wholesaler_id=i
+                user_id_whole=User.objects.get(id=wholesaler_id)
+                print('user_id_whole=> ',user_id_whole)
+                user_link_data= models.UserLinkage.objects.create(retailer_user_id=new_user,wholesaler_user_id=user_id_whole)
+                print('wholesaler_id=> ',wholesaler_id)
+                user_link_data.save()
+
+        user_type=Group.objects.get(id=user_type)
+        user_type.user_set.add(new_Uid)
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if city != '':
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+        print('new_Uid => '+str(new_Uid))
+        print('user_type => '+str(user_type))
+        print('parent_id => '+str(parent_id))
+        print('langn_id => '+str(langn_id))
+        print('aadhar_no => '+str(aadhar_no))
+        print('state => '+str(state))
+        print('city_name => '+str(city_name))
+        print('district => '+str(district))
+        print('pincode => '+str(pincode))
+        print('address => '+str(address))
+        print('user_photo => '+str(user_photo))
+        print('fertilizer_photo => '+str(fertilizer_photo))
+        print('soil_card => '+str(soil_card))
+        print('land_area => '+str(land_area))
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=parent_id,language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,fertilizer_photo=fertilizer_photo,soil_card=soil_card,land_area=land_area,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number,company_name=company_name)
+        userprofile.save()
+        response=JsonResponse({'status':'success','msg':'User registered successfuly'})
+        return response
+
+    else:
+        response=JsonResponse({'status':'error','msg':'Something went wrong. Please try again.'})
+        return response
+
+@login_required
+@csrf_exempt
+def add_farmer_mobile(request):
+    gr_no=[]
+
     first_name=''
     last_name=''
     city_name=''
@@ -121,12 +380,11 @@ def add_user_mobile(request):
     lang_data=get_langauge()
     state_data=get_state()
     city_data=get_city()
+    print(request.user.id)
     user_type=Group.objects.all().values_list('id', 'name')
     for i in user_type:
         gr_no.append(i[1])
     my_user_type=Group.objects.filter(user=request.user.id).values_list('name','id')
-    if my_user_type:
-        print(my_user_type[0][0])
     if request.method == 'POST':
         data={}
         username = request.POST.get('mobile_number')
@@ -136,18 +394,18 @@ def add_user_mobile(request):
         password = request.POST.get('mobile_number')
         email = request.POST.get('email')
         full_name = request.POST.get('name')
-#        if (' ' in full_name) == True:
-#            full_name_split=full_name.split(' ')
-#            if len(full_name_split)==2:
-#                first_name=full_name_split[0]
-#                last_name=full_name_split[1]
-#            if len(full_name_split)==3:
-#                first_name=full_name_split[0]
-#                last_name=full_name_split[2]
-#        else:
-#            first_name=full_name
+        if (' ' in full_name) == True:
+            full_name_split=full_name.split(' ')
+            if len(full_name_split)==2:
+                first_name=full_name_split[0]
+                last_name=full_name_split[1]
+            if len(full_name_split)==3:
+                first_name=full_name_split[0]
+                last_name=full_name_split[2]
+        else:
+            first_name=full_name
         langn_id=request.POST.get('language_id')
-        user_type = request.POST.get('user_type')
+        user_type =3
         aadhar_no=request.POST.get('aadhar_no')
         state=request.POST.get('state')
         city=request.POST.get('city')
@@ -165,13 +423,14 @@ def add_user_mobile(request):
             vote_id = request.FILES['vote_id']
         if request.FILES.get('soil_card'):
             soil_card = request.FILES['soil_card']
+
         land_area=request.POST.get('land_area')
 
-        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
+        new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,
+        is_active=1,email=email)
         new_user.set_password(password)
         new_user.save()
         new_Uid = new_user.id
-
         user_type=Group.objects.get(id=user_type)
         user_type.user_set.add(new_Uid)
         langn_id=models.Language.objects.get(id=langn_id)
@@ -190,49 +449,459 @@ def add_user_mobile(request):
         return response
 
     else:
-        response = JsonResponse({"status":"error"})
-    return response
-
-
-def get_langauge():
-    lang_data=[]
-    lang_type=models.Language.objects.all().values_list('id', 'lang_name')
-    for i in lang_type:
-        case1 = {'id': i[0], 'name': i[1],}
-        lang_data.append(case1)
-    return lang_data
-
-
-@csrf_exempt
-def get_state():
-    state_data=[]
-    state_list=models.State.objects.all().values_list('id', 'state_name')
-    for i in state_list:
-        case2 = {'id': i[0], 'name': i[1]}
-        state_data.append(case2)
-    return state_data
-
-@csrf_exempt
-def get_district(request):
-    if request.method == 'POST':
-        district_data=[]
-        state_id=request.POST.get('state_id')
-        district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
-        for i in district_list:
-            case2 = {'id': i[0], 'name': i[1]}
-            district_data.append(case2)
-        response=JsonResponse({'status':'success','district_data':district_data})
+        response=JsonResponse({'status':'error'})
         return response
 
-def get_city():
-    city_data=[]
-    city_list=models.City.objects.all().values_list('id', 'city_name')
-    for i in city_list:
-        case2 = {'id': i[0], 'name': i[1]}
-        city_data.append(case2)
-    return city_data
-################################################################################
+#@login_required
+@csrf_exempt
+def get_farmer_mobile(request):
+    user_id = request.POST.get('user_type')
+    data=[]
+    district=""
+    state=""
+    whole_data=[]
+    count=0
+    row=[]
+    gr_no=[]
+    first_name=''
+    last_name=''
+    city_name=''
+    state=''
+    company_name=''
+    user_photo="/media/default/placeholder.png"
+    aadhar_card="/media/default/placeholder.png"
+    pan_card="/media/default/placeholder.png"
+    vote_id="/media/default/placeholder.png"
+    soil_card="/media/default/placeholder.png"
+    gst_photo="/media/default/placeholder.png"
+    fertilizer_photo="/media/default/placeholder.png"
+    data={}
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
 
+    user_info=models.UserProfile.objects.filter(user=user_id).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id','gst_number','fertilizer_licence','fms_id','gst_photo','fertilizer_photo','company_name')
+    for i in user_info:
+            user_type=i[0],
+            language=i[1]
+            first_name=i[2]
+            last_name=i[3]
+            full_name=str(first_name)+" "+str(last_name)
+            email=i[4]
+            mobile_number=i[5]
+            aadhar_no=i[6]
+            state=i[7]
+            city=i[8]
+            district=i[9]
+            pincode=i[10]
+            address=i[11]
+            if i[12]!= "":
+                user_photo='/'+i[12]
+            if i[13]!= "":
+                aadhar_card='/'+i[13]
+            if i[14]!= "":
+                pan_card='/'+i[14]
+            if i[15]!= "": 
+                vote_id='/'+i[15]
+            if i[16]!= "": 
+                soil_card='/'+i[16] 
+            land_area=i[17]
+            group_id=i[18]
+            lang_id=i[19]
+            state_id=i[20]
+            district_id=i[21]
+            gst_number=i[22]
+            fertilizer_licence=i[23]
+            fms_id=i[24]
+            if i[25]!= "": 
+                gst_photo='/'+i[25]
+            if i[26]!= "": 
+                fertilizer_photo='/'+i[26]
+            company_name=i[27]
+            wholesaler_data=models.UserLinkage.objects.filter(retailer_user_id=user_id).values_list('wholesaler_user_id__id')
+            if wholesaler_data:
+               for i in wholesaler_data:
+                   #whole_data=str(i[0])+','+str(whole_data)
+                   whole_data.append(i[0])
+            user_type={"name":user_type[0],'id':group_id}
+            language={"name":language,'id':lang_id}
+            state={"name":state,'id':state_id}
+            district={"name":district,'id':district_id}
+    	    
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,"gst_number":gst_number,"fertilizer_licence":fertilizer_licence,"fms_id":fms_id,"gst_photo":gst_photo,"fertilizer_photo":fertilizer_photo,"company_name":company_name,"wholesaler_data":whole_data}
+    response=JsonResponse({'status':'success','data':data})
+    return response
+
+@csrf_exempt
+def save_farmer_mobile(request):
+    gr_no=[]
+    first_name=''
+    last_name=''
+    city_name=''
+    state=''
+    fms_id=''
+    fertilizer_licence=''
+    gst_number=''
+    user_photo="/media/default/placeholder.png"
+    aadhar_card="/media/default/placeholder.png"
+    pan_card="/media/default/placeholder.png"
+    vote_id="/media/default/placeholder.png"
+    soil_card="/media/default/placeholder.png"
+    gst_photo="/media/default/placeholder.png"
+    fertilizer_photo="/media/default/placeholder.png"
+    data={}
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
+    user_type = request.POST.get('user_type')
+    user_id = request.POST.get('user_id')
+    password = request.POST.get('mobile_number')
+    company_name = request.POST.get('company_name')
+    email = request.POST.get('email')
+    full_name = request.POST.get('name')
+    if (' ' in full_name) == True:
+        full_name_split=full_name.split(' ')
+        if len(full_name_split)==2:
+            first_name=full_name_split[0]
+            last_name=full_name_split[1]
+        if len(full_name_split)==3:
+            first_name=full_name_split[0]
+            last_name=full_name_split[2]
+    else:
+        first_name=full_name
+    langn_id=request.POST.get('language_id')
+    user_type = request.POST.get('user_type')
+    aadhar_no=request.POST.get('aadhar_no')
+    state=request.POST.get('state')
+    city=request.POST.get('city')
+    district=request.POST.get('district')
+    pincode=request.POST.get('pincode')
+    address=request.POST.get('address')
+    if request.POST.get('fms_id'):
+    	fms_id=request.POST.get('fms_id')
+    if request.POST.get('fertilizer_licence'):
+    	fertilizer_licence=request.POST.get('fertilizer_licence')
+    if request.POST.get('gst_number'):
+    	gst_number=request.POST.get('gst_number')
+    user_info_photo=models.UserProfile.objects.filter(user=user_id).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card')
+    for i in user_info_photo:
+        user_photo1=i[0],
+        aadhar_card1=i[1]
+        pan_card1=i[2]
+        vote_id1=i[3]
+        soil_card1=i[4]
+    user_info_photo=list(models.UserProfile.objects.filter(user=user_id).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card'))
+    for i in user_info_photo:
+        user_photo1=i[0],
+        aadhar_card1=i[1]
+        pan_card1=i[2]
+        vote_id1=i[3]
+        soil_card1=i[4]
+    user_profile = models.UserProfile.objects.get(user=user_id)
+    if request.FILES.get('user_photo'):
+        print("user_photo1",user_photo1)
+        # if user_photo1:
+        #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
+        user_photo = request.FILES['user_photo']
+        user_profile.user_photo = user_photo
+        
+    if request.FILES.get('aadhar_card'):
+        # if aadhar_card1:
+        #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
+        aadhar_card = request.FILES['aadhar_card']
+        user_profile.aadhar_card = aadhar_card
+    
+    if request.FILES.get('pan_card'):
+        # if pan_card1:
+        #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
+        pan_card = request.FILES['pan_card']
+        user_profile.pan_card = pan_card
+    
+    if request.FILES.get('vote_id'):
+        # if vote_id1:
+        #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
+        vote_id = request.FILES['vote_id']
+        user_profile.vote_id = vote_id
+    
+    if request.FILES.get('soil_card'):
+        # if soil_card1:
+        #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
+        soil_card = request.FILES['soil_card']
+        user_profile.soil_card = soil_card
+    
+    if request.FILES.get('fertilizer_photo'):
+    	fertilizer_photo = request.FILES['fertilizer_photo']
+    	user_profile.fertilizer_photo = fertilizer_photo
+
+
+
+    if request.FILES.get('gst_photo'):
+        gst_photo = request.FILES['gst_photo']
+        user_profile.gst_photo = gst_photo
+
+    land_area=request.POST.get('land_area')
+    models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email)
+    langn_id=models.Language.objects.get(id=langn_id)
+    state=models.State.objects.get(id=state)
+    district=models.District.objects.get(id=district)
+    if city:
+        if models.City.objects.filter(city_name=city).exists():
+            city_name=city
+        else:
+            new_city = models.City.objects.create(city_name =city,status=1)
+            new_city.save()
+            city_name=new_city.city_name
+    
+    #user_profile.parent_id=0
+    user_profile.company_name=company_name
+    user_profile.language=langn_id
+    #user_profile.aadhar_no=aadhar_no
+    user_profile.state=state
+    user_profile.city_name=city_name
+    user_profile.district=district
+    user_profile.pincode=pincode
+    user_profile.address=address
+    user_profile.land_area=land_area
+    user_profile.save()
+
+
+    if request.POST.get('wholesaler_id'):
+        models.UserLinkage.objects.filter(retailer_user_id=user_id).delete()
+        user_int=User.objects.get(id=user_id)
+        listdata=request.POST.get('wholesaler_id')
+        x=listdata.split(",")
+        for i in x:
+            wholesaler_id=i
+            user_id_whole=User.objects.get(id=wholesaler_id)
+            print('user_id_whole=> ',user_id_whole)
+            user_link_data= models.UserLinkage.objects.create(retailer_user_id=user_int,wholesaler_user_id=user_id_whole)
+            print('wholesaler_id=> ',wholesaler_id)
+            user_link_data.save()
+
+    response=JsonResponse({'status':'success','msg':'Profile Updated Successfuly'})
+    return response
+
+@csrf_exempt
+def get_farmer_profile(request):
+
+	user_type = request.POST.get('user_type')
+	userprofileDetails = models.UserProfile.objects.filter(user_type=user_type).values_list('user')
+	for i in userprofileDetails:
+		user_type=i[0]
+		data={"user_type":user_type,}
+        # "name":full_name,"mobile_number":mobile_number,"otp":otp,"user_id":str(user_id)}
+		response=JsonResponse({'status':'success','msg':'Otp Match','data':data})
+		return response
+
+
+# @login_required
+# @csrf_exempt
+# def get_farmer_id(request):
+#     data=[]
+#     user_type=""
+#     district=""
+#     state=""
+#     count=0
+#     row=[]
+#     user_type = request.POST.get('user_type')
+#     user_info=models.UserProfile.objects.filter(user_type=user_type).values_list('user_type__name',
+#     'user__username',
+#     'user',
+#     'user_type').order_by('-created_at')
+#     for i in user_info:
+
+#         user_id=i[0]
+
+#         username=i[1]
+#         user_type = i[2]
+#         count+=1
+#         data.append([count,str(username),str(user_id),str(user_type)])
+#     response = JsonResponse({'success':'success','data':(data)})
+
+#         return response
+
+
+@login_required
+@csrf_exempt
+def edit_farmer_mobile(request, pk):
+    gr_no=[]
+    first_name=''
+    last_name=''
+    city_name=''
+    state=''
+    user_photo="/media/default/placeholder.png"
+    aadhar_card="/media/default/placeholder.png"
+    pan_card="/media/default/placeholder.png"
+    vote_id="/media/default/placeholder.png"
+    soil_card="/media/default/placeholder.png"
+    data={}
+    group_data=get_group()
+    lang_data=get_langauge()
+    state_data=get_state()
+    city_data=get_city()
+    user_id=pk
+
+    if request.method == 'POST':
+        data={}
+        #user_id = request.POST.get('user_id')
+        password = request.POST.get('mobile_number')
+        email = request.POST.get('email')
+        full_name = request.POST.get('name')
+        if (' ' in full_name) == True:
+            full_name_split=full_name.split(' ')
+            if len(full_name_split)==2:
+                first_name=full_name_split[0]
+                last_name=full_name_split[1]
+            if len(full_name_split)==3:
+                first_name=full_name_split[0]
+                last_name=full_name_split[2]
+        else:
+            first_name=full_name
+        langn_id=request.POST.get('language_id')
+        user_type = request.POST.get('user_type')
+        aadhar_no=request.POST.get('aadhar_no')
+        state=request.POST.get('state')
+        city=request.POST.get('city')
+        district=request.POST.get('district')
+        pincode=request.POST.get('pincode')
+        address=request.POST.get('address')
+        user_info_photo=models.UserProfile.objects.filter(user=pk).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card')
+        for i in user_info_photo:
+            user_photo1=i[0],
+            aadhar_card1=i[1]
+            pan_card1=i[2]
+            vote_id1=i[3]
+            soil_card1=i[4]
+        user_info_photo=list(models.UserProfile.objects.filter(user=pk).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card'))
+        for i in user_info_photo:
+            user_photo1=i[0],
+            aadhar_card1=i[1]
+            pan_card1=i[2]
+            vote_id1=i[3]
+            soil_card1=i[4]
+        user_profile = UserProfile.objects.get(user=user_id)
+
+        if request.FILES.get('user_photo'):
+            print("user_photo1",user_photo1)
+            # if user_photo1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
+            user_photo = request.FILES['user_photo']
+            user_profile.user_photo = user_photo
+            
+        if request.FILES.get('aadhar_card'):
+            # if aadhar_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
+            aadhar_card = request.FILES['aadhar_card']
+            user_profile.aadhar_card = aadhar_card
+       
+        if request.FILES.get('pan_card'):
+            # if pan_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(pan_card1[0]))
+            pan_card = request.FILES['pan_card']
+            user_profile.pan_card = pan_card
+        
+        if request.FILES.get('vote_id'):
+            # if vote_id1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(vote_id1[0]))
+            vote_id = request.FILES['vote_id']
+            user_profile.vote_id = vote_id
+        
+        if request.FILES.get('soil_card'):
+            # if soil_card1:
+            #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(soil_card1[0]))
+            soil_card = request.FILES['soil_card']
+            user_profile.soil_card = soil_card
+        
+        land_area=request.POST.get('land_area')
+
+        models.User.objects.filter(id=user_id).update(first_name=first_name,last_name=last_name,email=email)
+
+        langn_id=models.Language.objects.get(id=langn_id)
+        state=models.State.objects.get(id=state)
+        district=models.District.objects.get(id=district)
+        if city:
+            if models.City.objects.filter(city_name=city).exists():
+                city_name=city
+            else:
+                new_city = models.City.objects.create(city_name =city,status=1)
+                new_city.save()
+                city_name=new_city.city_name
+       
+        user_profile.parent_id=0
+        user_profile.language=langn_id
+        user_profile.aadhar_no=aadhar_no
+        user_profile.state=state
+        user_profile.city_name=city_name
+        user_profile.district=district
+        user_profile.pincode=pincode
+        user_profile.address=address
+        user_profile.land_area=land_area
+        user_profile.save()
+        response=JsonResponse({'status':'success'})
+        return response
+    else:
+        user_info=models.UserProfile.objects.filter(user=pk).values_list('user_type__name','language__lang_name','user__first_name','user__last_name','user__email','user__username','aadhar_no','state__state_name','city','district__district_name','pincode','address','user_photo','aadhar_card','pan_card','vote_id','soil_card','land_area','user_type__id','language__id','state__id','district__id')
+        for i in user_info:
+            user_type=i[0],
+            language=i[1]
+            first_name=i[2]
+            last_name=i[3]
+            full_name=str(first_name)+" "+str(last_name)
+            email=i[4]
+            mobile_number=i[5]
+            aadhar_no=i[6]
+            state=i[7]
+            city=i[8]
+            district=i[9]
+            pincode=i[10]
+            address=i[11]
+            if i[12]!= "":
+                user_photo='/'+i[12]
+            if i[13]!= "":
+                aadhar_card='/'+i[13]
+            if i[14]!= "":
+                pan_card='/'+i[14]
+            if i[15]!= "": 
+                vote_id='/'+i[15]
+            if i[16]!= "": 
+                soil_card='/'+i[16] 
+            land_area=i[17]
+            group_id=i[18]
+            lang_id=i[19]
+            state_id=i[20]
+            district_id=i[21]
+            user_type={"name":user_type[0],'id':group_id}
+            language={"name":language,'id':lang_id}
+            state={"name":state,'id':state_id}
+            district={"name":district,'id':district_id}
+            print("user_photo",user_photo)
+            data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':1,'name':'Thane'}],"user_id":user_id}
+            response= JsonResponse({'status':'not change',"data":data})
+            return response
+
+#@login_required
+@csrf_exempt
+def search_farmer(request):
+    username = request.POST.get('mobile_number')
+    case = []
+    if User.objects.filter(username=username).exists():
+        data = User.objects.filter(username=username).values_list('id','first_name','last_name')
+        for ele in data:
+            data = {'id':ele[0],'first_name':ele[1],'last_name':ele[2]}
+            case.append([str(data)])
+            response=JsonResponse({'data':data,'msg': "welcome",'status': "success"})
+            return response
+
+ 
+
+    else:
+        response=JsonResponse({'status':'Farmer Not Registered'})
+        return response
+
+
+# For Getting State list
 @csrf_exempt
 def get_state_list(request):
     state_data=[]
@@ -240,19 +909,25 @@ def get_state_list(request):
     for i in state_list:
         case2 = {'id': i[0], 'name': i[1]}
         state_data.append(case2)
+    state_data=sorted(state_data, key=itemgetter('name'))
     response=JsonResponse({'status':'success','data':state_data})
     return response
 
+# For Getting District list
 @csrf_exempt
 def get_district_list(request):
     district_data=[]
-    district_list=models.District.objects.all().values_list('id', 'district_name')
+    state_id=request.POST.get('state_id')
+    district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
     for i in district_list:
         case2 = {'id': i[0], 'name': i[1]}
         district_data.append(case2)
+    district_data=sorted(district_data, key=itemgetter('name'))
     response=JsonResponse({'status':'success','district_data':district_data})
     return response
 
+
+# For Getting City list
 @csrf_exempt
 def get_city_list(request):
     city_data=[]
@@ -263,20 +938,43 @@ def get_city_list(request):
     response=JsonResponse({'status':'success','data':city_data})
     return response
 
-
+# For Getting all_manage_contain
 @csrf_exempt
 def all_manage_contain(request):
+    user_type=request.POST.get('user_type')
     data=[]
-    list=models.ManageContent.objects.all().values_list('id', 'title_eng','title_hnd','date','state','district','group',
+    my_user_type=Group.objects.filter(name=user_type).values_list('name','id')
+    if my_user_type:
+        user_id=my_user_type[0][1]
+    list=models.ManageContent.objects.filter(group_id__contains=user_id).values_list('id', 'title_eng','title_hnd','date','state_id','district_id','group_id',
     'contains_eng','contains_hnd','user_id_admin_id','status','created_at','updated_at','feature_image')
     for i in list:
-        case2 = {'id': i[0], 'title_eng': i[1], 'title_hnd': i[2],'date':i[3],'state':i[4],'district':i[5],'group':i[6],
+        district=i[5]
+        if district != 0:
+            district=models.District.objects.get(id=district)
+        else:
+            district=""
+        state=i[4]
+        if state != 0:
+            state=models.State.objects.get(id=state)
+        else:
+            state=""
+        case2 = {'id': i[0], 'title_eng': i[1], 'title_hnd': i[2],'date':i[3],'state':str(state),'district':str(district),'group':i[6],
         'contains_eng':i[7],'contains_hnd':i[8],'user_id_admin_id':i[9],'status':i[10],'created_at':i[11],'updated_at':i[12],
         'feature_image':i[13]}
         data.append(case2)
     response=JsonResponse({'status':'success','data':data})
     return response
 
+@csrf_exempt
+def get_product_mo(request):
+    product_list = []
+    product_details = models.Product.objects.all().values_list('id','product_name','product_price')
+    for i in product_details:
+        case1 = {'id': i[0], 'product_name': i[1], 'product_price': i[2]}
+        product_list.append(case1)
+    response=JsonResponse({'status':'success','data':product_list})
+    return response
 
 @csrf_exempt
 def get_product_mobile(request):
@@ -299,13 +997,230 @@ def get_product_mobile(request):
     return response
 
 @csrf_exempt
-def get_username(request):
-    username=request.POST.get('mobile_number')
-    if User.objects.filter(username=username).exists():
-        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+def get_price(request):
+    if request.method == 'POST':
+        product_data=[]
+        product_id=request.POST.get('id')
+        price_list=models.Product.objects.filter(id=product_id).values_list('id', 'product_price')
+        for i in price_list:
+            case2 = {'id': i[0], 'product_price': i[1]}
+            product_data.append(case2)
+        response=JsonResponse({'status':'success','price':product_data})
         return response
-    else:
+
+# For placing  order from mobile
+@csrf_exempt
+# def mobile_place_order(request):
+#     if request.method == 'POST':
+#         # products=get_product()
+#         # price = get_price()
+#         farmer_id = request.POST.get('farmer_id')
+#         print(farmer_id)
+#         retailer_id=request.POST.get('retailer_id')
+#         # product_price=request.POST.get('price')
+#         # product_quantity=request.POST.get('quantity')
+#         total_price=request.POST.get('grand_total')
+
+#         userprofile = models.Order.objects.create(user_id_farmer_id=farmer_id,
+#         user_id_retailer_id=retailer_id,
+#         # product_price=product_price,
+#         # product_quantity=product_quantity,
+#         total_price=total_price)
+#         userprofile.save()
+#         response=JsonResponse({'status':'success'})
+#         return response
+#     else:
+#         response=JsonResponse({'status':'error'})
+#         return response
+
+@csrf_exempt
+def mobile_place_order(request):
+   # if request.user.groups.filter(name="admin").exists():
+   #     print("in")
+   # else:
+   #     print ("out")
+   list_id=[]
+   if request.method == 'POST':
+       data={}
+       product_list = request.POST.get('product_list')
+       product_list1=json.loads(product_list)
+       total_price=request.POST.get('total_price')
+       user_id_farmer_id = request.POST.get('farmer_id')
+       user_id_retailer_id = request.POST.get('retailer_id')
+       product_quantity=request.POST.get('product_quantity')
+       product_price=request.POST.get('product_price')
+       product_total_price=request.POST.get('product_total_price')
+       user_id_farmer_id=User.objects.get(id=user_id_farmer_id)
+       user_id_retailer_id=User.objects.get(id=user_id_retailer_id)
+
+       order_data= models.Order.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,total_price=total_price)
+       order_data.save()
+       new_order_id = order_data.id
+       list_id.append(new_order_id)
+       for product in product_list1:
+           product_id=product['id']
+           product_name=product['name']
+           print("product_id",product_id,list_id)
+           product_id=models.Product.objects.get(id=product_id)
+           new_order_id=models.Order.objects.get(id__in=list_id)
+           print("new_order_id",new_order_id)
+           product_order_data= models.OrderProductsDetail.objects.create(product=product_id,order=new_order_id,product_quantity=product_quantity,product_price=product_price,product_total_price=product_total_price)
+           product_order_data.save()
+       loyalty_data= models.LoyaltyPoints.objects.filter(loyalty_type='Order').values_list('id', 'loyalty_point')
+       for i in loyalty_data:
+           loyalty_id=i[0]
+           loyalty_point=i[1]
+       # print("loyalty_id",loyalty_id,loyalty_point)
+       # user_loyalty_data= models.UserLoyaltyPoints.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,order_id=int(new_order_id),loyalty_points_id=str(loyalty_id),loyalty_point=int(loyalty_point),to_user_id=1,from_user_id=1,loyalty_type="Order")
+       # user_loyalty_data.save()
+       data={'order_id':loyalty_id,"status":True}
+
+#     order = models.Product.objects.all().values_list('product_name','product_unit','product_price')
+#     quanties=request.POST.get('quantity')
+#     quantity = (quanties)
+#     for ele in order:
+#         product_name = ele[0]
+#         product_unit = ele[1]
+#         product_prices = ele[2]
+#         product_price = float(product_prices)
+#         grand_total=request.POST.get('grand_total')
+
+#         # sub_total = float(product_price) * (quantity)
+#         # grand_total = 0
+#         # for cost in sub_total:
+#         #     grand_total = grand_total + float(cost)
+
+#     order_place = models.OrderProductsDetail.objects.create(
+#         product_name=product_name,
+#         product_unit=product_unit,
+#         quantity=quantity,
+#         product_price=product_price,
+#         grand_total=grand_total
+#         )
+#     order_place.save()
+#     #data={'product_name':product_name,'product_unit':product_unit,"status":True}
+
+#   # response = JsonResponse({"status":"success",'product_name':product_name,'product_unit':product_unit,"quantity":quantity,"product_price":product_price,
+#     "grand_total":grand_total,"status":True})
+#     return response
+
+# For Getting product list
+
+# @csrf_exempt
+# def get_product_mobile(request):
+#     data=[]
+#     count=0
+#     product_info=models.Product.objects.all().values_list('product_image','product_name','product_code','product_unit','product_price','id')
+#     for i in product_info:
+#         product_image=i[0]
+#         product_name=i[1]
+#         product_code=i[2]
+#         product_unit=i[3]
+#         product_price=i[4]
+#         product_id=i[5]
+#         count+=1
+#         case1 = {'product_id':product_id, 'product_name': product_name,'product_code':product_code,'product_unit':product_unit,'product_unit':product_unit,'product_price':product_price}
+#         data.append(case1)
+#     response=JsonResponse({'status':'success','data':data})
+#     return response
+
+# For Add product
+@csrf_exempt
+def add_product_mobile(request):
+    if request.method == 'POST':
+        data={}
+        product_image=''
+        product_name = request.POST.get('product_name')
+        product_code = request.POST.get('product_code')
+        product_unit = request.POST.get('product_unit')
+        sub_code = request.POST.get('sub_code')
+        product_unit1=product_unit+' '+sub_code
+        product_price = request.POST.get('product_price')
+        if request.FILES.get('product_image'):
+            product_image = request.FILES['product_image']
+
+        product = models.Product.objects.create(product_name=product_name,product_code=product_code,product_unit=product_unit,product_price=product_price,product_image=product_image)
+        product.save()
         response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        response=JsonResponse({'status':'error'})
+        return response
+
+
+@login_required
+@csrf_exempt
+def get_user_mobile(request):
+    data=[]
+    user_type=""
+    district=""
+    state=""
+    count=0
+    row=[]
+    user_info=models.UserProfile.objects.filter(~Q(user='1')).values_list('user_type__name','district__district_name','state__state_name','user','user__first_name','user__last_name','user__username','user__is_active').order_by('-created_at')
+    for i in user_info:
+        user_type=i[0]
+        district=i[1]
+        state=i[2]
+        user_id=i[3]
+        first_name=i[4]
+        last_name=i[5]
+        full_name=str(first_name)+" "+str(last_name)
+        username=i[6]
+        status=i[7]
+        data.append([count,str(user_type),str(full_name),str(username),str(district),str(state), str(status),str(user_id)])
+        response = ({'data':(data)})
+        return response
+
+@csrf_exempt
+def add_order_list(request):
+    # if request.user.groups.filter(name="admin").exists():
+    #     print("in")
+    # else:
+    #     print ("out")
+    list_id=[]
+    recharge_amount= random.randint(50,999)
+    if request.method == 'POST':
+        data={}
+        product_list = request.POST.get('product_list')
+        product_list1=json.loads(product_list)
+        total_price=request.POST.get('grand_total') 
+        user_id_farmer_id = request.POST.get('farmer_id')
+        user_id_retailer_id = request.POST.get('retailer_id')
+        user_id_farmer_id=User.objects.get(id=user_id_farmer_id)
+        user_id_retailer_id=User.objects.get(id=user_id_retailer_id)
+
+        order_data= models.Order.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,total_price=total_price)
+        order_data.save()
+        new_order_id = order_data.id
+        list_id.append(new_order_id)
+        for product in product_list1:
+            product_id=product['id']
+            #product_name=product['name']
+            product_price=product['product_price']
+            product_quantity=product['quantity']
+            product_total_price=product['subtotal']
+            product_id=models.Product.objects.get(id=product_id)
+            new_order_id=models.Order.objects.get(id__in=list_id)
+           
+            product_order_data= models.OrderProductsDetail.objects.create(product=product_id,order=new_order_id,product_quantity=product_quantity,product_price=product_price,product_total_price=product_total_price)
+            product_order_data.save()
+        loyalty_data= models.LoyaltyPoints.objects.filter(loyalty_type='Order').values_list('id', 'loyalty_point')
+        for i in loyalty_data:
+            loyalty_id=i[0]
+            loyalty_point=i[1]
+        user_loyalty_data= models.UserLoyaltyPoints.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,order_id=int(list_id[0]),loyalty_points_id=str(loyalty_id),loyalty_point=int(loyalty_point),to_user_id=1,from_user_id=1,loyalty_type='Order')
+        user_loyalty_data.save()
+        user_recharge_data= models.Recharge.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,amount=int(recharge_amount),order=new_order_id,transation_id=0,transation_request='dummy',transation_response='dummy')
+        user_recharge_data.save()
+        recharge_id=user_recharge_data.id
+
+        user_scratch_data= models.Scratch.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,amount=int(recharge_amount),order=new_order_id)
+        user_scratch_data.save()
+        
+        data={'recharge_id':recharge_id,'recharge_amount':recharge_amount,"status":True}
+        response=JsonResponse({'status':'success','msg':'Order Placed Successfully','data':data})
         return response
 
 @csrf_exempt
@@ -321,43 +1236,34 @@ def get_farmer_list(request):
         farmer_data.append(case2)
     response=JsonResponse({'status':'success','data':farmer_data})
     return response
-    
+
 
 @csrf_exempt
-def add_order_list(request):
-    # if request.user.groups.filter(name="admin").exists():
-    #     print("in")
-    # else:
-    #     print ("out")
+def get_wholesaler(request):
+    whole_data=[]
+    wholesaler_data=models.UserProfile.objects.filter(user_type=3).values_list('user','user__first_name','user__last_name','parent_id')
+    for i in wholesaler_data:
+        full_name=i[1]+' '+i[2]
+        case1 = {'user_id': i[0], 'name': full_name}
+        whole_data.append(case1)
+    response=JsonResponse({'status':'success','data':whole_data})
+    return response
+
+
+@csrf_exempt
+def recharge_done(request):
     if request.method == 'POST':
-        data={}
-        product_list = request.POST.get('product_list')
-        total_price=request.POST.get('total_price') 
-        user_id_farmer_id = request.POST.get('farmer_id')
-        user_id_retailer_id = request.POST.get('retailer_id')
-        product_quantity=request.POST.get('product_quantity')
-        product_price=request.POST.get('product_price')
-        product_total_price=request.POST.get('product_total_price')
-        user_id_farmer_id=User.objects.get(id=user_id_farmer_id)
-        user_id_retailer_id=User.objects.get(id=user_id_retailer_id)
+        recharge_id = request.POST.get('recharge_id')
+        user_recharge=models.Recharge.objects.get(id=recharge_id)
+        user_recharge.status = 1
+        user_recharge.save()
+        response=JsonResponse({'status':'success','msg':'Reacharge Done Successfully'})
+        return response
 
-        order_data= models.Order.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,total_price=total_price)
-        order_data.save()
-        new_order_id = order_data.id
-
-        #product_list = [{"id":"1","name":"Ferti"},{"id":"2","name":"Ammonium Sulphate"}] #[{"id":"1","name":"Ferti"},{"name":"Ammonium Sulphate","id":"2"}]
-        for product in product_list:
-            product_id=product['id']
-            product_name=product['name']
-            product_id=models.Product.objects.get(id=product_id)
-            new_order_id=models.Order.objects.get(id=new_order_id)
-            product_order_data= models.OrderProductsDetail.objects.create(product=product_id,order=new_order_id,product_quantity=product_quantity,product_price=product_price,product_total_price=product_total_price)
-        product_order_data.save()
-        loyalty_data= models.LoyaltyPoints.objects.filter(loyalty_type='Order').values_list('id', 'loyalty_point')
-        for i in loyalty_data:
-            loyalty_point=i[1]
-        user_loyalty_data= models.UserLoyaltyPoints.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,from_user_id=user_id_retailer_id,order_id=new_order_id,loyalty_point=loyalty_point)
-        user_loyalty_data.save()
-        data={'order_id':new_order_id,"status":True}
-    response=JsonResponse({'status':'success','msg':'Order Placed Successfully','data':data})
+@csrf_exempt
+def send_opt_farmer(request):
+    mobile_number = request.POST.get('mobile_number')
+    genotp=generateOTP(mobile_number)
+    data={"mobile_number":mobile_number,"opt":genotp}
+    response=JsonResponse({'status':'success','msg':'OTP send Successfully','data':data})
     return response

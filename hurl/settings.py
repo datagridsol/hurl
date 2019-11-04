@@ -40,18 +40,64 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'hurlapp',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8000','http://hurl.datagrid.co.in','https://hurl.datagrid.co.in','http://172.105.560.178:8001',
+)
 
 ROOT_URLCONF = 'hurl.urls'
 
@@ -77,23 +123,30 @@ WSGI_APPLICATION = 'hurl.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
+
+# DATABASES = {
+#      'default': {
+#      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#      'NAME': 'hurl',
+#      'USER': 'hurl1',
+#      'PASSWORD': 'hurl',
+#      'HOST': 'localhost',
+#      'PORT': '5432',
+#      }
+#  }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-# DATABASES = {
-#     'default': {
-#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     'NAME': 'hurl',
-#     'USER': 'hurllocal',
-#     'PASSWORD': 'hurllocal',
-#     'HOST': 'localhost',
-#     'PORT': '5432',
-#     }
-# }
 
 
 # Password validation
