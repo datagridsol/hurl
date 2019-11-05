@@ -2352,8 +2352,25 @@ def view_support(request,pk):
 @csrf_exempt
 def get_reports(request):
     data=[]
+    retailers_data=[]
+    products_data=[]
     count=0
     state_data=get_state()
+    retailers=models.UserProfile.objects.filter(user_type=2,user__is_active=1).values_list('user__id','user__first_name','user__last_name').order_by('-created_at')
+    for i in retailers:
+        retailers_data.append({'id':i[0],'full_name':i[1]+' '+i[2]})
+
+    products=models.Product.objects.filter(status=1).values_list('id','product_name').order_by('-created_at')
+    for i in products:
+        products_data.append({'id':i[0],'product_name':i[1]})
+
+    state = request.GET.get('state')
+    district = request.GET.get('district')
+    retailers = request.GET.get('retailers')
+    products = request.GET.get('products')
+    searchDate = request.GET.get('searchDate')
+    
+        
     user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
     for i in user_info:
         id=i[0]
@@ -2369,7 +2386,7 @@ def get_reports(request):
 
         count+=1
         data.append([count,str(retailer_first_name)+' '+str(retailer_last_name),str(retailer_username),str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(formatedDate),str(total_price)])
-    return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'district_data':[{'id':'1','name':'Thane'}]})
+    return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'retailers':retailers_data,'products':products_data})
 
 
 @csrf_exempt
@@ -2456,7 +2473,7 @@ def send_file(request):
     import mimetypes
     
     #template = "wholeseller_upload.html"
-    filename     = "/home/dev04/workspace/hurl/media/default/test.csv" # Select your file here.
+    filename     = "/opt/Python/hurl/media/default/test.csv" # Select your file here.
     download_name ="sample_format.csv"
     wrapper      = FileWrapper(open(filename))
     content_type = mimetypes.guess_type(filename)[0]

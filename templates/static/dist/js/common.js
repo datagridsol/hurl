@@ -1317,7 +1317,11 @@ $("#editwholeselerForm").validate({
           })
         }
     });
-
+  $('#searchDate').daterangepicker({
+    locale: {
+      format: 'DD/MM/YYYY'
+    }
+  });
   $('#reservationtime').daterangepicker({
     timePicker: true,
     timePicker24Hour:true,
