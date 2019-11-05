@@ -12,6 +12,7 @@ import json
 from hurlapp import models
 from django.db.models import Q
 from operator import itemgetter
+from datetime import datetime
 
 # For login
 @csrf_exempt
@@ -267,7 +268,8 @@ def add_user_mobile(request):
         langn_id=request.POST.get('language_id')
 #        user_type = request.POST.get('user_type')
         if request.POST.get('user_type'):
-        	user_type=request.POST.get('user_type')
+            user_type=request.POST.get('user_type')
+            sendwlcomeFarmer(username,full_name)
         else:
             user_type="2"
             status=0
@@ -1257,6 +1259,7 @@ def recharge_done(request):
         recharge_id = request.POST.get('recharge_id')
         user_recharge=models.Recharge.objects.get(id=recharge_id)
         user_recharge.status = 1
+        user_recharge.updated_at=datetime.now()
         user_recharge.save()
         response=JsonResponse({'status':'success','msg':'Reacharge Done Successfully'})
         return response
@@ -1264,7 +1267,37 @@ def recharge_done(request):
 @csrf_exempt
 def send_opt_farmer(request):
     mobile_number = request.POST.get('mobile_number')
-    genotp=generateOTP(mobile_number)
-    data={"mobile_number":mobile_number,"opt":genotp}
+    genotp=sendoptFarmer(mobile_number)
+    data={"mobilesendoptFarmer_number":mobile_number,"opt":genotp}
     response=JsonResponse({'status':'success','msg':'OTP send Successfully','data':data})
     return response
+
+@csrf_exempt
+def sendoptFarmer(request) :
+   import requests
+   digits = "0123456789"
+   OTP = random.randint(1000,9999)
+   # Phone_number=mobile_number
+   Phone_number = request.POST.get('mobile_number')
+   sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to verify your mobile number for Apna urea App"}
+   requests.packages.urllib3.disable_warnings()
+   r = requests.post(sms_url,data = data)
+   response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
+   return OTP
+
+
+@csrf_exempt
+def sendwlcomeFarmer(mobile_number,full_name) :
+   import requests
+   digits = "0123456789"
+   OTP = random.randint(1000,9999)
+   # Phone_number=mobile_number
+   Phone_number = mobile_number
+   full_name=full_name
+   sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Hello "+full_name+", ​Congratulations! You have successfully registered to Apna urea App. You can login using the mobile number "+Phone_number+""}
+   requests.packages.urllib3.disable_warnings()
+   r = requests.post(sms_url,data = data)
+   response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
+   return OTP

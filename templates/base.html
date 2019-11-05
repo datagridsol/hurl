@@ -213,9 +213,11 @@
             </a>
           </li>
 
+          
+
           <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product6/" == request.path %} active {% endif %}">
-              <i class="nav-icon fas fa-mobile-alt"></i>
+            <a href="{% url 'get_recharge' %}" class="nav-link {% if "/get_recharge/" == request.path %} active {% endif %}">
+              <i class="nav-icon fas fa-users"></i> 
               <p>
                 Manage Recharge
               </p>

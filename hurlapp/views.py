@@ -1899,6 +1899,39 @@ def get_order(request):
         data.append([count,str(full_name),str(full_name_retailer),str(formatedDate),str(state),str(district),str(amount),"<a class='btn' href='/order_details/"+str(id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_orders.html', {'data':(data)})
 
+@login_required
+@csrf_exempt
+def get_recharge(request):
+    data=[]
+    user_type=""
+    district=""
+    state=""
+    count=0
+    row=[]
+    user_info=models.Recharge.objects.all().values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_farmer_id__username','updated_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','amount','id','status','user_id_retailer_id__first_name','user_id_retailer_id__last_name').order_by('-updated_at')
+    for i in user_info:
+        first_name=i[0]
+        last_name=i[1]
+        full_name=str(first_name)+" "+str(last_name)
+        mobile_number=i[2]
+        created_at=i[3]
+        formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+        state=i[4]
+        district=i[5]
+        amount=i[6]
+        id=i[7]
+        status=i[8]
+        full_name_retailer=str(i[9])+" "+str(i[10])
+
+        if status:
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-content-id="+str(id)+">Recharge Done</button></div>"
+        else:
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-content-id="+str(id)+">Recharge Now</button></div>"
+
+        count+=1
+        data.append([count,str(full_name),str(mobile_number),str(full_name_retailer),str(formatedDate),str(state),str(district),str(amount),btn])
+    return render(request, 'manage_recharge.html', {'data':(data)})
+
 @csrf_exempt
 def addOrder(request):
     if request.user.groups.filter(name="admin").exists():
