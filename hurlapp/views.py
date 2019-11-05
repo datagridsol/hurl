@@ -21,6 +21,7 @@ import dateutil.parser
 #from django.utils.encoding import smart_str, smart_unicode
 import os
 from operator import itemgetter
+import io,csv
 
 def index(request):
     return render(request,'index.html')
@@ -740,10 +741,10 @@ def get_product(request):
         product_id=i[7]
         if status:
             status="Active"
-            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-product-id="+str(product_id)+">Disapprove</button></div>"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-product-id="+str(product_id)+">Deactive</button></div>"
         else:
             status="Deactive"
-            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-product-id="+str(product_id)+">Approve</button></div>"
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-product-id="+str(product_id)+">Active</button></div>"
         count+=1
         data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit_name),str(product_price),status,btn,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
 #     return render(request, 'get_product.html', {'data':(data)})
@@ -1351,7 +1352,7 @@ def get_state():
     state_data=[]
     state_list=models.State.objects.all().values_list('id', 'state_name')
     for i in state_list:
-        case2 = {'id': i[0], 'name': i[1]}
+        case2 = {'id': i[0], 'name': i[1].capitalize()}
         state_data.append(case2)
     state_data=sorted(state_data, key=itemgetter('name'))
     return state_data
@@ -1363,7 +1364,7 @@ def get_district(request):
         state_id=request.POST.get('state_id')
         district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
         for i in district_list:
-            case2 = {'id': i[0], 'name': i[1]}
+            case2 = {'id': i[0], 'name': i[1].capitalize()}
             district_data.append(case2)
         district_data=sorted(district_data, key=itemgetter('name'))
         response=JsonResponse({'status':'success','district_data':district_data})
@@ -2369,3 +2370,97 @@ def get_reports(request):
         count+=1
         data.append([count,str(retailer_first_name)+' '+str(retailer_last_name),str(retailer_username),str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(formatedDate),str(total_price)])
     return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'district_data':[{'id':'1','name':'Thane'}]})
+
+
+@csrf_exempt
+def wholeseller_upload(request):
+    template = "add_wholesaler.html"
+    if request.method =='GET':
+        return render(request, template)
+
+    csv_file = request.FILES['file']
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, "This is not a CSV FILE")
+
+    data_set = csv_file.read().decode('UTF-8')
+    io_string =io.StringIO(data_set)
+    next(io_string)
+    count=0
+    count1=0
+    for i in csv.reader(io_string, delimiter = ',', quotechar="|"):
+        username = i[0]
+        password=username
+        first_name=i[1]
+        last_name=i[2]
+        email=i[3]
+        company_name=i[4]
+        language=i[5]
+        state=i[6]
+        district=i[7]
+        city=i[8]
+        pincode=i[9]
+        aadhar_no=i[10]
+        address=i[11]
+        gst_number=i[12]
+        fertilizer_licence=i[13]
+        fms_id=i[14]
+        if User.objects.filter(username=username).exists():
+            count+=1
+
+        else:
+            count1+=1
+            new_user = User.objects.create(username = username,password = username,first_name=first_name,last_name=last_name,is_active=1,email=email)
+            new_user.set_password(password)
+            new_user.save()
+            new_Uid = new_user.id
+
+            user_type=Group.objects.get(id=4)
+            user_type.user_set.add(new_Uid)
+            langn_id=models.Language.objects.get(lang_name__icontains=language.strip().capitalize())
+            state=models.State.objects.get(state_name__icontains=state.strip())
+            district=models.District.objects.get(district_name__contains=district.strip().capitalize())
+            if city:
+                if models.City.objects.filter(city_name__contains=city.strip().capitalize()).exists():
+                    city_name=city
+                else:
+                    new_city = models.City.objects.create(city_name__contains =city.strip().capitalize(),status=1)
+                    new_city.save()
+                    city_name=new_city.city_name
+            # print('langn_id => '+str(langn_id))
+            # print('first_name => '+str(first_name))
+            # print('last_name => '+str(last_name))
+            # print('email => '+str(email))
+            # print('company_name => '+str(company_name))
+            # print('state => '+str(state))
+            # print('district => '+str(district))
+            # print('city => '+str(city))
+            # print('pincode => '+str(pincode))
+            # print('address => '+str(address))
+            # print('gst_number => '+str(gst_number))
+            # print('fertilizer_licence => '+str(fertilizer_licence))
+            # print('fms_id => '+str(fms_id))
+            userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number)
+            userprofile.save()
+
+    # return render(request, 'add_wholesaler.html', {'data':(count),'state_data':count1})
+
+
+    response=JsonResponse({'status':'success','Number Of User Added':count1,'Number Already Exits':count,})
+    return response
+
+
+def send_file(request):
+    import os, tempfile, zipfile
+    from wsgiref.util import FileWrapper
+    from django.conf import settings
+    import mimetypes
+    
+    #template = "wholeseller_upload.html"
+    filename     = "/home/dev04/workspace/hurl/media/default/test.csv" # Select your file here.
+    download_name ="sample_format.csv"
+    wrapper      = FileWrapper(open(filename))
+    content_type = mimetypes.guess_type(filename)[0]
+    response     = HttpResponse( wrapper,content_type=content_type)
+    response['Content-Length']      = os.path.getsize(filename)    
+    response['Content-Disposition'] = "attachment; filename=%s"%download_name
+    return response

@@ -18,7 +18,7 @@ urlpatterns=[
     url(r'^add_farmer/$',views.add_farmer,name='add_farmer'),
     url(r'^edit_farmer/(?P<pk>\d+)$',views.edit_farmer,name='edit_farmer'),
     url(r'^get_wholesaler/$',views.get_wholesaler,name='get_wholesaler'),
-    url(r'^add_wholesaler/$',views.add_wholesaler,name='add_wholesaler'),
+    url(r'^add_wholesaler/$',views.wholeseller_upload,name='add_wholesaler'),
     url(r'^edit_wholesaler/(?P<pk>\d+)$',views.edit_wholesaler,name='edit_wholesaler'),
     url(r'^import_wholesaler/$',views.import_wholesaler,name='import_wholesaler'),
     url(r'^search_city/$',views.search_city,name='search_city'),
@@ -63,6 +63,8 @@ urlpatterns=[
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
     url(r'^recharge_done/$',mobilefunctions.recharge_done,name='recharge_done'),   url(r'^get_farmer_mobile/$',mobilefunctions.get_farmer_mobile,name='get_farmer_mobile'),
     url(r'^save_farmer_mobile/$',mobilefunctions.save_farmer_mobile,name='save_farmer_mobile'),
+    url(r'^download/$',views.send_file, name='download'),
+    url(r'^generateOTP/$',mobilefunctions.generateOTP, name='generateOTP'),
 ]
 
 

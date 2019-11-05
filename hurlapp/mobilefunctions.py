@@ -67,13 +67,14 @@ def check_login(request):
 
 # function to generate OTP
 @csrf_exempt
-def generateOTP(mobile_number) :
+def generateOTP(request) :
    import requests
    digits = "0123456789"
    OTP = random.randint(1000,9999)
-   Phone_number=mobile_number
+   # Phone_number=mobile_number
+   Phone_number = request.POST.get('mobile_number')
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"datagrid","password":"Dat$Fagt&","sender":"DATAGR","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Otp For Login"+" "+str(OTP)}
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to login to your Apna urea App."}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
