@@ -2384,10 +2384,61 @@ def view_support(request,pk):
 
 @csrf_exempt
 def get_reports(request):
+    from django.db.models import Q
     data=[]
+    retailers_data=[]
+    products_data=[]
+    state=0
+    district=0
+    retailers_id=0
     count=0
     state_data=get_state()
+    retailers=models.UserProfile.objects.filter(user_type=2,user__is_active=1).values_list('user__id','user__first_name','user__last_name').order_by('-created_at')
+    for i in retailers:
+        retailers_data.append({'id':i[0],'full_name':i[1]+' '+i[2]})
+
+    products=models.Product.objects.filter(status=1).values_list('id','product_name').order_by('-created_at')
+    for i in products:
+        products_data.append({'id':i[0],'product_name':i[1]})
+
+    # if request.GET.get('state'):
+    #     state=request.GET.get('state')
+    #     user_info=models.Order.objects.filter(user_id_retailer_id__userprofile__state__id=state).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+
+    # elif request.GET.get('district'):
+    #     district=request.GET.get('district')
+    #     user_info=models.Order.objects.filter(user_id_retailer_id__userprofile__state__id=state,user_id_farmer_id__userprofile__district__id=district).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+
+    # elif request.GET.get('retailers'):
+    #     retailers_id=request.GET.get('retailers')
+    #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    # elif request.GET.get('products'):
+    #     retailers=request.GET.get('retailers')
+    #     print("hiwwwwwwww")
+    #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    # elif request.GET.get('retailers'):
+    #     retailers=request.GET.get('retailers')
+    #     print("hiwwwwwwww")
+    #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    # complexQuery = Q(user_id_retailer_id__userprofile__state__id=state) | Q(user_id_farmer_id__userprofile__district__id=district) | Q(user_id_retailer_id__in=retailers)
+
+    # q = Q()
+    # if state:
+    #     q |= Q(user_id_retailer_id__userprofile__state__id__in=state)
+    # if district:
+    #     q |= Q(user_id_farmer_id__userprofile__district__id__in=district)
+    # if retailers:
+    #     q |= Q(user_id_retailer_id__in=retailers)
+    # print("sss444444444444444",retailers_id,state,district)
+    # user_info=Q(models.Order.objects.filter(Q(user_id_retailer_id__userprofile__state__id=1)|Q(user_id_retailer_id__userprofile__district__id=1)) | Q(models.Order.objects.filter(Q(user_id_retailer_id__in=1)))).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+
+    # else:
     user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    # district = request.GET.get('district')
+    # retailers = request.GET.get('retailers')
+    # products = request.GET.get('products')
+    # searchDate = request.GET.get('searchDate')
+    
     for i in user_info:
         id=i[0]
         retailer_first_name=i[1]
@@ -2402,7 +2453,7 @@ def get_reports(request):
 
         count+=1
         data.append([count,str(retailer_first_name)+' '+str(retailer_last_name),str(retailer_username),str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(formatedDate),str(total_price)])
-    return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'district_data':[{'id':'1','name':'Thane'}]})
+    return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'retailers':retailers_data,'products':products_data})
 
 
 @csrf_exempt
