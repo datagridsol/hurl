@@ -2370,7 +2370,7 @@ def get_reports(request):
     products = request.GET.get('products')
     searchDate = request.GET.get('searchDate')
     
-        
+
     user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
     for i in user_info:
         id=i[0]
@@ -2462,7 +2462,7 @@ def wholeseller_upload(request):
     # return render(request, 'add_wholesaler.html', {'data':(count),'state_data':count1})
 
 
-    response=JsonResponse({'status':'success','Number Of User Added':count1,'Number Already Exits':count,})
+    response=JsonResponse({'status':'success','Number_Of_User_Added':count1,'Number_Already_Exits':count})
     return response
 
 

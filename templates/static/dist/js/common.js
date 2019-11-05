@@ -1280,6 +1280,67 @@ $("#editwholeselerForm").validate({
     }
   });
 
+  $("#uploadCSV").validate({
+    rules: {
+      file: {
+        required: true,
+        extension: "csv"
+        
+      }
+    },
+    file: {
+      message: {
+        required: "Please select a csv",
+        extension: "Please select only csv file"
+      }
+    },
+    errorPlacement: function(error, element) {
+      error.appendTo(element.parent("div"));
+    },
+    submitHandler: function() {
+        var btn = $('#submitBtn');
+        $(btn).buttonLoader('start');
+        var userForm=document.getElementById('uploadCSV');
+        var formData = new FormData(userForm);
+      
+        $.ajax({
+          'method':'POST',
+          'url':'/add_wholesaler/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              $(btn).buttonLoader('stop')
+              if(response.Number_Already_Exits>0)
+              {
+                toastr.success(response.Number_Already_Exits+' user(s) added successfully').delay(10000);  
+              }
+              if(response.Number_Of_User_Added>0)
+              {
+                toastr.success(response.Number_Already_Exits+' users alredy exist').delay(10000);  
+              }
+              //setTimeout(function(){ window.location.href="/add_wholesaler/"; }, 1000);
+
+            }
+            else
+            {
+              $(btn).buttonLoader('stop')
+              toastr.error(response.msg)
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            toastr.error(xhr.responseText)
+            $(btn).buttonLoader('stop')
+          },
+        });
+      return false;
+    }
+  });
+
   $('.typeahead').typeahead(
   {  
       source: function(query, result)
