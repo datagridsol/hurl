@@ -12,7 +12,7 @@ import json
 from hurlapp import models
 from django.db.models import Q
 from hurlapp.forms import ProfileForm
-from hurlapp.models import UserProfile,Product,ManageContent
+from hurlapp.models import UserProfile,Product,ManageContent,Order
 from hurlapp import forms
 from hurl import settings
 from django.utils.timezone import get_current_timezone
@@ -22,6 +22,7 @@ import dateutil.parser
 import os
 from operator import itemgetter
 import io,csv
+from django.db.models import Sum
 
 def index(request):
     return render(request,'index.html')
@@ -52,12 +53,31 @@ def register(request):
     return render(request,'registration.html',
                           {'data':data})
 @login_required
+@csrf_exempt
 def dashboard(request):
+    total_farmer=0
+    total_wholeseler=0
+    total_retailer=0
+    total_product=0
+    total_order=0
+    retailer_loyalty_point=0
+    if request.GET.get('searchDate'):
+        searchDate=request.GET.get('searchDate')
+        daterange= searchDate.split("-")
+        start_date=daterange[0]
+        end_date=daterange[1]
     total_farmer=UserProfile.objects.filter(user_type_id='3').count()
     total_wholeseler=UserProfile.objects.filter(user_type_id='4').count()
     total_retailer=UserProfile.objects.filter(user_type_id='2').count()
     total_product=Product.objects.filter(status='1').count()
-    data={'total_farmer':total_farmer,'total_wholeseler':total_wholeseler,"total_retailer":total_retailer,"total_product":total_product}
+    order_value=Order.objects.filter(status=1).aggregate(Sum('total_price'))
+    total_order1=order_value['total_price__sum']
+    if total_order1 is not None:
+        total_order=int(total_order['total_price__sum'])
+    # retailer_loyalty_point=models.UserLoyaltyPoints.objects.filter(user_id_retailer_id__userprofile__user_type=2).aggregate(Sum('loyalty_point'))
+    # farmer_loyalty_point=models.UserLoyaltyPoints.objects.filter(user_id_farmer_id__userprofile__user_type=2).aggregate(Sum('loyalty_point'))
+    data={'total_farmer':total_farmer,'total_wholeseler':total_wholeseler,"total_retailer":total_retailer,"total_product":total_product,"total_order":total_order,"total_order":total_order,"total_order":total_order}
+    
     return render(request,'dashboard.html',{'data':data})
 
 @csrf_exempt
@@ -1572,9 +1592,34 @@ def get_retailer(request):
 
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_retailer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-gift'></i> Layalty Points</a>"])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_retailer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a> | <a class='btn' href='/loyalty_retailer/"+str(user_id)+"'><i class='fas fa-gift'></i> Layalty Points</a>"])
     return render(request, 'manage_retailer.html', {'data':(data)})
 
+
+@login_required
+@csrf_exempt
+def loyalty_retailer(request,pk):
+    data=[]
+    user_type=""
+    district=""
+    state=""
+    count=0
+    row=[]
+    user_info=models.UserLoyaltyPoints.objects.filter(user_id_retailer_id=pk).values_list('user_id_retailer_id__first_name','user_id_retailer_id__last_name','user_id_retailer_id__username','user_id_retailer_id__userprofile__state__state_name','user_id_retailer_id__userprofile__district__district_name','loyalty_type','loyalty_point','order')
+    for i in user_info:
+        first_name=i[0]
+        last_name=i[1]
+        mobile_number=i[2]
+        order_id=i[7]
+        loyalty_type=i[5]
+        loyalty_point=i[6]
+        state=i[3]
+        district=i[4]
+        
+        full_name=str(first_name)+" "+str(last_name)
+        count+=1
+        data.append([count,str(full_name),str(mobile_number),str(order_id),str(loyalty_type),str(loyalty_point),str(state),str(district)])
+    return render(request, 'loyalty_retailer_view.html', {'data':(data)})
 
 @login_required
 @csrf_exempt
@@ -2365,7 +2410,7 @@ def view_support(request,pk):
         last_name=user_info[0][5]
         user_type=user_info[0][6]
 
-        user_chats=models.SupportReply.objects.filter(support_id_id=pk).values_list('id','query','reply','created_at','user_id_admin_id')
+        user_chats=models.SupportReply.objects.filter(support_id_id=pk).values_list('id','query','reply','created_at','user_id_admin_id').order_by('created_at')
         for i in user_chats:
             chat_id=i[0]
             chat_query=i[1]
@@ -2401,16 +2446,16 @@ def get_reports(request):
     for i in products:
         products_data.append({'id':i[0],'product_name':i[1]})
 
-    # if request.GET.get('state'):
-    #     state=request.GET.get('state')
+    if request.GET.get('state'):
+        state=request.GET.get('state')
     #     user_info=models.Order.objects.filter(user_id_retailer_id__userprofile__state__id=state).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
 
-    # elif request.GET.get('district'):
-    #     district=request.GET.get('district')
+    elif request.GET.get('district'):
+        district=request.GET.get('district')
     #     user_info=models.Order.objects.filter(user_id_retailer_id__userprofile__state__id=state,user_id_farmer_id__userprofile__district__id=district).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
 
-    # elif request.GET.get('retailers'):
-    #     retailers_id=request.GET.get('retailers')
+    elif request.GET.get('retailers'):
+        retailers_id=request.GET.get('retailers')
     #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
     # elif request.GET.get('products'):
     #     retailers=request.GET.get('retailers')
@@ -2422,15 +2467,15 @@ def get_reports(request):
     #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
     # complexQuery = Q(user_id_retailer_id__userprofile__state__id=state) | Q(user_id_farmer_id__userprofile__district__id=district) | Q(user_id_retailer_id__in=retailers)
 
-    # q = Q()
-    # if state:
-    #     q |= Q(user_id_retailer_id__userprofile__state__id__in=state)
-    # if district:
-    #     q |= Q(user_id_farmer_id__userprofile__district__id__in=district)
-    # if retailers:
-    #     q |= Q(user_id_retailer_id__in=retailers)
+    q = Q()
+    if state:
+        q |= Q(user_id_retailer_id__userprofile__state__id__in=state)
+    if district:
+        q |= Q(user_id_farmer_id__userprofile__district__id__in=district)
+    if retailers:
+        q = Q(user_id_retailer_id__in=11)
     # print("sss444444444444444",retailers_id,state,district)
-    # user_info=Q(models.Order.objects.filter(Q(user_id_retailer_id__userprofile__state__id=1)|Q(user_id_retailer_id__userprofile__district__id=1)) | Q(models.Order.objects.filter(Q(user_id_retailer_id__in=1)))).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    # user_info=models.Order.objects.filter(q).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
 
     # else:
     user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
@@ -2529,22 +2574,29 @@ def wholeseller_upload(request):
     # return render(request, 'add_wholesaler.html', {'data':(count),'state_data':count1})
 
 
-    response=JsonResponse({'status':'success','Number Of User Added':count1,'Number Already Exits':count,})
+    response=JsonResponse({'status':'success','Number_Of_User_Added':count1,'Number_Already_Exits':count})
     return response
 
 
 def send_file(request):
+
+    import wget
     import os, tempfile, zipfile
     from wsgiref.util import FileWrapper
     from django.conf import settings
     import mimetypes
+    import requests
+
+
     
     #template = "wholeseller_upload.html"
     filename     = "/home/dev04/workspace/hurl/media/default/test.csv" # Select your file here.
     download_name ="sample_format.csv"
-    wrapper      = FileWrapper(open(filename))
-    content_type = mimetypes.guess_type(filename)[0]
-    response     = HttpResponse( wrapper,content_type=content_type)
-    response['Content-Length']      = os.path.getsize(filename)    
-    response['Content-Disposition'] = "attachment; filename=%s"%download_name
-    return response
+    r = requests.get("home/dev04/workspace/hurl/media/default/test.csv")
+    response=urllib.request.urlretrieve(filename, '/Users/scott/Downloads/cat.jpg')
+
+    # wrapper      = FileWrapper(open(filename))
+    # response     = HttpResponse( wrapper,content_type='text/csv')
+    # response['Content-Length']      = os.path.getsize(filename)    
+    #response['Content-Disposition'] = "attachment; filename=%s"%download_name
+    return r

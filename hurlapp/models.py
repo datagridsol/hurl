@@ -255,7 +255,7 @@ class UserLoyaltyPoints(models.Model):
     from_user_id=models.IntegerField()
     loyalty_type= models.CharField(max_length=255)
     loyalty_points_id= models.CharField(max_length=255)
-    order_id =models.IntegerField()
+    order =models.IntegerField()
     loyalty_point = models.IntegerField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())

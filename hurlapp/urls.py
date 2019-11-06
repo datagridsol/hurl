@@ -66,6 +66,7 @@ urlpatterns=[
     url(r'^save_farmer_mobile/$',mobilefunctions.save_farmer_mobile,name='save_farmer_mobile'),
     url(r'^download/$',views.send_file, name='download'),
     url(r'^generateOTP/$',mobilefunctions.generateOTP, name='generateOTP'),
+    url(r'^loyalty_retailer/(?P<pk>\d+)$',views.loyalty_retailer, name='loyalty_retailer'),
 ]
 
 

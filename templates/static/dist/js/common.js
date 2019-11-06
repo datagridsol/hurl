@@ -1093,6 +1093,52 @@ $("#editwholeselerForm").validate({
     }
   });
 
+/*
+$("#dashboardForm").validate({
+    rules: {
+      searchDate: {
+        required: true,
+        
+      }
+    },
+    messages: {
+      searchDate: {
+        required: "Please enter a date",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('dashboardForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/dashboard/'
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Wholesaler updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_wholesaler/"; }, 2000);
+              
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+*/
+
+
   var summernoteValidator = $("#contentForm").validate({
     errorElement: "div",
     errorClass: 'is-invalid',

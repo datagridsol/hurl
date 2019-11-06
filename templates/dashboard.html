@@ -6,16 +6,40 @@
     <!-- Content Header (Page header) -->
     <div class="content-header">
       <div class="container-fluid">
-        <div class="row mb-2">
+        <div class="row mb-6">
           <div class="col-sm-6">
             <h1 class="m-0 text-dark">Dashboard</h1>
           </div><!-- /.col -->
-          <div class="col-sm-6">
+           <form role="form" method="get">
+          
+            <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label>Date range</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="far fa-calendar-alt"></i>
+                    </span>
+                  </div>
+                  <input type="text" class="form-control float-right" name="searchDate" id="searchDate">
+                </div>
+             </div>
+            </div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <label>&nbsp;</label><br>
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </div>
             <!-- <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
               <li class="breadcrumb-item active">Dashboard</li>
             </ol> -->
-          </div><!-- /.col -->
+          </div>  
+          
+          </form>
+
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
@@ -26,7 +50,8 @@
       <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
         <div class="row">
-          <div class="col-lg-3 col-6">
+
+          <div class="col-lg-4 col-6">
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
@@ -36,11 +61,11 @@
               <div class="icon">
                 <i class="ion ion-bag"></i>
               </div>
-              <a href="{% url 'get_wholesaler' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+             <!--  <a href="{% url 'get_wholesaler' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-lg-4 col-6">
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
@@ -51,11 +76,11 @@
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="{% url 'get_retailer' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <!-- <a href="{% url 'get_retailer' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-lg-4 col-6">
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
@@ -66,22 +91,52 @@
               <div class="icon">
                 <i class="ion ion-person-add"></i>
               </div>
-              <a href="{% url 'get_farmer' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+             <!--  <a href="{% url 'get_farmer' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-lg-4 col-6">
             <!-- small box -->
-            <div class="small-box bg-danger">
+            <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{data.total_product}}</h3>
+                <h3>{{data.total_order}}</h3>
 
-                <p>Total Products</p>
+                <p>Total Order Value</p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
               </div>
-              <a href="{% url 'get_product' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+             <!--  <a href="{% url 'get_product' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{data.total_product}}</h3>
+
+                <p>Total Amount Of Loyalty Point For Retailer</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+             <!--  <a href="{% url 'get_product' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{data.total_product}}</h3>
+
+                <p>Total Loyalty Amount Point For Farmer</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+             <!--  <a href="{% url 'get_product' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
