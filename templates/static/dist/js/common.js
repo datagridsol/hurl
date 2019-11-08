@@ -1341,6 +1341,74 @@ $("#editwholeselerForm").validate({
     }
   });
 
+  var summernoteValidator = $("#notificationForm").validate({
+    rules:{
+      title_eng: {
+        required: true,
+      },
+      title_hnd: {
+        required: true,
+      },
+      'request_for[]':{
+        required: true,
+      },
+      'user_type[]':
+      {
+        required:true,
+      },   
+      message_eng: {
+        required: true,
+      },
+      message_hnd: {
+        required: true,
+      }            
+    },
+    errorElement: "div",
+    errorClass: 'is-invalid',
+    validClass: 'is-valid',
+    errorPlacement: function (error, element) {
+        // Add the `help-block` class to the error element
+        error.addClass("invalid-feedback");
+        console.log(element);
+        if (element.prop("type") === "checkbox") {
+            error.insertAfter(element.siblings("label"));
+        } else if (element.hasClass("ckeditor")) {
+            error.insertAfter(element.siblings(".note-editor"));
+        } else {
+            error.insertAfter(element);
+        }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('notificationForm');
+       var formData = new FormData(userForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_notifications/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Notifications sent successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/get_notifications/"; }, 2000);
+              
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
   $('.typeahead').typeahead(
   {  
       source: function(query, result)

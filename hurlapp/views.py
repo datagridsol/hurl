@@ -21,6 +21,7 @@ import dateutil.parser
 #from django.utils.encoding import smart_str, smart_unicode
 import os
 from operator import itemgetter
+from pyfcm import FCMNotification
 import io,csv
 
 def index(request):
@@ -2364,11 +2365,15 @@ def get_reports(request):
     for i in products:
         products_data.append({'id':i[0],'product_name':i[1]})
 
+    qry='';
+    select=['id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name']
     state = request.GET.get('state')
     district = request.GET.get('district')
     retailers = request.GET.get('retailers')
     products = request.GET.get('products')
     searchDate = request.GET.get('searchDate')
+    if request.GET.get('state'):
+        qry +='user_id_retailer_id__state='+state
     
 
     user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
@@ -2481,3 +2486,132 @@ def send_file(request):
     response['Content-Length']      = os.path.getsize(filename)    
     response['Content-Disposition'] = "attachment; filename=%s"%download_name
     return response
+
+@csrf_exempt
+def get_notifications(request):
+    data=[]
+    count=0
+
+    user_info=models.Notification.objects.all().values_list('title_eng','created_at','status','district_id','state_id','group_id','push_status','sms_status','id').order_by('-created_at')
+    
+    for i in user_info:
+        title_eng=i[0]
+        created_at=i[1]
+        formatedDate = created_at.strftime("%d-%m-%Y")
+        district=i[3]
+        if district != 0:
+            district=models.District.objects.get(id=district)
+        else:
+            district="-"
+        state=i[4]
+        if state != 0:
+            state=models.State.objects.get(id=state)
+        else:
+            state="-"
+        status=i[2]
+        group=i[5]
+        grouTxt=''
+        if(group):
+            Arr=group.split(',')
+            for gid in Arr:
+                grouTxt=str(Group.objects.get(id=gid))+','+str(grouTxt)
+        push_request=i[6]
+        push='No'
+        if push_request == 1:
+            push='Yes'
+        sms_request=i[7]   
+        sms='No'
+        if sms_request == 1:
+            sms='Yes'
+        id=i[8]
+        
+        count+=1
+        data.append([count,str(title_eng),str(district),str(state),str(grouTxt[:-1]),formatedDate,push,sms])
+    return render(request, 'manage_notifications.html', {'data':(data)})
+
+@csrf_exempt
+def add_notifications(request):
+    import requests
+    lang_data=get_langauge()
+    state_data=get_state()
+    if request.method == 'POST':
+        data={}
+        sms_response=''
+        push_response=''
+        push_service = FCMNotification(api_key="AAAAT-fnF2g:APA91bEWQbMJqFFPIy-zTLllngov5w09ed6u5MS3pUKLOq9GrVmq7HPxQCDWirrq4wGjYUI2v1vQP-IHQARgO3atV1LU_QM7vtWpEYo0ashQ7NiBdxCR8DneRWZ-OQwCaoxpWTXS7mA-")
+        user_type_get=request.POST.getlist('user_type[]')
+        group_id = ','.join(user_type_get)
+        title_eng = request.POST.get('title_eng')
+        title_hnd = request.POST.get('title_hnd')
+        request_for = request.POST.getlist('request_for[]')
+        sms_status='0'
+        push_status='0'
+        if 'push' in request_for:
+            push_status='1'
+        
+        if 'sms' in request_for:
+            sms_status='1'
+        
+        message_eng = request.POST.get('message_eng')
+        message_hnd = request.POST.get('message_hnd')
+        status = '1'
+        district_id = request.POST.get('district')
+        if district_id == '':
+           district_id=0
+        else:
+           district_id=district_id  
+        state_id = request.POST.get('state')
+        if state_id == '':
+           state_id=0
+        else:
+           state_id=state_id
+
+        q = Q()
+        if '2' in user_type_get:
+            q |= Q(user_type=2)
+        if '3' in user_type_get:
+            q |= Q(user_type=3)
+        if '4' in user_type_get:
+            q |= Q(user_type=4)
+
+        
+        user_info=models.UserProfile.objects.filter(q).values_list('user__username','language_id','fcm_id').order_by('-created_at')
+        #print(user_info.query)
+        for i in user_info:
+            mobile=i[0]
+            language_code=i[1]
+            if language_code == '1':
+                title=title_eng
+                message=message_eng
+            else:
+                title=title_hnd
+                message=message_hnd
+            fcm_id=i[2]
+            if push_status == '1':
+                print('Push Notification code')
+                if fcm_id != '':
+                    registration_id = fcm_id
+                    message_title = title
+                    message_body = message
+                    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body)
+                    print(result)
+                    push_response=str(result)+'<br>'+push_response
+            if sms_status =='1':
+                print('SMS code')
+                Phone_number = mobile
+                sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+                data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(message)}
+                requests.packages.urllib3.disable_warnings()
+                r = requests.post(sms_url,data = data)
+                sms_response=r.content+'<br'+sms_response
+        Content = models.Notification.objects.create(title_eng=title_eng,title_hnd=title_hnd,message_eng=message_eng,message_hnd=message_hnd,push_status=push_status,sms_status=sms_status,push_response=push_response,sms_response=sms_response,status=status,district_id=district_id,group_id=group_id,state_id=state_id)
+        Content.save()
+
+
+
+        response=JsonResponse({'status':'success'})
+        return response
+
+    else:
+        data={'languages':lang_data,'state_data':state_data}
+        return render(request, 'add-notification.html', {'data':data})

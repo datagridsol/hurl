@@ -43,6 +43,10 @@ urlpatterns=[
     url(r'^user_login/$',views.user_login,name='user_login'),
     url(r'^user_status/$',views.user_status,name='user_status'),
     url(r'^product_status/$',views.product_status,name='product_status'),
+    url(r'^get_notifications/$',views.get_notifications,name='get_notifications'),
+    url(r'^add_notifications/$',views.add_notifications,name='add_notifications'),
+
+    
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
     #url(r'^add_mobile_user/$',mobilefunctions.add_mobile_user,name='add_mobile_user'),
