@@ -10,12 +10,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Manage Wholesalers</h1>
+              <h1>All Details Of Farmer</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-                <li class="breadcrumb-item active">Manage Wholesalers</li>
+                <li class="breadcrumb-item active">All Details Of Farmer</li>
               </ol>
             </div>
           </div>
@@ -28,10 +28,10 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">List Of All Wholesalers</h3>
-                <div class="card-tools">
-                  <a class="btn btn-block bg-gradient-primary btn-lg" href="{% url 'add_wholesaler' %}">Import Wholesaler</a>
-                </div>
+                <h3 class="card-title">All Details Of Farmer</h3>
+               <!--  <div class="card-tools">
+                  <a class="btn btn-block bg-gradient-primary btn-lg" href="{% url 'add_retailer' %}">Add Retailer</a>
+                </div> -->
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -43,10 +43,14 @@
                     
                     <th class="input-filter">Name</th>
                     <th class="input-filter">Phone</th>
-                    <th class="input-filter">District</th>
-                    <th class="input-filter">State</th>
-                    <th class="select-filter">Status</th>
-                    <th>Action</th>                  
+                    <th class="select-filter">Order Id</th>
+                    <th class="select-filter">Total Price</th>
+                    <th class="select-filter">Reward Amount</th>
+                    <th class="select-filter">Recharge Status</th>
+                    <th class="input-filter">Date</th>
+                    <th class="input-filter">Action</th>
+    
+                                     
                   </tr>
                   </thead>
                   <tfoot>
@@ -54,10 +58,14 @@
                           <th>Sr No</th>
                           <th class="input-filter">Name</th>
                           <th class="input-filter">Phone</th>
-                          <th class="input-filter">District</th>
-                          <th class="input-filter">State</th>
-                          <th class="select-filter">Status</th>
-                          <th>Action</th>   
+                          <th class="select-filter">Order Id</th>
+                          <th class="select-filter">Total Price</th>
+                          <th class="select-filter">Reward Amount</th>
+                          <th class="select-filter">Recharge Status</th>
+                          <th class="input-filter">Date</th>
+                          <th class="input-filter">Action</th>
+    
+                       
                       </tr>
                   </tfoot>
                   

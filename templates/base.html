@@ -189,7 +189,7 @@
             <a href="#" class="nav-link {% if "/add_product3/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-award"></i>
               <p>
-                Loyality Configuration
+                Loyalty Configuration
               </p>
             </a>
           </li>
@@ -217,22 +217,23 @@
 
           <li class="nav-item has-treeview ">
             <a href="{% url 'get_recharge' %}" class="nav-link {% if "/get_recharge/" == request.path %} active {% endif %}">
-              <i class="nav-icon fas fa-users"></i> 
+              <i class="nav-icon fas fa-users"></i>
+
               <p>
                 Manage Recharge
               </p>
             </a>
           </li>
 
-
           <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product9/" == request.path %} active {% endif %}">
+            <a href="{% url 'get_notifications' %}" class="nav-link {% if "/get_notifications/" == request.path %} active {% endif %}">
               <i class="nav-icon far fa-comments"></i>
               <p>
                 Notification
               </p>
             </a>
           </li>
+
 
           <!-- <li class="nav-item has-treeview ">
             <a href="#" class="nav-link {% if "/add_product10/" == request.path %} active {% endif %}">
@@ -245,14 +246,35 @@
 
          
 
+    <!--    <li class="nav-item has-treeview ">   <a href="#"  class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+ -->
 
        <li class="nav-item has-treeview ">
             <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+
               <p>
                 Reports
               </p>
             </a>
+
+        <ul class="treeview-menu" style="display: hidden;">
+       <li class="nav-item has-treeview ">
+            <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+              <p>
+                Salers Reports
+              </p>
+            </a>
           </li> 
+
+        <li class="nav-item has-treeview ">
+          <a href="{% url 'recharge_loyalty_report' %}" class="nav-link {% if "/recharge_loyalty_report/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+            <p>
+              Recharge/Loyalty Reports
+            </p>
+          </a>
+        </li>
+      </ul> 
+      </li>
 
         </ul>
       </nav>
@@ -304,6 +326,13 @@
 <script src="{% static "plugins/pdfmake/vfs_fonts.js" %}"></script>
 <script src="{% static "plugins/datatables-buttons/js/buttons.html5.js" %}"></script>
 <script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.js" %}"></script>
+<script src="{% static "plugins/jszip/jszip.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/dataTables.buttons.min.js" %}"></script>
+<script src="{% static "plugins/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static "plugins/pdfmake/vfs_fonts.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/buttons.html5.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.js" %}"></script>
+
 <script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static "dist/js/adminlte.js" %}"></script>

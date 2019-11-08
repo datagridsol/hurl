@@ -10,12 +10,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Manage Products</h1>
+              <h1>Manage Notifications</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-                <li class="breadcrumb-item active">Manage Products</li>
+                <li class="breadcrumb-item active">Manage Notifications</li>
               </ol>
             </div>
           </div>
@@ -28,9 +28,9 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">List Of All Products</h3>
+                <h3 class="card-title">List Of All Notifications</h3>
                 <div class="card-tools">
-                  <a class="btn btn-block bg-gradient-primary btn-lg" href="{% url 'add_product' %}">Add Products</a>
+                  <a class="btn btn-block bg-gradient-primary btn-lg" href="{% url 'add_notifications' %}">Add Notification</a>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -40,29 +40,27 @@
                   <thead>
                   <tr>
                     <th>Sr No</th>
-                    <th class="select-filter">Product Id</th>
-                    <th>Product Image</th>
-                    <th class="input-filter">Product Name</th>
-                    <th class="input-filter">Product Code</th>
-                    <th class="input-filter">Unit</th>
-                    <th class="input-filter">Price</th>
-                    <th class="select-filter">Status</th>
-                    <th>Approval</th>
-                    <th>Action</th>                  
+                    <th class="input-filter">Title Eng</th>
+                    <th class="select-filter">District</th>
+                    <th class="select-filter">State</th>
+                    <th class="input-filter">User Type</th>
+                    <th class="input-filter">Date</th>
+                    <th class="select-filter">Push Notification</th>
+                    <th class="select-filter">SMS Notification</th>                
+                                     
                   </tr>
                   </thead>
                   <tfoot>
                       <tr>
-                          <th>Sr No</th>
-                          <th class="select-filter">Product Id</th>
-                          <th>Product Image</th>
-                          <th class="input-filter">Product Name</th>
-                          <th class="input-filter">Product Code</th>
-                          <th class="input-filter">Unit</th>
-                          <th class="input-filter">Price</th>
-                          <th class="select-filter">Status</th>
-                          <th>Approval</th>
-                          <th>Action</th>   
+                        <th>Sr No</th>
+                        <th class="input-filter">Title Eng</th>
+                        <th class="select-filter">District</th>
+                        <th class="select-filter">State</th>
+                        <th class="input-filter">User Type</th>
+                        <th class="input-filter">Date</th>
+                        <th class="select-filter">Push Notification</th>
+                        <th class="select-filter">SMS Notification</th>                
+                        
                       </tr>
                   </tfoot>
                   
@@ -138,78 +136,77 @@
               }
         });
 
-
-    $(document).on( 'click', '.editBut .disapprove', function () {
-      var $this=$(this);
-      var product_id=$this.data('product-id');
-      var status='Active';
-      var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
-      var result=confirm("Are you sure, You want to product approve?");
-      var btn = $this;
-      $(btn).buttonLoader('start');
-      if (result == true) { 
-        $.ajax({
-          'method':'POST',
-          'url':'/product_status/',
-          'data':{"status":status,"product_id":product_id,"csrftoken":csrftoken},
-           success: function(response){
-            $(btn).buttonLoader('stop')
-            if(response.status=='success')
-            {
+        $(document).on( 'click', '.editBut .disapprove', function () {
+        var $this=$(this);
+        var content_id=$this.data('content-id');
+        var status='Active';
+        var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+        var result=confirm("Are you sure, You want to approve?");
+        var btn = $this;
+        $(btn).buttonLoader('start');
+        if (result == true) { 
+          $.ajax({
+            'method':'POST',
+            'url':'/content_status/',
+            'data':{"status":status,"content_id":content_id,"csrftoken":csrftoken},
+            success: function(response){
+              $(btn).buttonLoader('stop')
+              if(response.status=='success')
+              {
+                toastr.success(response.msg).delay(10000)
+                $this.parent('.editBut').parent('td').prev('td').html('Deactive');
+                $this.parent('.editBut').html("<button class='btn btn-block btn-success btn-sm approve' data-content-id="+content_id+">Approve</button>");
+              }
+              else
+              {
               toastr.success(response.msg).delay(10000)
-              $this.parent('.editBut').parent('td').prev('td').html('Deactive');
-              $this.parent('.editBut').html("<button class='btn btn-block btn-success btn-sm approve' data-product-id="+product_id+">Approve</button>");
-            }
-            else
-            {
-             toastr.success(response.msg).delay(10000)
-            }
+              }
 
-        },
-          error: function(xhr,status,errorThrown){
-            toastr.error(xhr.responseText)
-            $(btn).buttonLoader('stop')
           },
-        });
-      }
+            error: function(xhr,status,errorThrown){
+              toastr.error(xhr.responseText)
+              $(btn).buttonLoader('stop')
+            },
+          });
+        }
 
-   });
+    });
 
-   $(document).on( 'click', '.editBut .approve', function () {
-      var $this=$(this);
-      var product_id=$this.data('product-id');
-      var status='Deactive';
-      var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-      var result=confirm("Are you sure, You want to product Disapprove?");
-      var btn = $this;
-      $(btn).buttonLoader('start');
-      if (result == true) { 
-        $.ajax({
-          'method':'POST',
-          'url':'/product_status/',
-          'data':{"status":status,"product_id":product_id,"csrftoken":csrftoken},
-           success: function(response){
-            $(btn).buttonLoader('stop')
-            if(response.status=='success')
-            {
+    $(document).on( 'click', '.editBut .approve', function () {
+        var $this=$(this);
+        var content_id=$this.data('content-id');
+        var status='Deactive';
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        var result=confirm("Are you sure, You want to disapprove?");
+        var btn = $this;
+        $(btn).buttonLoader('start');
+        if (result == true) { 
+          $.ajax({
+            'method':'POST',
+            'url':'/content_status/',
+            'data':{"status":status,"content_id":content_id,"csrftoken":csrftoken},
+            success: function(response){
+              $(btn).buttonLoader('stop')
+              if(response.status=='success')
+              {
+                toastr.success(response.msg).delay(10000)
+                $this.parent('.editBut').parent('td').prev('td').html('Active');
+                $this.closest('.editBut').html("<button class='btn btn-block btn-danger btn-sm disapprove' data-content-id="+content_id+">Disapprove</button>");
+              }
+              else
+              {
               toastr.success(response.msg).delay(10000)
-              $this.parent('.editBut').parent('td').prev('td').html('Active');
-              $this.closest('.editBut').html("<button class='btn btn-block btn-danger btn-sm disapprove' data-product-id="+product_id+">Disapprove</button>");
-            }
-            else
-            {
-             toastr.success(response.msg).delay(10000)
-            }
+              }
 
-        },
-          error: function(xhr,status,errorThrown){
-            toastr.error(xhr.responseText)
-            $(btn).buttonLoader('stop')
           },
-        });        
-      }
-   });
-  
+            error: function(xhr,status,errorThrown){
+              toastr.error(xhr.responseText)
+              $(btn).buttonLoader('stop')
+            },
+          });        
+        }
+    });
+    
   });
   
    </script>

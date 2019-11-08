@@ -12,7 +12,7 @@ import json
 from hurlapp import models
 from django.db.models import Q
 from hurlapp.forms import ProfileForm
-from hurlapp.models import UserProfile,Product,ManageContent,Order
+from hurlapp.models import UserProfile,Product,ManageContent
 from hurlapp import forms
 from hurl import settings
 from django.utils.timezone import get_current_timezone
@@ -21,8 +21,11 @@ import dateutil.parser
 #from django.utils.encoding import smart_str, smart_unicode
 import os
 from operator import itemgetter
+from datetime import timedelta
 import io,csv
+from pyfcm import FCMNotification
 from django.db.models import Sum
+
 
 def index(request):
     return render(request,'index.html')
@@ -63,19 +66,27 @@ def dashboard(request):
     retailer_loyalty_point=0
     if request.GET.get('searchDate'):
         searchDate=request.GET.get('searchDate')
-        daterange= searchDate.split("-")
+        daterange= searchDate.split(" - ")
         start_date=daterange[0]
-        end_date=daterange[1]
-    total_farmer=UserProfile.objects.filter(user_type_id='3').count()
-    total_wholeseler=UserProfile.objects.filter(user_type_id='4').count()
-    total_retailer=UserProfile.objects.filter(user_type_id='2').count()
-    total_product=Product.objects.filter(status='1').count()
-    order_value=Order.objects.filter(status=1).aggregate(Sum('total_price'))
-    total_order1=order_value['total_price__sum']
-    if total_order1 is not None:
-        total_order=int(total_order['total_price__sum'])
-    # retailer_loyalty_point=models.UserLoyaltyPoints.objects.filter(user_id_retailer_id__userprofile__user_type=2).aggregate(Sum('loyalty_point'))
-    # farmer_loyalty_point=models.UserLoyaltyPoints.objects.filter(user_id_farmer_id__userprofile__user_type=2).aggregate(Sum('loyalty_point'))
+        
+        newDate=datetime.strptime(start_date, '%d/%m/%Y')
+        start_date=newDate.strftime("%Y-%m-%d")
+        
+        end_date1=str(daterange[1])
+        newDate=datetime.strptime(end_date1, '%d/%m/%Y') + timedelta(days=1)
+        end_date=newDate.strftime("%Y-%m-%d")
+        total_farmer=UserProfile.objects.filter(user_type_id='3',created_at__range=(start_date, end_date)).count()
+        total_wholeseler=UserProfile.objects.filter(user_type_id='4',created_at__range=(start_date, end_date)).count()
+        total_retailer=UserProfile.objects.filter(user_type_id='2',created_at__range=(start_date, end_date)).count()
+        total_product=Product.objects.filter(status='1',created_at__range=(start_date, end_date)).count()
+        order_value=models.Order.objects.filter(status=1,created_at__range=(start_date, end_date)).aggregate(Sum('total_price'))
+
+    else:
+        total_farmer=UserProfile.objects.filter(user_type_id='3').count()
+        total_wholeseler=UserProfile.objects.filter(user_type_id='4').count()
+        total_retailer=UserProfile.objects.filter(user_type_id='2').count()
+        total_product=Product.objects.filter(status='1').count()
+        order_value=models.Order.objects.filter(status=1).aggregate(Sum('total_price'))
     data={'total_farmer':total_farmer,'total_wholeseler':total_wholeseler,"total_retailer":total_retailer,"total_product":total_product,"total_order":total_order,"total_order":total_order,"total_order":total_order}
     
     return render(request,'dashboard.html',{'data':data})
@@ -680,7 +691,7 @@ def get_state():
     state_data=[]
     state_list=models.State.objects.all().values_list('id', 'state_name')
     for i in state_list:
-        case2 = {'id': i[0], 'name': i[1]}
+        case2 = {'id': i[0], 'name': i[1].capitalize()}
         state_data.append(case2)
     state_data=sorted(state_data, key=itemgetter('name'))
     return state_data
@@ -766,7 +777,7 @@ def get_product(request):
             status="Deactive"
             btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-product-id="+str(product_id)+">Active</button></div>"
         count+=1
-        data.append([count,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit_name),str(product_price),status,btn,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        data.append([count,product_id,'<img src="'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_code),str(product_unit_name),str(product_price),status,btn,"<a href='/edit_product/"+str(product_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
 #     return render(request, 'get_product.html', {'data':(data)})
     return render(request, 'get_product.html', {'data':(data)})
 
@@ -1372,7 +1383,7 @@ def get_state():
     state_data=[]
     state_list=models.State.objects.all().values_list('id', 'state_name')
     for i in state_list:
-        case2 = {'id': i[0], 'name': i[1].capitalize()}
+        case2 = {'id': i[0], 'name':i[1].capitalize()}
         state_data.append(case2)
     state_data=sorted(state_data, key=itemgetter('name'))
     return state_data
@@ -1384,9 +1395,9 @@ def get_district(request):
         state_id=request.POST.get('state_id')
         district_list=models.District.objects.filter(state_id=state_id).values_list('id', 'district_name')
         for i in district_list:
-            case2 = {'id': i[0], 'name': i[1].capitalize()}
+            case2 = {'id': i[0], 'name': i[1]}
             district_data.append(case2)
-        district_data=sorted(district_data, key=itemgetter('name'))
+            district_data=sorted(district_data, key=itemgetter('name'))
         response=JsonResponse({'status':'success','district_data':district_data})
         return response
 
@@ -1443,7 +1454,6 @@ def add_product(request):
         product_code = request.POST.get('product_code')
         product_unit = '0'
         product_unit_name = request.POST.get('product_unit_name')
-        print("product_unit_name",product_unit_name)
         if product_unit_name:
             if models.ProductUnit.objects.filter(unit_name=product_unit_name).exists():
                 product_unit_name=product_unit_name
@@ -1592,34 +1602,9 @@ def get_retailer(request):
 
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_retailer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a> | <a class='btn' href='/loyalty_retailer/"+str(user_id)+"'><i class='fas fa-gift'></i> Layalty Points</a>"])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_retailer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a> | <a class='btn' href='/loyalty_retailer/"+str(user_id)+"'><i class='fas fa-gift'></i> Loyalty Points</a>"])
     return render(request, 'manage_retailer.html', {'data':(data)})
 
-
-@login_required
-@csrf_exempt
-def loyalty_retailer(request,pk):
-    data=[]
-    user_type=""
-    district=""
-    state=""
-    count=0
-    row=[]
-    user_info=models.UserLoyaltyPoints.objects.filter(user_id_retailer_id=pk).values_list('user_id_retailer_id__first_name','user_id_retailer_id__last_name','user_id_retailer_id__username','user_id_retailer_id__userprofile__state__state_name','user_id_retailer_id__userprofile__district__district_name','loyalty_type','loyalty_point','order')
-    for i in user_info:
-        first_name=i[0]
-        last_name=i[1]
-        mobile_number=i[2]
-        order_id=i[7]
-        loyalty_type=i[5]
-        loyalty_point=i[6]
-        state=i[3]
-        district=i[4]
-        
-        full_name=str(first_name)+" "+str(last_name)
-        count+=1
-        data.append([count,str(full_name),str(mobile_number),str(order_id),str(loyalty_type),str(loyalty_point),str(state),str(district)])
-    return render(request, 'loyalty_retailer_view.html', {'data':(data)})
 
 @login_required
 @csrf_exempt
@@ -1744,7 +1729,7 @@ def get_farmer(request):
 
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_farmer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_farmer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/farmer_view/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_farmer.html', {'data':(data)})
 
 @login_required
@@ -1934,48 +1919,17 @@ def get_order(request):
         full_name_retailer=str(first_name_retailer)+" "+str(last_name_retailer)
 
         created_at=i[4]
-        formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+	#end_time = datetime.datetime.utcnow().replace(microsecond =0)
+        formatedDate1= (created_at + timedelta(hours = 5,minutes = 30))
+        formatedDate = formatedDate1.strftime("%d-%m-%Y %H:%M:%S")
         state=i[5]
         district=i[6]
         amount=i[7]
         id=i[8]
 
         count+=1
-        data.append([count,str(full_name),str(full_name_retailer),str(formatedDate),str(state),str(district),str(amount),"<a class='btn' href='/order_details/"+str(id)+"'><i class='fas fa-eye'></i> View</a>"])
+        data.append([count,id,str(full_name),str(full_name_retailer),str(formatedDate),str(state),str(district),str(amount),"<a class='btn' href='/order_details/"+str(id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_orders.html', {'data':(data)})
-
-@login_required
-@csrf_exempt
-def get_recharge(request):
-    data=[]
-    user_type=""
-    district=""
-    state=""
-    count=0
-    row=[]
-    user_info=models.Recharge.objects.all().values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_farmer_id__username','updated_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','amount','id','status','user_id_retailer_id__first_name','user_id_retailer_id__last_name').order_by('-updated_at')
-    for i in user_info:
-        first_name=i[0]
-        last_name=i[1]
-        full_name=str(first_name)+" "+str(last_name)
-        mobile_number=i[2]
-        created_at=i[3]
-        formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
-        state=i[4]
-        district=i[5]
-        amount=i[6]
-        id=i[7]
-        status=i[8]
-        full_name_retailer=str(i[9])+" "+str(i[10])
-
-        if status:
-            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-content-id="+str(id)+">Recharge Done</button></div>"
-        else:
-            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-content-id="+str(id)+">Recharge Now</button></div>"
-
-        count+=1
-        data.append([count,str(full_name),str(mobile_number),str(full_name_retailer),str(formatedDate),str(state),str(district),str(amount),btn])
-    return render(request, 'manage_recharge.html', {'data':(data)})
 
 @csrf_exempt
 def addOrder(request):
@@ -2026,7 +1980,7 @@ def order_details(request,pk):
     address=order_info[0][9]
     phone=order_info[0][10]
 
-    product_image="/media/default/placeholder.png"
+    product_image="media/default/placeholder.png"
     order_details=models.OrderProductsDetail.objects.filter(order_id=id).values_list('product_id','product_price','product_quantity','product_total_price','product__product_name','product__product_image','product__product_unit')
     
     for i in order_details:
@@ -2039,7 +1993,7 @@ def order_details(request,pk):
             product_image=i[5]
         product_unit=i[6]
         count+=1
-        data_prod.append([count,'<img src="/'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_quantity)+' '+str(product_unit),str(product_price),str(product_total_price)])
+        data_prod.append([count,product_id,'<img src="/'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_quantity)+' '+str(product_unit),str(product_price),str(product_total_price)])
     
     data={'full_name':full_name,'full_name_retailer':full_name_retailer,'created_at':formatedDate,'state':state,'district':district,'amount':amount,'id':id,'address':address,'phone':phone,'data_prod':data_prod}
     
@@ -2227,10 +2181,10 @@ def get_content(request):
         id=i[8]
         if status:
             status="Active"
-            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-content-id="+str(id)+">Disapprove</button></div>"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-content-id="+str(id)+">Deactive</button></div>"
         else:
             status="Deactive"
-            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-content-id="+str(id)+">Approve</button></div>"
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-content-id="+str(id)+">Active</button></div>"
         count+=1
         data.append([count,'<img src="'+str(feature_image)+'"  width="70" height="50">',str(title_eng),str(district),str(state),str(grouTxt[:-1]),status,btn,"<a href='/edit_content/"+str(id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
     return render(request, 'manage_content.html', {'data':(data)})
@@ -2400,7 +2354,7 @@ def view_support(request,pk):
         return response
 
     else:
-        user_info=models.Support.objects.filter(id=pk).values_list('id','query','subject','created_at','user__first_name','user__last_name','user__groups__name')
+        user_info=models.Support.objects.filter(id=pk).values_list('id','query','subject','created_at','user__first_name','user__last_name','user__groups__name').order_by('created_at')
         id=user_info[0][0]
         query=user_info[0][1]
         subject=user_info[0][2]
@@ -2427,6 +2381,92 @@ def view_support(request,pk):
         return render(request, 'view_support.html', {'data':data})
 
 
+# @csrf_exempt
+# def get_reports(request):
+#     data=[]
+#     count=0
+#     state_data=get_state()
+#     user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+#     for i in user_info:
+#         id=i[0]
+#         retailer_first_name=i[1]
+#         retailer_username=i[2]
+#         farmer__first_name=i[3]
+#         farmer_username=i[4]
+#         created_at=i[5]
+#         total_price=i[6]
+#         retailer_last_name=i[7]
+#         farmer_last_name=i[8]
+#         formatedDate = created_at.strftime("%d-%m-%Y")
+
+#         count+=1
+#         data.append([count,str(retailer_first_name)+' '+str(retailer_last_name),str(retailer_username),str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(formatedDate),str(total_price)])
+#     return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'district_data':[{'id':'1','name':'Thane'}]})
+
+
+@login_required
+@csrf_exempt
+def get_recharge(request):
+    data=[]
+    user_type=""
+    district=""
+    state=""
+    count=0
+    row=[]
+    user_info=models.Recharge.objects.all().values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_farmer_id__username','updated_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','amount','id','status','user_id_retailer_id__first_name','user_id_retailer_id__last_name').order_by('-updated_at')
+    for i in user_info:
+        first_name=i[0]
+        last_name=i[1]
+        full_name=str(first_name)+" "+str(last_name)
+        mobile_number=i[2]
+        created_at=i[3]
+        #formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+        formatedDate1= (created_at + timedelta(hours = 5,minutes = 30))
+        formatedDate = formatedDate1.strftime("%d-%m-%Y %H:%M:%S")
+        state=i[4]
+        district=i[5]
+        amount=i[6]
+        id=i[7]
+        status=i[8]
+        full_name_retailer=str(i[9])+" "+str(i[10])
+
+        if status:
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-content-id="+str(id)+">Recharge Done</button></div>"
+        else:
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-content-id="+str(id)+">Recharge Now</button></div>"
+
+        count+=1
+        data.append([count,str(full_name),str(mobile_number),str(full_name_retailer),str(formatedDate),str(state),str(district),str(amount),btn])
+    return render(request, 'manage_recharge.html', {'data':(data)})
+
+
+@login_required
+@csrf_exempt
+def loyalty_retailer(request,pk):
+    data=[]
+    user_type=""
+    district=""
+    state=""
+    count=0
+    row=[]
+    user_info=models.UserLoyaltyPoints.objects.filter(user_id_retailer_id=pk).values_list('user_id_retailer_id__first_name','user_id_retailer_id__last_name','user_id_retailer_id__username','user_id_retailer_id__userprofile__state__state_name','user_id_retailer_id__userprofile__district__district_name','loyalty_type','loyalty_point','order')
+    for i in user_info:
+        first_name=i[0]
+        last_name=i[1]
+        mobile_number=i[2]
+        order_id=i[7]
+        loyalty_type=i[5]
+        loyalty_point=i[6]
+        state=i[3]
+        district=i[4]
+        
+        full_name=str(first_name)+" "+str(last_name)
+        count+=1
+        data.append([count,str(full_name),str(mobile_number),str(order_id),str(loyalty_type),str(loyalty_point),str(state),str(district)])
+    return render(request, 'loyalty_retailer_view.html', {'data':(data)})
+
+
+
 @csrf_exempt
 def get_reports(request):
     from django.db.models import Q
@@ -2437,6 +2477,10 @@ def get_reports(request):
     district=0
     retailers_id=0
     count=0
+    start_date=''
+    searchDate=''
+    end_date=''
+    products_id=''
     state_data=get_state()
     retailers=models.UserProfile.objects.filter(user_type=2,user__is_active=1).values_list('user__id','user__first_name','user__last_name').order_by('-created_at')
     for i in retailers:
@@ -2448,54 +2492,58 @@ def get_reports(request):
 
     if request.GET.get('state'):
         state=request.GET.get('state')
-    #     user_info=models.Order.objects.filter(user_id_retailer_id__userprofile__state__id=state).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    
 
-    elif request.GET.get('district'):
+    if request.GET.get('district'):
         district=request.GET.get('district')
-    #     user_info=models.Order.objects.filter(user_id_retailer_id__userprofile__state__id=state,user_id_farmer_id__userprofile__district__id=district).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
+    
 
-    elif request.GET.get('retailers'):
+    if request.GET.get('retailers'):
         retailers_id=request.GET.get('retailers')
-    #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
-    # elif request.GET.get('products'):
-    #     retailers=request.GET.get('retailers')
-    #     print("hiwwwwwwww")
-    #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
-    # elif request.GET.get('retailers'):
-    #     retailers=request.GET.get('retailers')
-    #     print("hiwwwwwwww")
-    #     user_info=models.Order.objects.filter(user_id_retailer_id=retailers).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
-    # complexQuery = Q(user_id_retailer_id__userprofile__state__id=state) | Q(user_id_farmer_id__userprofile__district__id=district) | Q(user_id_retailer_id__in=retailers)
+    
+    if request.GET.get('products'):
+        products_id=request.GET.get('product')
+    if request.GET.get('searchDate'):
+        searchDate=request.GET.get('searchDate')
+        daterange= searchDate.split(" - ")
+        start_date=daterange[0]
+        
+        newDate=datetime.strptime(start_date, '%d/%m/%Y')
+        start_date=newDate.strftime("%Y-%m-%d")
+        
+        end_date1=str(daterange[1])
+        newDate=datetime.strptime(end_date1, '%d/%m/%Y') + timedelta(days=1)
+        end_date=newDate.strftime("%Y-%m-%d")
+        
 
     q = Q()
     if state:
-        q |= Q(user_id_retailer_id__userprofile__state__id__in=state)
+        q &= Q(order__user_id_retailer_id__userprofile__state__id__in=state)
     if district:
-        q |= Q(user_id_farmer_id__userprofile__district__id__in=district)
-    if retailers:
-        q = Q(user_id_retailer_id__in=11)
-    # print("sss444444444444444",retailers_id,state,district)
+        q &= Q(order__user_id_farmer_id__userprofile__district__id__in=district)
+    if retailers_id:
+        q &= Q(order__user_id_retailer_id__in=retailers_id)
+    if products_id:
+        q &= Q(product=products_id)
+    if searchDate:
+        q &= Q(order__created_at__range=(start_date, end_date))
     # user_info=models.Order.objects.filter(q).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
 
-    # else:
-    user_info=models.Order.objects.all().values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
-    # district = request.GET.get('district')
-    # retailers = request.GET.get('retailers')
-    # products = request.GET.get('products')
-    # searchDate = request.GET.get('searchDate')
-    
-    for i in user_info:
+    user_info1=models.OrderProductsDetail.objects.filter(q).values_list('id','order__user_id_retailer_id__first_name','order__user_id_retailer_id__last_name','order__user_id_retailer_id__username','order__user_id_farmer_id__first_name','order__user_id_farmer_id__last_name','order__created_at','order__total_price','order__user_id_retailer_id__last_name','order__user_id_farmer_id__last_name','order__user_id_farmer_id__username').order_by('-updated_at')
+    for i in user_info1:
         id=i[0]
         retailer_first_name=i[1]
-        retailer_username=i[2]
-        farmer__first_name=i[3]
-        farmer_username=i[4]
-        created_at=i[5]
-        total_price=i[6]
-        retailer_last_name=i[7]
-        farmer_last_name=i[8]
+        retailer_last_name=i[2]
+        retailer_username=i[3]
+        farmer__first_name=i[4]
+        farmer_last_name=i[5]
+        created_at=i[6]
         formatedDate = created_at.strftime("%d-%m-%Y")
-
+        total_price=i[7]
+        retailer_last_name=i[8]
+        farmer_last_name=i[9]
+        farmer_username=i[10]
+        
         count+=1
         data.append([count,str(retailer_first_name)+' '+str(retailer_last_name),str(retailer_username),str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(formatedDate),str(total_price)])
     return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'retailers':retailers_data,'products':products_data})
@@ -2592,11 +2640,239 @@ def send_file(request):
     #template = "wholeseller_upload.html"
     filename     = "/home/dev04/workspace/hurl/media/default/test.csv" # Select your file here.
     download_name ="sample_format.csv"
-    r = requests.get("home/dev04/workspace/hurl/media/default/test.csv")
-    response=urllib.request.urlretrieve(filename, '/Users/scott/Downloads/cat.jpg')
+    # r = requests.get("home/dev04/workspace/hurl/media/default/test.csv")
+    # response=urllib.request.urlretrieve(filename, '/Users/scott/Downloads/cat.jpg')
 
-    # wrapper      = FileWrapper(open(filename))
-    # response     = HttpResponse( wrapper,content_type='text/csv')
-    # response['Content-Length']      = os.path.getsize(filename)    
-    #response['Content-Disposition'] = "attachment; filename=%s"%download_name
-    return r
+    wrapper      = FileWrapper(open(filename))
+    response     = HttpResponse( wrapper,content_type='text/csv')
+    response['Content-Length']      = os.path.getsize(filename)    
+    response['Content-Disposition'] = "attachment; filename=%s"%download_name
+    return response
+    
+
+
+@csrf_exempt
+def farmer_details_view(request,pk):
+    data=[]
+    retailers_data=[]
+    products_data=[]
+    products_id=''
+    state_data=get_state()
+    user_id=pk
+    recharge_status=''
+    count=0
+    user_info1=models.Scratch.objects.filter(user_id_farmer_id=user_id).values_list('id','user_id_farmer_id__first_name','user_id_farmer_id__last_name','created_at','order__total_price','order__user_id_farmer_id__username','amount','order__id','user_id_farmer_id').order_by('-updated_at')
+    for i in user_info1:
+        id=i[0]
+        farmer__first_name=i[1]
+        farmer_last_name=i[2]
+        created_at=i[3]
+        formatedDate = created_at.strftime("%d-%m-%Y")
+        total_price=i[4]
+        farmer_username=i[5]
+        amount=i[6]
+        order_id=i[7]
+        farmer_id=i[8]
+        user_info12=models.Recharge.objects.filter(user_id_farmer_id=user_id).values_list('id','status')
+        for i in user_info12:
+            id1=i[0]
+            status=i[1]
+            if status:
+                recharge_status="Complete"
+                recharge_status="<lable class='btn btn-block btn-success btn-sm approve'>Complete</lable></div>"
+            else:
+                recharge_status="<lable class='btn btn-block btn-danger btn-sm disapprove'>Pending</lable></div>"
+
+        count+=1
+        data.append([count,str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(order_id),str(total_price),str(amount),recharge_status,str(formatedDate),"<a class='btn' href='/order_details/"+str(order_id)+"'><i class='fas fa-eye'></i> View</a>"])
+
+    return render(request, 'farmer_view.html', {'data':(data)})
+
+
+@csrf_exempt
+def recharge_loyalty_report(request):
+    data=[]
+    farmer_phone_data=[]
+    farmer_name_data=[]
+    count=0
+    searchDate=''
+    user_id=''
+    phone=''
+    retailers=models.UserProfile.objects.filter(user_type=3,user__is_active=1).values_list('user__id','user__first_name','user__last_name','user__username').order_by('-created_at')
+    for i in retailers:
+        farmer_name_data.append({'id':i[0],'name':i[1]+' '+i[2]})
+        farmer_phone_data.append({'id':i[0],'mobile_number':i[3]})
+
+    if request.GET.get('user_id'):
+        user_id=request.GET.get('user_id')
+    
+    if request.GET.get('phone'):
+        phone=request.GET.get('phone')
+    if request.GET.get('searchDate'):
+        searchDate=request.GET.get('searchDate')
+        daterange= searchDate.split(" - ")
+        start_date=daterange[0]
+        
+        newDate=datetime.strptime(start_date, '%d/%m/%Y')
+        start_date=newDate.strftime("%Y-%m-%d")
+        
+        end_date1=str(daterange[1])
+        newDate=datetime.strptime(end_date1, '%d/%m/%Y') + timedelta(days=1)
+        end_date=newDate.strftime("%Y-%m-%d")
+
+    q = Q()
+    if user_id:
+        q &= Q(user_id_farmer_id__id=user_id)
+    if phone:
+        q &= Q(user_id_farmer_id__username=phone)
+    if searchDate:
+        q &= Q(order__created_at__range=(start_date, end_date))
+    user_info1=models.Recharge.objects.filter(q).values_list('id','user_id_farmer_id__first_name','user_id_farmer_id__last_name','created_at','user_id_farmer_id__username','amount').order_by('-updated_at')
+    print("user_info1",user_info1.query)
+    for i in user_info1:
+        id=i[0]
+        farmer__first_name=i[1]
+        farmer_last_name=i[2]
+        created_at=i[3]
+        formatedDate = created_at.strftime("%d-%m-%Y")
+        mobile_number=i[4]
+        amount=i[5]
+
+        count+=1
+        data.append([count,str(formatedDate),str(farmer__first_name)+' '+str(farmer_last_name),str(mobile_number),str(amount)])
+
+    return render(request, 'recharge_loyalty_report.html', {'data':(data),'farmer_name_data':farmer_name_data,'farmer_phone_data':farmer_phone_data})
+
+# @csrf_exempt
+# def get_city_search(request):
+#     city_data=[]
+#     city_name=request.POST.get('city_name')
+#     city_list = models.City.objects.filter(city_name__icontains=city_name).values_list('id','city_name')
+#     for i in city_list:
+#         case2 = {'id': i[0], 'name': i[1]}
+#         city_data.append(case2)
+#     return HttpResponse(city_data)
+
+
+@csrf_exempt
+def get_notifications(request):
+    data=[]
+    count=0
+
+    user_info=models.Notification.objects.all().values_list('title_eng','created_at','status','district_id','state_id','group_id','push_status','sms_status','id').order_by('-created_at')
+    
+    for i in user_info:
+        title_eng=i[0]
+        created_at=i[1]
+        formatedDate = created_at.strftime("%d-%m-%Y")
+        district=i[3]
+        if district != 0:
+            district=models.District.objects.get(id=district)
+        else:
+            district="-"
+        state=i[4]
+        if state != 0:
+            state=models.State.objects.get(id=state)
+        else:
+            state="-"
+        status=i[2]
+        group=i[5]
+        grouTxt=''
+        if(group):
+            Arr=group.split(',')
+            for gid in Arr:
+                grouTxt=str(Group.objects.get(id=gid))+','+str(grouTxt)
+        push_request=i[6]
+        push='No'
+        if push_request == 1:
+            push='Yes'
+        sms_request=i[7]   
+        sms='No'
+        if sms_request == 1:
+            sms='Yes'
+        id=i[8]
+        
+        count+=1
+        data.append([count,str(title_eng),str(district),str(state),str(grouTxt[:-1]),formatedDate,push,sms])
+    return render(request, 'manage_notifications.html', {'data':(data)})
+
+@csrf_exempt
+def add_notifications(request):
+    import requests
+    lang_data=get_langauge()
+    state_data=get_state()
+    if request.method == 'POST':
+        data={}
+        sms_response=''
+        push_response=''
+        push_service = FCMNotification(api_key="AAAAT-fnF2g:APA91bEWQbMJqFFPIy-zTLllngov5w09ed6u5MS3pUKLOq9GrVmq7HPxQCDWirrq4wGjYUI2v1vQP-IHQARgO3atV1LU_QM7vtWpEYo0ashQ7NiBdxCR8DneRWZ-OQwCaoxpWTXS7mA-")
+        user_type_get=request.POST.getlist('user_type[]')
+        group_id = ','.join(user_type_get)
+        title_eng = request.POST.get('title_eng')
+        title_hnd = request.POST.get('title_hnd')
+        request_for = request.POST.getlist('request_for[]')
+        sms_status='0'
+        push_status='0'
+        if 'push' in request_for:
+            push_status='1'
+        
+        if 'sms' in request_for:
+            sms_status='1'
+        
+        message_eng = request.POST.get('message_eng')
+        message_hnd = request.POST.get('message_hnd')
+        status = '1'
+        district_id = request.POST.get('district')
+        if district_id == '':
+           district_id=0
+        else:
+           district_id=district_id  
+        state_id = request.POST.get('state')
+        if state_id == '':
+           state_id=0
+        else:
+           state_id=state_id
+
+        q = Q()
+        if '2' in user_type_get:
+            q |= Q(user_type=2)
+        if '3' in user_type_get:
+            q |= Q(user_type=3)
+        if '4' in user_type_get:
+            q |= Q(user_type=4)
+        user_info=models.UserProfile.objects.filter(q).values_list('user__username','language_id','fcm_id').order_by('-created_at')
+        #print(user_info.query)
+        for i in user_info:
+            mobile=i[0]
+            language_code=i[1]
+            if language_code == '1':
+                title=title_eng
+                message=message_eng
+            else:
+                title=title_hnd
+                message=message_hnd
+            fcm_id=i[2]
+            if push_status == '1':
+                print('Push Notification code')
+                if fcm_id:
+                    registration_id = fcm_id
+                    message_title = title
+                    message_body = message
+                    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body)
+                    print(result)
+                    push_response=str(result)+'<br>'+push_response
+            if sms_status =='1':
+                print('SMS code')
+                Phone_number = mobile
+                sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+                data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(message)}
+                requests.packages.urllib3.disable_warnings()
+                r = requests.post(sms_url,data = data)
+                sms_response=r.content+'<br'+sms_response
+        Content = models.Notification.objects.create(title_eng=title_eng,title_hnd=title_hnd,message_eng=message_eng,message_hnd=message_hnd,push_status=push_status,sms_status=sms_status,push_response=push_response,sms_response=sms_response,status=status,district_id=district_id,group_id=group_id,state_id=state_id)
+        Content.save()
+        response=JsonResponse({'status':'success'})
+        return response
+    else:
+        data={'languages':lang_data,'state_data':state_data}
+        return render(request, 'add-notification.html', {'data':data})

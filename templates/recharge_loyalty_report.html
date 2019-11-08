@@ -12,12 +12,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Retailer Wise Sales Report</h1>
+              <h1>Recharge/Loyalty Wise Report</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-                <li class="breadcrumb-item active">Retailer Wise Sales Report</li>
+                <li class="breadcrumb-item active">Recharge/Loyalty Wise Report</li>
               </ol>
             </div>
           </div>
@@ -34,51 +34,40 @@
                 <div class="row">
                     <div class="col-sm-2">
                       <div class="form-group">
-                        <label>Select State</label>
-                        <select class="form-control" id="state" name="state">
+                        <label>Select Name</label>
+                        <select class="form-control" id="name" name="name">
                           <option  value="" selected="selected">---select---</option>
-                          {% for state_data in state_data %}
-                           <option value="{{state_data.id}}">{{state_data.name}}</option>
+                          {% for farmer_name_data in farmer_name_data %}
+                           <option value="{{farmer_name_data.id}}">{{farmer_name_data.name}}</option>
                           {% endfor %}
+
+                           <!--  {% for state_data in state_data %}
+                             <option value="{{state_data.id}}" {% if state_data.id == state_data.id %} selected="true" {% endif %} >{{state_data.name}} </option>
+                             {% endfor %}
+ -->
                         </select>
                       </div>
                     </div>
 
                     <div class="col-sm-2">
                       <div class="form-group">
-                        <label>Select District</label>
-                        <select class="form-control" id="district" name="district">
+                        <label>Select Phone</label>
+                        <select class="form-control" id="phone" name="phone">
                           <option  value="" selected="selected">---select---</option>
-                        </select>
-                      </div>
-                    </div>
-
-
-                    <div class="col-sm-2">
-                      <div class="form-group">
-                        <label>Select Retailer</label>
-                        <select class="form-control" id="retailers" name="retailers">
-                          <option  value="" selected="selected">---select---</option>
-                          {% for retailer in retailers %}
-                           <option value="{{retailer.id}}">{{retailer.full_name}}</option>
+                          {% for farmer_phone_data in farmer_phone_data %}
+                           <option value="{{farmer_phone_data.mobile_number}}">{{farmer_phone_data.mobile_number}}</option>
                           {% endfor %}
+
+                           <!--  {% for state_data in state_data %}
+                             <option value="{{state_data.id}}" {% if state_data.id == state_data.id %} selected="true" {% endif %} >{{state_data.name}} </option>
+                             {% endfor %}
+ -->
                         </select>
                       </div>
                     </div>
 
-                    <div class="col-sm-2">
-                      <div class="form-group">
-                        <label>Select Product</label>
-                        <select class="form-control" id="products" name="products">
-                          <option  value="" selected="selected">---select---</option>
-                          {% for product in products %}
-                           <option value="{{product.id}}">{{product.product_name}}</option>
-                          {% endfor %}
-                        </select>
-                      </div>
-                    </div>
 
-                    
+
 
                     <div class="col-sm-2">
                       <div class="form-group">
@@ -94,8 +83,6 @@
                         </div>
                         
                       </div>
-
-                   
                     </div>
 
                     <div class="col-sm-2">
@@ -114,12 +101,11 @@
                   <thead>
                   <tr>
                     <th>Sr No</th>
-                    <th class="input-filter">Retailer Name</th>
-                    <th class="select-filter">Retailer Phone</th>
-                    <th class="input-filter">Farmer Name</th>
-                    <th class="input-filter">Farmer Phone</th>
                     <th class="input-filter">Date</th>
-                    <th class="input-filter">Amount</th>               
+                    <th class="select-filter">Name</th>
+                    <th class="input-filter">Phone</th>
+                    <th class="input-filter">Amount</th>
+                                  
                                  
                   </tr>
                    
@@ -127,11 +113,9 @@
                   <tfoot>
                       <tr>
                         <th>Sr No</th>
-                        <th class="input-filter">Retailer Name</th>
-                        <th class="select-filter">Retailer Phone</th>
-                        <th class="input-filter">Farmer Name</th>
-                        <th class="input-filter">Farmer Phone</th>
                         <th class="input-filter">Date</th>
+                        <th class="select-filter">Name</th>
+                        <th class="input-filter">Phone</th>
                         <th class="input-filter">Amount</th>               
                           
                       </tr>
@@ -216,8 +200,5 @@
   </script>
 
 {% endblock %}
-<<<<<<< HEAD
 
 
-=======
->>>>>>> fe116ceff218a5acb6629b2226d3e4bb65fec778

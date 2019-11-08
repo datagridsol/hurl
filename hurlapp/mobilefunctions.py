@@ -26,7 +26,7 @@ def login(request):
                 userprofile.otp = genotp
                 userprofile.save()
                 data={"mobile_number":mobile_number,"opt":genotp}
-                response=JsonResponse({'status':'success','msg':'OTP Send Successfully','data':data})
+                response=JsonResponse({'status':'success','msg':'OTP Sent Successfully','data':data})
                 return response
             else:
                 response=JsonResponse({'status':'error','msg':'Your account is not approved by admin'})
@@ -68,14 +68,15 @@ def check_login(request):
 
 # function to generate OTP
 @csrf_exempt
-def generateOTP(request) :
+def generateOTP(mobile_number) :
    import requests
    digits = "0123456789"
    OTP = random.randint(1000,9999)
-   # Phone_number=mobile_number
-   Phone_number = request.POST.get('mobile_number')
+   Phone_number=mobile_number
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to login to your Apna urea App."}
+   #data = {"user":"datagrid","password":"Dat$Fagt&","sender":"DATAGR","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Otp For Login"+" "+str(OTP)}
+   
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to login to your Apna Urea App."}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
@@ -182,7 +183,7 @@ def get_state():
     state_data=[]
     state_list=models.State.objects.all().values_list('id', 'state_name')
     for i in state_list:
-        case2 = {'id': i[0], 'name': i[1]}
+        case2 = {'id': i[0], 'name': i[1].capitalize()}
         state_data.append(case2)
     state_data=sorted(state_data, key=itemgetter('name'))
     return state_data
@@ -197,7 +198,7 @@ def get_district(request):
         for i in district_list:
             case2 = {'id': i[0], 'name': i[1]}
             district_data.append(case2)
-        district_data=sorted(district_data, key=itemgetter('name'))
+            district_data=sorted(district_data, key=itemgetter('name'))
         response=JsonResponse({'status':'success','district_data':district_data})
         return response
 
@@ -299,7 +300,7 @@ def add_user_mobile(request):
         if request.FILES.get('pan_card'):
            pan_card = request.FILES['pan_card']
         if request.FILES.get('vote_id'):
-           vote_card = request.FILES['vote_id']
+           vote_id = request.FILES['vote_id']
         if request.FILES.get('soil_card'):
            soil_card = request.FILES['soil_card']
         if request.FILES.get('fertilizer_photo'):
@@ -357,7 +358,7 @@ def add_user_mobile(request):
         print('fertilizer_photo => '+str(fertilizer_photo))
         print('soil_card => '+str(soil_card))
         print('land_area => '+str(land_area))
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=parent_id,language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,fertilizer_photo=fertilizer_photo,soil_card=soil_card,land_area=land_area,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number,company_name=company_name)
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=parent_id,language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,fertilizer_photo=fertilizer_photo,soil_card=soil_card,land_area=land_area,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number,company_name=company_name,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id)
         userprofile.save()
         response=JsonResponse({'status':'success','msg':'User registered successfuly'})
         return response
@@ -667,6 +668,7 @@ def save_farmer_mobile(request):
     user_profile.pincode=pincode
     user_profile.address=address
     user_profile.land_area=land_area
+    
     user_profile.save()
 
 
@@ -910,7 +912,7 @@ def get_state_list(request):
     state_data=[]
     state_list=models.State.objects.all().values_list('id', 'state_name')
     for i in state_list:
-        case2 = {'id': i[0], 'name': i[1]}
+        case2 = {'id': i[0], 'name':i[1].capitalize()}
         state_data.append(case2)
     state_data=sorted(state_data, key=itemgetter('name'))
     response=JsonResponse({'status':'success','data':state_data})
@@ -1194,7 +1196,7 @@ def add_order_list(request):
         user_id_farmer_id=User.objects.get(id=user_id_farmer_id)
         user_id_retailer_id=User.objects.get(id=user_id_retailer_id)
 
-        order_data= models.Order.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,total_price=total_price)
+        order_data= models.Order.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,total_price=total_price,created_at=datetime.now())
         order_data.save()
         new_order_id = order_data.id
         list_id.append(new_order_id)
@@ -1221,6 +1223,9 @@ def add_order_list(request):
 
         user_scratch_data= models.Scratch.objects.create(user_id_farmer_id=user_id_farmer_id,user_id_retailer_id=user_id_retailer_id,amount=int(recharge_amount),order=new_order_id)
         user_scratch_data.save()
+        # mobile_number=User.objects.get(id=user_id_farmer_id).values_list('username')
+        # mobile_number=mobile_number[0][0]
+        # send_sms_order_placed(mobile_number)
         
         data={'recharge_id':recharge_id,'recharge_amount':recharge_amount,"status":True}
         response=JsonResponse({'status':'success','msg':'Order Placed Successfully','data':data})
@@ -1230,12 +1235,46 @@ def add_order_list(request):
 def get_farmer_list(request):
     farmer_data=[]
     username=request.POST.get('mobile_number')
-    farmer_list=models.UserProfile.objects.filter(user_type=3,user__username=username).values_list('id', 'user__first_name','user__last_name')
+    farmer_list=models.UserProfile.objects.filter(user_type=3,user__username=username).values_list('user__id', 'user__first_name','user__last_name')
     for i in farmer_list:
         first_name=i[1]
         last_name=i[2]
         full_name=first_name+' '+ last_name
         case2 = {'id': i[0], 'name': full_name}
+        farmer_data.append(case2)
+    response=JsonResponse({'status':'success','data':farmer_data})
+    return response
+
+
+# @csrf_exempt
+# def get_reatiler_farmer_list(request):
+#     farmer_data=[]
+#     user_id=request.POST.get('user_id')
+#     farmer_list=models.UserProfile.objects.filter(parent_id=user_id).values_list('user__id', 'user__first_name','user__last_name','user_photo')
+#     for i in farmer_list:
+#         first_name=i[1]
+#         last_name=i[2]
+#         full_name=first_name+' '+ last_name
+#         user_photo=i[3]
+#         case2 = {'id': i[0], 'name': full_name}
+#         farmer_data.append(case2)
+#     response=JsonResponse({'status':'success','data':farmer_data})
+#     return response
+
+@csrf_exempt
+def get_reatiler_farmer_list(request):
+    farmer_data=[]
+    user_photo="/media/default/placeholder.png"
+    user_id=request.POST.get('user_id')
+    farmer_list=models.UserProfile.objects.filter(parent_id=user_id).values_list('user__id', 'user__first_name','user__last_name','user_photo')
+    for i in farmer_list:
+        first_name=i[1]
+        last_name=i[2]
+        full_name=first_name+' '+ last_name
+        user_photo1=i[3]
+        if user_photo1:
+            user_photo=user_photo1
+        case2 = {'id': i[0], 'name': full_name,"user_photo":user_photo}
         farmer_data.append(case2)
     response=JsonResponse({'status':'success','data':farmer_data})
     return response
@@ -1269,18 +1308,18 @@ def send_opt_farmer(request):
     mobile_number = request.POST.get('mobile_number')
     genotp=sendoptFarmer(mobile_number)
     data={"mobilesendoptFarmer_number":mobile_number,"opt":genotp}
-    response=JsonResponse({'status':'success','msg':'OTP send Successfully','data':data})
+    response=JsonResponse({'status':'success','msg':'OTP sent Successfully','data':data})
     return response
 
 @csrf_exempt
-def sendoptFarmer(request) :
+def sendoptFarmer(mobile_number):
    import requests
    digits = "0123456789"
    OTP = random.randint(1000,9999)
-   # Phone_number=mobile_number
-   Phone_number = request.POST.get('mobile_number')
+   Phone_number=mobile_number
+   #Phone_number = request.POST.get('mobile_number')
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to verify your mobile number for Apna urea App"}
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to verify your mobile number for Apna Urea App"}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
@@ -1296,8 +1335,262 @@ def sendwlcomeFarmer(mobile_number,full_name) :
    Phone_number = mobile_number
    full_name=full_name
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Hello "+full_name+", ​Congratulations! You have successfully registered to Apna urea App. You can login using the mobile number "+Phone_number+""}
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Hello "+full_name+",Congratulations! You have successfully registered to Apna Urea App. You can login using the mobile number "+Phone_number+""}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
-   response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
    return OTP
+
+@csrf_exempt
+def send_sms_order_placed(mobile_number) :
+   import requests
+   digits = "0123456789"
+   OTP = random.randint(1000,9999)
+   Phone_number = mobile_number
+   sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Your Order Placed Successfully"}
+   requests.packages.urllib3.disable_warnings()
+   r = requests.post(sms_url,data = data)
+   return OTP
+
+@csrf_exempt
+def farmer_recharge_details(request):
+   data=[]
+   retailers_data=[]
+   products_data=[]
+   products_id=''
+   state_data=get_state()
+   recharge_status=''
+   count=0
+   request
+   user_id = request.POST.get('user_id')
+   user_info1=models.Scratch.objects.filter(user_id_farmer_id=user_id).values_list('id','user_id_farmer_id__first_name','user_id_farmer_id__last_name','created_at','order__total_price','order__user_id_farmer_id__username','amount','order__id','user_id_farmer_id').order_by('-updated_at')
+   for i in user_info1:
+       id=i[0]
+       farmer__first_name=i[1]
+       farmer_last_name=i[2]
+       created_at=i[3]
+       formatedDate = created_at.strftime("%d-%m-%Y")
+       total_price=i[4]
+       farmer_username=i[5]
+       amount=i[6]
+       order_id=i[7]
+       farmer_id=i[8]
+       user_info12=models.Recharge.objects.filter(user_id_farmer_id=user_id).values_list('id','status')
+       for i in user_info12:
+           id1=i[0]
+           status=i[1]
+           if status:
+               recharge_status="Complete"
+
+           else:
+               recharge_status="Pending"
+
+       count+=1
+       data.append({'name':str(farmer__first_name)+' '+str(farmer_last_name),'order_id':str(order_id),"total_price":str(total_price),"reward_amount":str(amount),'recharge_status':recharge_status,'created_at':str(formatedDate)})
+   response=JsonResponse({'status':'success','msg':'Recharge Details','data':data})
+   return response
+
+
+@csrf_exempt
+def get_order_list(request):
+   from django.db.models import Q
+   data=[]
+   retailers_data=[]
+   products_data=[]
+   products_id=''
+   state_data=get_state()
+   recharge_status=''
+   count=0
+   user_id = request.POST.get('user_id')
+   my_user_type=Group.objects.filter(user=user_id).values_list('name','id')
+   if my_user_type:
+      user_type=my_user_type[0][1]
+
+   if my_user_type:
+       q = Q()
+       if user_type==2:
+           q &= Q(user_id_retailer_id=user_id)
+           first_name='user_id_retailer_id__first_name'
+           last_name='user_id_retailer_id__last_name'
+       if user_type==3:
+           q &= Q(user_id_farmer_id=user_id)
+           first_name='user_id_farmer_id__first_name'
+           last_name='user_id_farmer_id__last_name'
+
+       user_info1=models.Order.objects.filter(q).values_list('id',str(first_name),str(last_name),'created_at','total_price').order_by('-updated_at')
+       if user_info1:
+           for i in user_info1:
+               id=i[0]
+               first_name=i[1]
+               last_name=i[2]
+               created_at=i[3]
+               formatedDate = created_at.strftime("%d/%m/%Y")
+               total_price=i[4]
+               count+=1
+               data.append({'name':str(first_name)+' '+str(last_name),"total_price":str(total_price),'created_at':str(formatedDate),'order_id':id})
+           response=JsonResponse({'status':'success','msg':'All Order List','data':data})
+       else:
+           response=JsonResponse({'status':'success','msg':'No Order Details Found','data':[]})
+   else:
+       response=JsonResponse({'status':'success','msg':'No User Details Found','data':[]})
+
+   return response
+
+
+
+@csrf_exempt
+def order_details_list(request):
+    data=[]
+    data_prod=[]
+    count=0
+    order_id = request.POST.get('order_id')
+    order_info=models.Order.objects.filter(id=order_id).values_list('user_id_farmer_id__first_name','user_id_farmer_id__last_name','user_id_retailer_id__first_name','user_id_retailer_id__last_name','created_at','user_id_farmer_id__userprofile__state__state_name','user_id_farmer_id__userprofile__district__district_name','total_price','id','user_id_retailer_id__userprofile__address','user_id_farmer_id__username')
+
+    first_name=order_info[0][0]
+    last_name=order_info[0][1]
+    full_name=str(first_name)+" "+str(last_name)
+
+    first_name_retailer=order_info[0][2]
+    last_name_retailer=order_info[0][3]
+    full_name_retailer=str(first_name_retailer)+" "+str(last_name_retailer)
+
+    created_at=order_info[0][4]
+    formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
+    state=order_info[0][5]
+    district=order_info[0][6]
+    amount=order_info[0][7]
+    od_id=order_info[0][8]
+    address=order_info[0][9]
+    phone=order_info[0][10]
+
+    product_image="/media/default/placeholder.png"
+    order_details=models.OrderProductsDetail.objects.filter(order_id=order_id).values_list('product_id','product_price','product_quantity','product_total_price','product__product_name','product__product_image','product__product_unit')
+    
+    for i in order_details:
+        product_id=i[0]
+        product_price=i[1]
+        product_quantity=i[2]
+        product_total_price=i[3]
+        product_name=i[4]
+        if i[5]!= "":
+            product_image=i[5]
+        product_unit=i[6]
+        count+=1
+        data.append([count,str(product_image),str(product_name),str(product_quantity)+' '+str(product_unit),str(product_price),str(product_total_price)])
+        data_prod.append({"count":count,"product_image":str(product_image),"product_quantity":str(product_quantity)+' '+str(product_unit),"products_price":str(product_total_price),"products_total_price":str(product_total_price)})
+    
+    data={'full_name':full_name,'created_at':formatedDate,'state':state,'district':district,'amount':amount,'order_id':order_id,'address':address,'phone':phone,'data_prod':data_prod}
+    response=JsonResponse({'status':'success','msg':'Order Datails','data':data})
+    return response
+
+
+
+@csrf_exempt
+def get_recharge_list(request):
+   data=[]
+   retailers_data=[]
+   products_data=[]
+   products_id=''
+   state_data=get_state()
+   recharge_status=''
+   count=0
+   user_id = request.POST.get('user_id')
+   my_user_type=Group.objects.filter(user=user_id).values_list('name','id')
+   if my_user_type:
+      user_type=my_user_type[0][1]
+
+   if my_user_type:
+       q = Q()
+       if user_type==2:
+           q &= Q(user_id_retailer_id=user_id)
+           first_name='user_id_retailer_id__first_name'
+           last_name='user_id_retailer_id__last_name'
+       if user_type==3:
+           q &= Q(user_id_farmer_id=user_id)
+           first_name='user_id_farmer_id__first_name'
+           last_name='user_id_farmer_id__last_name'
+
+       user_info1=models.Recharge.objects.filter(q).values_list('id',str(first_name),str(last_name),'amount','status').order_by('-updated_at')
+       if user_info1:
+           for i in user_info1:
+               recharge_id=i[0]
+               first_name=i[1]
+               last_name=i[2]
+               recharge_amount=i[3]
+               status=i[4]
+               if status:
+                   status="Complete"
+            
+               else:
+                   status="Pending"
+            
+               count+=1
+               data.append({'recharge_id':recharge_id,'name':str(first_name)+' '+str(last_name),"recharge_amount":str(recharge_amount),'status':str(status)})
+           response=JsonResponse({'status':'success','msg':'All Order List','data':data})
+       else:
+           response=JsonResponse({'status':'success','msg':'No Order Details Found','data':[]})
+   else:
+       response=JsonResponse({'status':'success','msg':'No User Details Found','data':[]})
+
+   return response
+
+
+@csrf_exempt
+def get_support_list(request):
+    data=[]
+    count=0
+    
+    user_info=models.Support.objects.all().values_list('id','query','created_at').order_by('-updated_at')
+    print(user_info)
+    for i in user_info:
+        id=i[0]
+        query=i[1]
+        created_at=i[2]
+        formatedDate = created_at.strftime("%d/%m/%Y")
+        
+        count+=1
+        data={'count':count,'created_at':formatedDate,'query':query,'support_id':id}
+    response=JsonResponse({'status':'success','msg':'Support Details','data':data})
+    return response
+
+
+
+@csrf_exempt
+def reply_support_list(request):
+    count=0
+    data_reply=[]
+    support_id = request.POST.get('support_id')
+    user_chats=models.SupportReply.objects.filter(support_id_id=support_id).values_list('id','query','reply','created_at','user_id_admin_id').order_by('created_at')
+    for i in user_chats:
+        chat_id=i[0]
+        chat_query=i[1]
+        reply=i[2]
+        chat_created_at=i[3]
+        chat_formatedDate = chat_created_at.strftime("%d/%m/%Y %H:%M")
+        user_id_admin_id=i[4]
+        count+=1
+        data_reply.append({'count':count,'chat_id':chat_id,'chat_query':chat_query,'reply':reply,'created_at':chat_formatedDate,'user_id_admin_id':user_id_admin_id})
+
+    if request.POST.get('message'):
+        reply = request.POST.get('message')
+        user_id_admin_id_id = request.user.id
+        support = models.SupportReply.objects.create(query=reply,support_id_id=support_id,user_id_admin_id_id=user_id_admin_id_id)
+        support.save()
+    response=JsonResponse({'status':'success','msg':'Support Details','data':data_reply})
+    return response
+
+@csrf_exempt
+def send_query_list(request):
+    query = request.POST.get('query')
+    subject = request.POST.get('subject')
+    user_id = request.POST.get('user_id')
+    user_id=User.objects.get(id=user_id)
+    user_id_admin_id_id =user_id_admin_id_id
+    support = models.Support.objects.create(subject=subject,user=user_id,query=query)
+    support.save()
+    support_id=support.id
+    support_reply = models.SupportReply.objects.create(query=query,support_id_id=support_id,user_id_admin_id_id=user_id_admin_id_id)
+    support_reply.save()
+    response=JsonResponse({'status':'success','msg':'Query Send Successfuly','support_id':support_id})
+    return response
+

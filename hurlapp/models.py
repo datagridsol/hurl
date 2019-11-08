@@ -153,11 +153,13 @@ class ManageContent(models.Model):
 
 
 class Notification(models.Model):
-    group=models.ForeignKey(Group,on_delete=models.CASCADE)
-    state=models.ForeignKey(State,on_delete=models.CASCADE)
-    district=models.ForeignKey(District,on_delete=models.CASCADE)
-    message_eng=models.TextField()
-    message_hnd=models.TextField()
+    group_id=models.CharField(max_length=255,blank=True)
+    state_id=models.IntegerField(default=0)
+    district_id=models.IntegerField(default=0)
+    title_eng=models.TextField(blank=True)
+    title_hnd=models.TextField(blank=True)
+    message_eng=models.TextField(blank=True)
+    message_hnd=models.TextField(blank=True)
     sms_status = models.IntegerField(default=0)
     push_status = models.IntegerField(default=0)
     sms_request=models.TextField()
@@ -200,7 +202,7 @@ class Recharge(models.Model):
     transation_response=models.TextField()
     status = models.IntegerField(default=0)
     created_at = models.DateTimeField(default=datetime.datetime.now())
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(default=datetime.datetime.now())
     def __str__(self):
         return str(self.id)
 
@@ -255,7 +257,7 @@ class UserLoyaltyPoints(models.Model):
     from_user_id=models.IntegerField()
     loyalty_type= models.CharField(max_length=255)
     loyalty_points_id= models.CharField(max_length=255)
-    order =models.IntegerField()
+    order=models.IntegerField()
     loyalty_point = models.IntegerField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())

@@ -18,6 +18,7 @@ urlpatterns=[
     url(r'^add_farmer/$',views.add_farmer,name='add_farmer'),
     url(r'^edit_farmer/(?P<pk>\d+)$',views.edit_farmer,name='edit_farmer'),
     url(r'^get_wholesaler/$',views.get_wholesaler,name='get_wholesaler'),
+    # url(r'^add_wholesaler/$',views.add_wholesaler,name='add_wholesaler'),
     url(r'^add_wholesaler/$',views.wholeseller_upload,name='add_wholesaler'),
     url(r'^edit_wholesaler/(?P<pk>\d+)$',views.edit_wholesaler,name='edit_wholesaler'),
     url(r'^import_wholesaler/$',views.import_wholesaler,name='import_wholesaler'),
@@ -43,7 +44,10 @@ urlpatterns=[
     url(r'^user_login/$',views.user_login,name='user_login'),
     url(r'^user_status/$',views.user_status,name='user_status'),
     url(r'^product_status/$',views.product_status,name='product_status'),
-    url(r'^get_recharge/$',views.get_recharge,name='get_recharge'),
+    url(r'^get_notifications/$',views.get_notifications,name='get_notifications'),
+    url(r'^add_notifications/$',views.add_notifications,name='add_notifications'),
+
+    
     url(r'^mobile_login/$',mobilefunctions.login,name='mobile_login'),
     url(r'^check_login/$',mobilefunctions.check_login,name='check_login'),
     #url(r'^add_mobile_user/$',mobilefunctions.add_mobile_user,name='add_mobile_user'),
@@ -64,9 +68,25 @@ urlpatterns=[
     # url(r'^testimage/$',views.SaveProfile,name='testimage'),
     url(r'^recharge_done/$',mobilefunctions.recharge_done,name='recharge_done'),   url(r'^get_farmer_mobile/$',mobilefunctions.get_farmer_mobile,name='get_farmer_mobile'),
     url(r'^save_farmer_mobile/$',mobilefunctions.save_farmer_mobile,name='save_farmer_mobile'),
-    url(r'^download/$',views.send_file, name='download'),
-    url(r'^generateOTP/$',mobilefunctions.generateOTP, name='generateOTP'),
+    url(r'^get_recharge/$',views.get_recharge,name='get_recharge'),
     url(r'^loyalty_retailer/(?P<pk>\d+)$',views.loyalty_retailer, name='loyalty_retailer'),
+    url(r'^farmer_view/(?P<pk>\d+)$',views.farmer_details_view, name='farmer_view'),
+    url(r'^download/$',views.send_file, name='download'), 
+    #url(r'^download/$',views.send_file, name='download'),farmer_recharge_details
+    url(r'^get_reatiler_farmer_list/$',mobilefunctions.get_reatiler_farmer_list,name='get_reatiler_farmer_list'),
+    url(r'^farmer_recharge_details/$',mobilefunctions.farmer_recharge_details,name='farmer_recharge_details'),
+    url(r'^get_order_list/$',mobilefunctions.get_order_list,name='get_order_list'),
+    url(r'^order_details_list/$',mobilefunctions.order_details_list,name='order_details_list'),
+    url(r'^get_recharge_list/$',mobilefunctions.get_recharge_list,name='get_recharge_list'),
+    url(r'^get_support_list/$',mobilefunctions.get_support_list,name='get_support_list'),
+    url(r'^reply_support_list/$',mobilefunctions.reply_support_list,name='reply_support_list'),
+    url(r'^send_query_list/$',mobilefunctions.send_query_list,name='send_query_list'),
+    url(r'^recharge_loyalty_report/$',views.recharge_loyalty_report,name='recharge_loyalty_report'),
+    # url(r'^get_city_search/$',views.get_city_search,name='get_city_search'),alertController
+    
+
+    
+    
 ]
 
 
