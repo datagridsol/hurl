@@ -1541,17 +1541,26 @@ def get_recharge_list(request):
 def get_support_list(request):
     data=[]
     count=0
-    
-    user_info=models.Support.objects.all().values_list('id','query','created_at').order_by('-updated_at')
+    user_photo="/media/default/placeholder.png"
+    user_info=models.Support.objects.all().values_list('id','query','created_at','user').order_by('-updated_at')
     print(user_info)
     for i in user_info:
         id=i[0]
         query=i[1]
         created_at=i[2]
-        formatedDate = created_at.strftime("%d/%m/%Y")
+        user_id=i[3]
+        user_info=models.UserProfile.objects.filter(user=user_id).values_list('user__first_name','user__last_name','user_photo')
+        for i in user_info:
+            first_name=i[0]
+            last_name=i[1]
+            full_name=str(first_name)+" "+str(last_name)
+            user_photo=i[2]
+            if user_photo:
+                user_photo=user_photo
         
-        count+=1
-        data={'count':count,'created_at':formatedDate,'query':query,'support_id':id}
+            formatedDate = created_at.strftime("%d/%m/%Y")
+            count+=1
+            data.append({'count':count,'created_at':formatedDate,'query':query,'support_id':id,'name':full_name,'user_photo':user_photo})
     response=JsonResponse({'status':'success','msg':'Support Details','data':data})
     return response
 

@@ -84,6 +84,7 @@ urlpatterns=[
     url(r'^recharge_loyalty_report/$',views.recharge_loyalty_report,name='recharge_loyalty_report'),
      url(r'^loyalty_configuration/$',views.loyalty_configuration,name='loyalty_configuration'),
      url(r'^edit_loyalty/(?P<pk>\d+)$',views.edit_loyalty, name='edit_loyalty'),
+     url(r'^loyalty_configuration_farmer/$',views.loyalty_configuration_farmer,name='loyalty_configuration_farmer'),
     # url(r'^get_city_search/$',views.get_city_search,name='get_city_search'),alertController
     
 

@@ -2859,7 +2859,20 @@ def loyalty_configuration(request):
         loyalty_point=nlist[2]
         data.append([count,str(loyalty_type),loyalty_point,"<a href='/edit_loyalty/"+str(loyalty_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
         count+=1
-        return render(request, 'loyalty_configuration.html', {'data':data})
+    return render(request, 'loyalty_configuration.html', {'data':data})
+
+@csrf_exempt
+def loyalty_configuration_farmer(request):
+    userdata=models.LoyaltyPoints.objects.filter(loyalty_type='Order').values_list('id','loyalty_type','loyalty_point')
+    data=[]
+    count=1
+    for nlist in userdata:
+        loyalty_id=nlist[0]
+        loyalty_type=nlist[1]
+        loyalty_point=nlist[2]
+        data.append([count,str(loyalty_type),loyalty_point,"<a href='/edit_loyalty/"+str(loyalty_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        count+=1
+    return render(request, 'loyalty_configuration_farmer.html', {'data':data})
 
 @csrf_exempt
 def edit_loyalty(request,pk):
