@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Add Wholesaler{% endblock %}
 {% load staticfiles %}
-
+{% block title %}Add Content{% endblock %}
 {% block body_block %}
 <style type="text/css">
-    #uploadCSV label.error {
+    #contentForm label.error {
       display: inline-block;
       max-width: 100%;
       margin-bottom: 5px;
@@ -27,7 +26,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-              <li class="breadcrumb-item active">Import Wholesaler</li>
+              <li class="breadcrumb-item active">Add Content</li>
             </ol>
           </div>
         </div>
@@ -40,36 +39,30 @@
         <div class="row">
           
           <!-- right column -->
-          <div class="col-md-4" style="margin: 0 auto;">
+          <div class="col-md-8" style="margin: 0 auto;">
             <!-- general form elements disabled -->
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Import Wholesaler</h3>
+                <h3 class="card-title">Add Loyalty</h3>
               </div>
               <!-- /.card-header -->
-              <form method="POST" id="uploadCSV" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-sm-12">
-                          
-                            <div class="form-group">
-                              <label for="customFile">Upload a csv <span class="text-danger">*</span></label>
-                              <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="file" id="file" >
-                                <label class="custom-file-label" for="file">Choose file</label>
-                              </div>
-                            </div>
-                        </div>
-                    </div>
-                  </div>
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-                  <a href="{% url 'download' %}" class="btn btn-sm btn-outline-success">Download Sample CSV</a>
-                </div>
-              </form>   
-
-  
+              <form id="addUser" action="/create/">
+          <div class="form-group">
+            <input class="form-control" type="text" name="loyalty_type" placeholder="loyalty_type" required>
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="text" name="loyalty_point" placeholder="loyalty_point" required>
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="text" name="conversion" placeholder="conversion" required>
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="text" name="status" placeholder="status" required>
+          </div>
+          <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+        </form>
+            <!-- /.card -->
+            
           </div>
           <!--/.col (right) -->
         </div>

@@ -5,8 +5,10 @@
   {% load staticfiles %}
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>HURL | Dashboard</title>
-  <!-- Tell the browser to be responsive to screen width -->
+  
+  <title>HURL | {% block title %}{% endblock %}</title>
+  <!-- Tell the browser to be respons
+    ive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
@@ -186,7 +188,7 @@
           </li>
 
           <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product3/" == request.path %} active {% endif %}">
+            <a href="{% url 'loyalty_configuration' %}" class="nav-link {% if "/loyalty_configuration/" == request.path %} active {% endif %}">
               <i class="nav-icon fas fa-award"></i>
               <p>
                 Loyalty Configuration

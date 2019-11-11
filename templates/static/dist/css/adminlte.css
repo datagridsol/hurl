@@ -14818,8 +14818,9 @@ textarea.form-control.is-warning {
   border-radius: 0.25rem;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
   display: block;
-  margin-bottom: 20px;
+  margin:2rem!important;
   position: relative;
+  min-height: 214px;
 }
 
 .small-box > .inner {
@@ -14843,11 +14844,12 @@ textarea.form-control.is-warning {
 }
 
 .small-box h3 {
-  font-size: 2.2rem;
-  font-weight: bold;
-  margin: 0 0 10px 0;
-  padding: 0;
-  white-space: nowrap;
+    font-size: 4.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    padding: 0;
+    white-space: nowrap;
+    text-align: center;
 }
 
 @media (min-width: 992px) {
@@ -14877,7 +14879,9 @@ textarea.form-control.is-warning {
 }
 
 .small-box p {
-  font-size: 1rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center
 }
 
 .small-box p > small {

@@ -82,6 +82,7 @@ urlpatterns=[
     url(r'^reply_support_list/$',mobilefunctions.reply_support_list,name='reply_support_list'),
     url(r'^send_query_list/$',mobilefunctions.send_query_list,name='send_query_list'),
     url(r'^recharge_loyalty_report/$',views.recharge_loyalty_report,name='recharge_loyalty_report'),
+     url(r'^loyalty_configuration/$',views.loyalty_configuration,name='loyalty_configuration'),
     # url(r'^get_city_search/$',views.get_city_search,name='get_city_search'),alertController
     
 

@@ -99,27 +99,30 @@ def user_login(request):
         password = request.POST.get('password')
         remember_me = request.POST.get('remember_me')
         data={'username':username,'password':password,"status":True}
-        
-        user = User.objects.get(username=username)
-        if user.is_active:
-            user = authenticate(username=username, password=password)
-            if user:  
-                login(request,user)
-                response=JsonResponse({'status':'success'})
-                if request.POST.get('remember'):
-                    response.set_cookie('username', username)
-                    response.set_cookie('password', password)
+        if User.objects.filter(username=username):
+            user = User.objects.get(username=username)
+            if user.is_active:
+                user = authenticate(username=username, password=password)
+                if user:  
+                    login(request,user)
+                    response=JsonResponse({'status':'success'})
+                    if request.POST.get('remember'):
+                        response.set_cookie('username', username)
+                        response.set_cookie('password', password)
+                    else:
+                        response.delete_cookie('username')
+                        response.delete_cookie('password')
+                    return response
                 else:
-                    response.delete_cookie('username')
-                    response.delete_cookie('password')
-                return response
+                    response=JsonResponse({'status':'error','msg':'Invalid login details'})
+                    return response
             else:
-                response=JsonResponse({'status':'error','msg':'Invalid login details'})
+                response=JsonResponse({'status':'error','msg':'Your account was inactive'})
                 return response
         else:
-            response=JsonResponse({'status':'error','msg':'Your account was inactive'})
+            response=JsonResponse({'status':'error','msg':'Username Does not Exits'})
             return response
-        
+    
     else:
         username=''
         password=''
@@ -218,7 +221,7 @@ def add_user(request):
                 new_city = models.City.objects.create(city_name =city,status=1)
                 new_city.save()
                 city_name=new_city.city_name
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area,fertilizer_photo=fertilizer_photo,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number)
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area,fertilizer_photo=fertilizer_photo,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number,created_at=datetime.now())
         userprofile.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -370,6 +373,7 @@ def edit_user(request, pk):
         user_profile.gst_number=gst_number
         user_profile.fertilizer_licence=fertilizer_licence
         user_profile.land_area=land_area
+        user_profile.updated_at=datetime.now()
         user_profile.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -558,6 +562,7 @@ def edit_retailer(request, pk):
         user_profile.fms_id=fms_id
         user_profile.gst_number=gst_number
         user_profile.fertilizer_licence=fertilizer_licence
+        user_profile.updated_at=datetime.now()
         user_profile.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -803,6 +808,7 @@ def edit_product(request,pk):
         product.product_unit_name=product_unit_name
         product.product_price=product_price
         product.product_image=product_image
+        product.updated_at=datetime.now()
         product.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -930,6 +936,7 @@ def edit_farmer(request, pk):
         user_profile.pincode=pincode
         user_profile.address=address
         user_profile.land_area=land_area
+        user_profile.updated_at=datetime.now()
         user_profile.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -1284,6 +1291,7 @@ def edit_wholesaler(request, pk):
         user_profile.fms_id=fms_id
         user_profile.gst_number=gst_number
         user_profile.fertilizer_licence=fertilizer_licence
+        user_profile.updated_at=datetime.now()
         user_profile.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -1693,7 +1701,7 @@ def add_farmer(request):
                 new_city = models.City.objects.create(city_name =city,status=1)
                 new_city.save()
                 city_name=new_city.city_name
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area,fertilizer_photo=fertilizer_photo,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number)
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area,fertilizer_photo=fertilizer_photo,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number,created_at=datetime.now())
         userprofile.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -1824,7 +1832,7 @@ def add_wholesaler(request):
                 new_city = models.City.objects.create(city_name =city,status=1)
                 new_city.save()
                 city_name=new_city.city_name
-        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area,fertilizer_photo=fertilizer_photo,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number)
+        userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area,fertilizer_photo=fertilizer_photo,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number,created_at=datetime.now())
         userprofile.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -1945,7 +1953,7 @@ def addOrder(request):
         product_unit = request.POST.get('product_unit')
 
         print("values",product_name,product_unit)
-        user = models.Product.objects.create(product_name=product_name,product_unit=product_unit)
+        user = models.Product.objects.create(product_name=product_name,product_unit=product_unit,created_at=datetime.now())
         user.save()
         #remember_me = request.POST.get('remember_me')
         #print("Insideeee",remember_me)
@@ -2223,7 +2231,7 @@ def add_content(request):
             feature_image = request.FILES['feature_image']
         
 
-        Content = models.ManageContent.objects.create(title_eng=title_eng,title_hnd=title_hnd,date=dt,contains_eng=contains_eng,contains_hnd=contains_hnd,feature_image=feature_image,status=status,district_id=district_id,group_id=group_id,state_id=state_id,user_id_admin_id_id=user_id_admin_id_id)
+        Content = models.ManageContent.objects.create(title_eng=title_eng,title_hnd=title_hnd,date=dt,contains_eng=contains_eng,contains_hnd=contains_hnd,feature_image=feature_image,status=status,district_id=district_id,group_id=group_id,state_id=state_id,user_id_admin_id_id=user_id_admin_id_id,created_at=datetime.now())
         Content.save()
         response=JsonResponse({'status':'success'})
         return response
@@ -2305,6 +2313,7 @@ def edit_content(request,pk):
         content.group_id=group_id
         content.state_id=state_id
         content.user_id_admin_id_id=user_id_admin_id_id
+        content.updated_at=datetime.now()
 
         content.save()
         response=JsonResponse({'status':'success'})
@@ -2869,10 +2878,47 @@ def add_notifications(request):
                 requests.packages.urllib3.disable_warnings()
                 r = requests.post(sms_url,data = data)
                 sms_response=r.content+'<br'+sms_response
-        Content = models.Notification.objects.create(title_eng=title_eng,title_hnd=title_hnd,message_eng=message_eng,message_hnd=message_hnd,push_status=push_status,sms_status=sms_status,push_response=push_response,sms_response=sms_response,status=status,district_id=district_id,group_id=group_id,state_id=state_id)
+        Content = models.Notification.objects.create(title_eng=title_eng,title_hnd=title_hnd,message_eng=message_eng,message_hnd=message_hnd,push_status=push_status,sms_status=sms_status,push_response=push_response,sms_response=sms_response,status=status,district_id=district_id,group_id=group_id,state_id=state_id,created_at=datetime.now())
         Content.save()
         response=JsonResponse({'status':'success'})
         return response
     else:
         data={'languages':lang_data,'state_data':state_data}
         return render(request, 'add-notification.html', {'data':data})
+
+
+@csrf_exempt
+def loyalty_configuration(request):
+    import requests
+    data=[]
+    lang_data=get_langauge()
+    state_data=get_state()
+    if request.method == 'POST':
+       
+        response=JsonResponse({'status':'success'})
+        return response
+    else:
+        data={'languages':lang_data,'state_data':state_data}
+        return render(request, 'loyalty_configuration.html', {'data':data})
+
+# @csrf_exempt
+# def loyalty_configration(request):
+#     userdata=models.UserLoyaltyPoints.objects.all().values_list('user_id_farmer_id','user_id_retailer_id',
+#     'to_user_id','from_user_id','loyalty_type','loyalty_points_id','order_id','loyalty_point')
+#     # print('============',userdata)
+#     row=[]
+#     for nlist in userdata:
+#         user_id_farmer_id=nlist[0]
+#         user_id_retailer_id=nlist[1]
+#         to_user_id=nlist[2]
+#         from_user_id=nlist[3]
+#         loyalty_type=nlist[4]
+#         loyalty_points_id=nlist[5]
+#         order_id=nlist[6]
+#         loyalty_point=nlist[7]
+#         case2 = {'user_id_farmer_id': user_id_farmer_id, 'user_id_retailer_id': user_id_retailer_id,
+#         'to_user_id':to_user_id,'from_user_id':from_user_id,'loyalty_type':loyalty_type,'loyalty_points_id':loyalty_points_id,
+#         'order_id':order_id,'loyalty_point':loyalty_point}
+#         row.append(case2)
+#         print('============',row)
+#     return JsonResponse({'data':row})

@@ -1510,7 +1510,7 @@ def get_recharge_list(request):
            first_name='user_id_farmer_id__first_name'
            last_name='user_id_farmer_id__last_name'
 
-       user_info1=models.Recharge.objects.filter(q).values_list('id',str(first_name),str(last_name),'amount','status').order_by('-updated_at')
+       user_info1=models.Recharge.objects.filter(q).values_list('id',str(first_name),str(last_name),'amount','status','created_at').order_by('-updated_at')
        if user_info1:
            for i in user_info1:
                recharge_id=i[0]
@@ -1518,6 +1518,8 @@ def get_recharge_list(request):
                last_name=i[2]
                recharge_amount=i[3]
                status=i[4]
+               created_at=i[5]
+               formatedDate = created_at.strftime("%d-%m-%Y %H:%M:%S")
                if status:
                    status="Complete"
             
@@ -1525,7 +1527,7 @@ def get_recharge_list(request):
                    status="Pending"
             
                count+=1
-               data.append({'recharge_id':recharge_id,'name':str(first_name)+' '+str(last_name),"recharge_amount":str(recharge_amount),'status':str(status)})
+               data.append({'recharge_id':recharge_id,'name':str(first_name)+' '+str(last_name),"recharge_amount":str(recharge_amount),'status':str(status),'created_at':formatedDate})
            response=JsonResponse({'status':'success','msg':'All Order List','data':data})
        else:
            response=JsonResponse({'status':'success','msg':'No Order Details Found','data':[]})
@@ -1585,7 +1587,7 @@ def send_query_list(request):
     subject = request.POST.get('subject')
     user_id = request.POST.get('user_id')
     user_id=User.objects.get(id=user_id)
-    user_id_admin_id_id =user_id_admin_id_id
+    user_id_admin_id_id = request.POST.get('admin_id')
     support = models.Support.objects.create(subject=subject,user=user_id,query=query)
     support.save()
     support_id=support.id
