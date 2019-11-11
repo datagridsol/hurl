@@ -1093,6 +1093,59 @@ $("#editwholeselerForm").validate({
     }
   });
 
+
+$("#editloyalityForm").validate({
+   
+    rules: {
+      loyalty_type: {
+        required: true,
+        
+      },
+      loyalty_point: {
+        required: true,
+      }
+    },
+    messages: {
+      loyalty_type: {
+        required: "Please enter a loyalty type",
+      },
+      loyalty_point: {
+        required: "Please enter a loyalty point",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('editloyalityForm');
+       var formData = new FormData(userForm);
+       var user_id_pk=document.getElementById('user_id_pk').value;
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_loyalty/'+user_id_pk,
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('loyalty updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/loyalty_configuration/"; }, 2000);
+              
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+
 /*
 $("#dashboardForm").validate({
     rules: {

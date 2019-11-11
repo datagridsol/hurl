@@ -489,7 +489,6 @@ def edit_retailer(request, pk):
         user_profile = UserProfile.objects.get(user=user_id)
 
         if request.FILES.get('user_photo'):
-            print("user_photo1",user_photo1)
             # if user_photo1:
             #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
@@ -608,7 +607,6 @@ def edit_retailer(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-            print("user_photo",user_photo)
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':1,'name':'Thane'}],"user_id":user_id,"gst_number":gst_number,"fertilizer_licence":fertilizer_licence,"fms_id":fms_id,"gst_photo":gst_photo,"fertilizer_photo":fertilizer_photo}
         return render(request, 'edit_user.html',{'data':data})
 
@@ -788,7 +786,6 @@ def get_product(request):
 
 @csrf_exempt
 def edit_product(request,pk):
-    print("Add USer")
     product_id=pk
     if request.method == 'POST':
         data={}
@@ -815,9 +812,9 @@ def edit_product(request,pk):
 
     else:
         product_info=models.Product.objects.filter(id=pk).values_list('product_image','product_name','product_code','product_unit','product_price','status','id','product_unit_name')
-        print(product_info)
+        
         data={'product_image':'/'+product_info[0][0],'product_name':product_info[0][1],'product_code':product_info[0][2],'product_unit':product_info[0][3],'product_price':product_info[0][4],'product_id':product_info[0][6],'product_unit_name':product_info[0][7]}
-        print(data)
+        
         return render(request, 'edit_product.html',{'data':data})
 
 @login_required
@@ -882,7 +879,7 @@ def edit_farmer(request, pk):
         user_profile = UserProfile.objects.get(user=user_id)
 
         if request.FILES.get('user_photo'):
-            print("user_photo1",user_photo1)
+            
             # if user_photo1:
             #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
@@ -975,7 +972,7 @@ def edit_farmer(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-            print("user_photo",user_photo)
+            
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':1,'name':'Thane'}],"user_id":user_id}
         return render(request, 'edit_farmer.html',{'data':data})
 
@@ -1219,7 +1216,7 @@ def edit_wholesaler(request, pk):
         user_profile = UserProfile.objects.get(user=user_id)
 
         if request.FILES.get('user_photo'):
-            print("user_photo1",user_photo1)
+           
             # if user_photo1:
             #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(user_photo1[0]))
             user_photo = request.FILES['user_photo']
@@ -1229,7 +1226,7 @@ def edit_wholesaler(request, pk):
             # if aadhar_card1:
             #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(aadhar_card1[0]))
             aadhar_card = request.FILES['aadhar_card']
-            print("sssssss",aadhar_card)
+           
             user_profile.aadhar_card = aadhar_card
        
         if request.FILES.get('pan_card'):
@@ -1337,7 +1334,7 @@ def edit_wholesaler(request, pk):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-            print("user_photo",user_photo)
+           
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,'district_data':[{'id':1,'name':'Thane'}],"user_id":user_id,"gst_number":gst_number,"fertilizer_licence":fertilizer_licence,"fms_id":fms_id,"gst_photo":gst_photo,"fertilizer_photo":fertilizer_photo}
         return render(request, 'edit_wholesaler.html',{'data':data})
 
@@ -1418,7 +1415,7 @@ def get_city():
     return city_data
 
 def search_city(request):
-    print("Call")
+    
     #print(request.GET)
     city_name=request.GET.get('query')
     #print(city_name)
@@ -1435,7 +1432,7 @@ def search_city(request):
     return response
 
 def product_unit(request):
-    print("Call")
+    
     #print(request.GET)
     unit_name=request.GET.get('query')
     #print(city_name)
@@ -1454,7 +1451,7 @@ def product_unit(request):
 
 @csrf_exempt
 def add_product(request):
-    print("Add USer")
+    
     if request.method == 'POST':
         data={}
         product_image=''
@@ -1511,7 +1508,7 @@ def add_retailer(request):
         print(my_user_type[0][0])
 
     if request.method == 'POST':
-        print("Post Data Retailer")
+       
         data={}
         username = request.POST.get('mobile_number')
         if User.objects.filter(username=username).exists():
@@ -1768,7 +1765,6 @@ def add_wholesaler(request):
         print(my_user_type[0][0])
 
     if request.method == 'POST':
-        print("Post Data Farmer")
         data={}
         username = request.POST.get('mobile_number')
         if User.objects.filter(username=username).exists():
@@ -1875,37 +1871,7 @@ def get_wholesaler(request):
             data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_wholesaler/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_wholesaler.html', {'data':(data)})
 
-@csrf_exempt
-def import_wholesaler(request):
-    import pandas as pd
-    import os
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    MEDIA_DIR = os.path.join(BASE_DIR,'media')
-    print("hieeeeeeeeee",MEDIA_DIR)
-    data = pd.read_excel (MEDIA_DIR+'/1.xlsx') 
-    df = pd.DataFrame(data, columns= ['name'])
-    print (df)
-    input()
-    # new_user = User.objects.create(username = username,password = password,first_name=first_name,last_name=last_name,is_active=1,email=email)
-    # new_user.set_password(password)
-    # new_user.save()
-    # new_Uid = new_user.id
-    # user_type=Group.objects.get(id=user_type)
-    # user_type.user_set.add(new_Uid)
-    # langn_id=models.Language.objects.get(id=langn_id)
-    # state=models.State.objects.get(id=state)
-    # district=models.District.objects.get(id=district)
-    # if city:
-    #     if models.City.objects.filter(city_name=city).exists():
-    #         city_name=city
-    #     else:
-    #         new_city = models.City.objects.create(city_name =city,status=1)
-    #         new_city.save()
-    #         city_name=new_city.city_name
-    # userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id,soil_card=soil_card,land_area=land_area)
-    # userprofile.save()
-    # response=JsonResponse({'status':'success'})
-    # return response
+
 
 @login_required
 @csrf_exempt
@@ -2162,7 +2128,6 @@ def get_content(request):
     feature_image="/media/default/placeholder.png"
     #product_info=models.ManageContent.objects.all().values_list('title_eng','title_hnd','date','status','feature_image','district_id','state_id','group_id','id')
     user_info=models.ManageContent.objects.all().values_list('title_eng','title_hnd','date','status','feature_image','district_id','state_id','group_id','id').order_by('-created_at')
-    print(user_info)
     for i in user_info:
         if i[4]!= "":
             feature_image='/'+i[4]
@@ -2211,7 +2176,6 @@ def add_content(request):
         title_hnd = request.POST.get('title_hnd')
         date = request.POST.get('datetime')+':00'
         dt = dateutil.parser.parse(date)
-        print(dt)
         contains_eng = request.POST.get('content_eng')
         contains_hnd = request.POST.get('content_hnd')
         status = '1'
@@ -2272,7 +2236,6 @@ def edit_content(request,pk):
         title_hnd = request.POST.get('title_hnd')
         date = request.POST.get('datetime')+':00'
         dt = dateutil.parser.parse(date)
-        print(dt)
         contains_eng = request.POST.get('content_eng')
         contains_hnd = request.POST.get('content_hnd')
 
@@ -2294,7 +2257,6 @@ def edit_content(request,pk):
             
 
         if request.FILES.get('feature_image'):
-            print("feature_image",feature_image)
             feature_image=request.FILES.get('feature_image')
             # if feature_image:
             #     os.remove(settings.BASE_DIR+settings.MEDIA_URL+str(feature_image))
@@ -2332,7 +2294,7 @@ def get_support(request):
     count=0
     
     user_info=models.Support.objects.all().values_list('id','query','subject','created_at','user__first_name','user__last_name','user__groups__name').order_by('-updated_at')
-    print(user_info)
+   
     for i in user_info:
         id=i[0]
         query=i[1]
@@ -2737,7 +2699,6 @@ def recharge_loyalty_report(request):
     if searchDate:
         q &= Q(order__created_at__range=(start_date, end_date))
     user_info1=models.Recharge.objects.filter(q).values_list('id','user_id_farmer_id__first_name','user_id_farmer_id__last_name','created_at','user_id_farmer_id__username','amount').order_by('-updated_at')
-    print("user_info1",user_info1.query)
     for i in user_info1:
         id=i[0]
         farmer__first_name=i[1]
@@ -2889,36 +2850,40 @@ def add_notifications(request):
 
 @csrf_exempt
 def loyalty_configuration(request):
-    import requests
+    userdata=models.LoyaltyPoints.objects.all().values_list('id','loyalty_type','loyalty_point')
     data=[]
-    lang_data=get_langauge()
-    state_data=get_state()
+    count=1
+    for nlist in userdata:
+        loyalty_id=nlist[0]
+        loyalty_type=nlist[1]
+        loyalty_point=nlist[2]
+        data.append([count,str(loyalty_type),loyalty_point,"<a href='/edit_loyalty/"+str(loyalty_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        count+=1
+        return render(request, 'loyalty_configuration.html', {'data':data})
+
+@csrf_exempt
+def edit_loyalty(request,pk):
+    loyalty_id=pk
     if request.method == 'POST':
-       
+        loyalty_type=request.POST.get('loyalty_type')
+        loyalty_point=request.POST.get('loyalty_point')
+        loyalty= models.LoyaltyPoints.objects.get(id=loyalty_id)
+        loyalty.loyalty_type=loyalty_type
+        loyalty.loyalty_point=int(loyalty_point)
+        loyalty.conversion=0
+        loyalty.updated_at=datetime.now()
+        loyalty.save()
         response=JsonResponse({'status':'success'})
         return response
     else:
-        data={'languages':lang_data,'state_data':state_data}
-        return render(request, 'loyalty_configuration.html', {'data':data})
-
-# @csrf_exempt
-# def loyalty_configration(request):
-#     userdata=models.UserLoyaltyPoints.objects.all().values_list('user_id_farmer_id','user_id_retailer_id',
-#     'to_user_id','from_user_id','loyalty_type','loyalty_points_id','order_id','loyalty_point')
-#     # print('============',userdata)
-#     row=[]
-#     for nlist in userdata:
-#         user_id_farmer_id=nlist[0]
-#         user_id_retailer_id=nlist[1]
-#         to_user_id=nlist[2]
-#         from_user_id=nlist[3]
-#         loyalty_type=nlist[4]
-#         loyalty_points_id=nlist[5]
-#         order_id=nlist[6]
-#         loyalty_point=nlist[7]
-#         case2 = {'user_id_farmer_id': user_id_farmer_id, 'user_id_retailer_id': user_id_retailer_id,
-#         'to_user_id':to_user_id,'from_user_id':from_user_id,'loyalty_type':loyalty_type,'loyalty_points_id':loyalty_points_id,
-#         'order_id':order_id,'loyalty_point':loyalty_point}
-#         row.append(case2)
-#         print('============',row)
-#     return JsonResponse({'data':row})
+        userdata=models.LoyaltyPoints.objects.filter(id=loyalty_id).values_list('id','loyalty_type','loyalty_point')
+        data=[]
+        count=1
+        for nlist in userdata:
+            loyalty_id=nlist[0]
+            loyalty_type=nlist[1]
+            loyalty_point=nlist[2]
+        count+=1
+        data={"loyalty_id":loyalty_id,"loyalty_type":loyalty_type,"loyalty_point":loyalty_point}
+        count+=1
+        return render(request, 'edit_loyalty.html', {'data':data})

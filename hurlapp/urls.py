@@ -21,7 +21,7 @@ urlpatterns=[
     # url(r'^add_wholesaler/$',views.add_wholesaler,name='add_wholesaler'),
     url(r'^add_wholesaler/$',views.wholeseller_upload,name='add_wholesaler'),
     url(r'^edit_wholesaler/(?P<pk>\d+)$',views.edit_wholesaler,name='edit_wholesaler'),
-    url(r'^import_wholesaler/$',views.import_wholesaler,name='import_wholesaler'),
+    # url(r'^import_wholesaler/$',views.import_wholesaler,name='import_wholesaler'),
     url(r'^search_city/$',views.search_city,name='search_city'),
     url(r'^check_user_mobile/$',views.check_user_mobile,name='check_user_mobile'),
     url(r'^user_profile/(?P<pk>\d+)$',views.user_profile,name='user_profile'),
@@ -83,6 +83,7 @@ urlpatterns=[
     url(r'^send_query_list/$',mobilefunctions.send_query_list,name='send_query_list'),
     url(r'^recharge_loyalty_report/$',views.recharge_loyalty_report,name='recharge_loyalty_report'),
      url(r'^loyalty_configuration/$',views.loyalty_configuration,name='loyalty_configuration'),
+     url(r'^edit_loyalty/(?P<pk>\d+)$',views.edit_loyalty, name='edit_loyalty'),
     # url(r'^get_city_search/$',views.get_city_search,name='get_city_search'),alertController
     
 

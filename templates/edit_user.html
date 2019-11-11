@@ -50,7 +50,7 @@
               <div class="card-body">
                   {% csrf_token %}
                   {# A more "HTML" way of creating the login form#}
-                  <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.user_id}}">
+                  <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.loyalty_id}}">
                   <input type="hidden" name="district_selct" id="district_selct" value="{{data.district.id}}">
                   <div class="row">
                     <div class="col-sm-6">

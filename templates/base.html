@@ -251,31 +251,31 @@
     <!--    <li class="nav-item has-treeview ">   <a href="#"  class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
  -->
 
-       <li class="nav-item has-treeview ">
-            <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+       <!-- <li class="nav-item has-treeview ">
+            <a href="#" class="nav-link {% if "/add_product4/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
 
               <p>
                 Reports
               </p>
-            </a>
+            </a> -->
 
-        <ul class="treeview-menu" style="display: hidden;">
-       <li class="nav-item has-treeview ">
-            <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
-              <p>
-                Salers Reports
-              </p>
-            </a>
-          </li> 
+       <!--  <ul class="treeview-menu" style="display: hidden;"> -->
+           <li class="nav-item has-treeview ">
+                <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+                  <p>
+                    Sales Reports
+                  </p>
+                </a>
+              </li> 
 
-        <li class="nav-item has-treeview ">
-          <a href="{% url 'recharge_loyalty_report' %}" class="nav-link {% if "/recharge_loyalty_report/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
-            <p>
-              Recharge/Loyalty Reports
-            </p>
-          </a>
-        </li>
-      </ul> 
+            <li class="nav-item has-treeview ">
+              <a href="{% url 'recharge_loyalty_report' %}" class="nav-link {% if "/recharge_loyalty_report/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+                <p>
+                  Recharge/Loyalty Reports
+                </p>
+              </a>
+            </li>
+     <!--  </ul>  -->
       </li>
 
         </ul>
