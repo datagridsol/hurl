@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Manage Product{% endblock %}
+{% load staticfiles %}
+
+
+
+{% block body_block %}
+<style type="text/css">
+    #confForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    
+  </style>
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Add Configuration</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          
+          <!-- right column -->
+          <div class="col-md-8" style="margin: 0 auto;">
+            <!-- general form elements disabled -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Add Configuration</h3>
+              </div>
+              <!-- /.card-header -->
+              <form role="form" method="post" id="confForm" enctype="multipart/form-data">
+              <div class="card-body">
+                  {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="user_type">Product Name</label>
+                        <select class="form-control" id="product_name" name="product_name">
+                          <option  value="" selected="selected">---select---</option>
+                          {% for products_data in products_data %}
+                           <option value="{{products_data.id}}">{{products_data.product_name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Product Unit <span class="text-danger"></span></label>
+                        <input type="text" class="form-control" readonly="true" name="product_unit_name" id="product_unit_name" placeholder="Product Unit">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Product Quantity <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="quantity" id="quantity" placeholder="Product Quantity">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                     <div class="form-group">
+                        <label>Recharge Amount <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="recharge_amount" id="recharge_amount" placeholder="Recharge Amount">
+                     </div>
+                     </div>
+                  </div>
+                  
+                  
+                  
+                 
+                  <!-- <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="customFile">Product Image</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="product_image" id="product_image">
+                          <label class="custom-file-label" for="product_image">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+ -->
+                  
+
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </form>
+            <!-- /.card -->
+            
+          </div>
+          <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}

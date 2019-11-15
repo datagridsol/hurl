@@ -230,7 +230,7 @@ $(document).ready(function(){
       },
       land_area: {
         required: true,
-	number: true,
+  number: true,
       }
     },
     messages: {
@@ -267,7 +267,7 @@ $(document).ready(function(){
       },
       land_area: {
         required: "Please enter a land area",
-	number: "Please enter valid number",
+  number: "Please enter valid number",
       }
     },
     submitHandler: function() {
@@ -531,12 +531,36 @@ $(document).ready(function(){
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
         minlength: 12,
         maxlength: 12,
+        remote: {
+          url: "/check_aadhar_card/",
+          type: "post",
+          data: {
+            aadhar_no: function() {
+              return $( "#aadhar_no" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       state: {
         required: true,
@@ -556,12 +580,14 @@ $(document).ready(function(){
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
          minlength: "Your aadhar number must consist of at least 12 digits",
         maxlength: "Your aadhar number must consist of at max 12 digits",
+        remote: "Aadhar number already exists"
       },
       state: {
         required: "Please enter a state",
@@ -748,7 +774,7 @@ $(document).ready(function(){
       },
       land_area: {
         required: true,
-	number: true,
+  number: true,
       }
     },
     messages: {
@@ -781,7 +807,7 @@ $(document).ready(function(){
       },
       land_area: {
         required: "Please enter a land area",
-	number: "Please enter valid number",
+  number: "Please enter valid number",
       }
     },
     submitHandler: function() {
@@ -830,12 +856,36 @@ $(document).ready(function(){
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
         minlength: 12,
         maxlength: 12,
+        remote: {
+          url: "/check_aadhar_card/",
+          type: "post",
+          data: {
+            aadhar_no: function() {
+              return $( "#aadhar_no" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       state: {
         required: true,
@@ -855,12 +905,14 @@ $(document).ready(function(){
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
          minlength: "Your aadhar number must consist of at least 12 digits",
         maxlength: "Your aadhar number must consist of at max 12 digits",
+        remote: "Aadhar number already exists"
       },
       state: {
         required: "Please enter a state",
@@ -941,7 +993,7 @@ $("#wholesalerForm").validate({
       },
       land_area: {
         required: true,
-	number: "Please enter valid mobile number",
+  number: "Please enter valid mobile number",
       }
     },
     messages: {
@@ -1022,12 +1074,36 @@ $("#editwholeselerForm").validate({
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
         minlength: 12,
         maxlength: 12,
+        remote: {
+          url: "/check_aadhar_card/",
+          type: "post",
+          data: {
+            aadhar_no: function() {
+              return $( "#aadhar_no" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       state: {
         required: true,
@@ -1047,12 +1123,14 @@ $("#editwholeselerForm").validate({
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exist"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
          minlength: "Your aadhar number must consist of at least 12 digits",
         maxlength: "Your aadhar number must consist of at max 12 digits",
+        remote: "Aadhar number already exist"
       },
       state: {
         required: "Please enter a state",
@@ -1092,59 +1170,6 @@ $("#editwholeselerForm").validate({
       return false;
     }
   });
-
-
-$("#editloyalityForm").validate({
-   
-    rules: {
-      loyalty_type: {
-        required: true,
-        
-      },
-      loyalty_point: {
-        required: true,
-      }
-    },
-    messages: {
-      loyalty_type: {
-        required: "Please enter a loyalty type",
-      },
-      loyalty_point: {
-        required: "Please enter a loyalty point",
-      }
-    },
-    submitHandler: function() {
-      var userForm=document.getElementById('editloyalityForm');
-       var formData = new FormData(userForm);
-       var user_id_pk=document.getElementById('user_id_pk').value;
-        $.ajax({
-          'method':'POST',
-          'url':'/edit_loyalty/'+user_id_pk,
-          'data': formData,
-          'cache':false,
-          'contentType': false,
-          'processData': false,
-          success: function(response){
-            if(response.status=='success')
-            {
-              toastr.success('loyalty updated successfully.').delay(10000);
-              setTimeout(function(){ window.location.href="/loyalty_configuration/"; }, 2000);
-              
-            }
-            else
-            {
-              alert(response.msg);
-            }
-
-          },
-          error: function(xhr,status,errorThrown){
-            alert(xhr.responseText)
-          },
-        });
-      return false;
-    }
-  });
-
 
 /*
 $("#dashboardForm").validate({
@@ -1547,20 +1572,218 @@ $("#dashboardForm").validate({
     });
 
 
+ $("#confForm").validate({
+    rules: {
+      product_name: {
+        required: true,
+        
+      },
+      quantity: {
+        required: true,
+        number: true
+      },
+      recharge_amount: {
+        required: true,
+        number: true
+      }
+    },
+    messages: {
+      product_name: {
+        required: "Please enter a name",
+      },
+      quantity: {
+        required: "Please enter a quantity",
+        number: "Please enter valid quantity"
+      },
+      recharge_amount: {
+        required: "Please enter a recharge amount",
+        number: "Please enter valid recharge amount"
+      }
+    },
+
+    submitHandler: function() {
+       var productForm=document.getElementById('confForm');
+       var formData = new FormData(productForm);
+        $.ajax({
+          'method':'POST',
+          'url':'/add_famer_configuration/',
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+           success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('Configuration Add successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/loyalty_configuration_farmer/"; }, 2000);
+              
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+   $("#editconfForm").validate({
+   
+   rules: {
+  
+      quantity: {
+        required: true,
+        number: true
+      },
+      recharge_amount: {
+        required: true,
+        number: true
+      }
+    },
+    messages: {
+
+      quantity: {
+        required: "Please enter a quantity",
+        number: "Please enter valid quantity"
+      },
+      recharge_amount: {
+        required: "Please enter a recharge amount",
+        number: "Please enter valid recharge amount"
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('editconfForm');
+       var formData = new FormData(userForm);
+       var user_id_pk=document.getElementById('user_id_pk').value;
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_loyalty_configuration/'+user_id_pk,
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('loyalty configuration updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/loyalty_configuration_farmer/"; }, 2000);
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
+
+  $(document).on('change','#confForm #product_name',function(){
+    var product_id=$(this).val();
+    $.ajax({
+        'method':'POST',
+        'url':'/get_product_unit/'+product_id,
+        success: function(response){
+          if(response.status=='success')
+          {
+            $('#product_unit_name').val(response.unit);
+          }
+          else
+          {
+            alert(response.msg);
+          }
+
+        },
+        error: function(xhr,status,errorThrown){
+          alert(xhr.responseText)
+        },
+      });
+  });
+  
+  $("#editloyalityForm").validate({
+   
+    rules: {
+      
+      loyalty_point: {
+        required: true,
+      }
+    },
+    messages: {
+      loyalty_point: {
+        required: "Please enter a loyalty point",
+      }
+    },
+    submitHandler: function() {
+      var userForm=document.getElementById('editloyalityForm');
+       var formData = new FormData(userForm);
+       var user_id_pk=document.getElementById('user_id_pk').value;
+        $.ajax({
+          'method':'POST',
+          'url':'/edit_loyalty/'+user_id_pk,
+          'data': formData,
+          'cache':false,
+          'contentType': false,
+          'processData': false,
+          success: function(response){
+            if(response.status=='success')
+            {
+              toastr.success('loyalty updated successfully.').delay(10000);
+              setTimeout(function(){ window.location.href="/edit_loyalty/"; }, 2000);
+              
+            }
+            else
+            {
+              alert(response.msg);
+            }
+
+          },
+          error: function(xhr,status,errorThrown){
+            alert(xhr.responseText)
+          },
+        });
+      return false;
+    }
+  });
 
   $('#searchDate').daterangepicker({
+    autoUpdateInput: false,
     locale: {
       format: 'DD/MM/YYYY'
     }
+  });
+
+  $('#searchDate').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+  });
+
+  $('#searchDate').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
   });
 
   $('#reservationtime').daterangepicker({
     timePicker: true,
     timePicker24Hour:true,
     singleDatePicker:true,
+    autoUpdateInput: false,
     locale: {
       format: 'DD/MM/YYYY HH:mm'
     }
+  });
+  $('#reservationtime').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('DD/MM/YYYY HH:mm'));
+  });
+
+  $('#reservationtime').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
   });
   var summernoteElement = $('.ckeditor');
   var summernoteElementEdit = $('.ckeditoredit');

@@ -72,6 +72,8 @@ urlpatterns=[
     url(r'^loyalty_retailer/(?P<pk>\d+)$',views.loyalty_retailer, name='loyalty_retailer'),
     url(r'^farmer_view/(?P<pk>\d+)$',views.farmer_details_view, name='farmer_view'),
     url(r'^download/$',views.send_file, name='download'), 
+
+
     #url(r'^download/$',views.send_file, name='download'),farmer_recharge_details
     url(r'^get_reatiler_farmer_list/$',mobilefunctions.get_reatiler_farmer_list,name='get_reatiler_farmer_list'),
     url(r'^farmer_recharge_details/$',mobilefunctions.farmer_recharge_details,name='farmer_recharge_details'),
@@ -81,10 +83,23 @@ urlpatterns=[
     url(r'^get_support_list/$',mobilefunctions.get_support_list,name='get_support_list'),
     url(r'^reply_support_list/$',mobilefunctions.reply_support_list,name='reply_support_list'),
     url(r'^send_query_list/$',mobilefunctions.send_query_list,name='send_query_list'),
-    url(r'^recharge_loyalty_report/$',views.recharge_loyalty_report,name='recharge_loyalty_report'),
+    url(r'^recharge_report/$',views.recharge_report,name='recharge_report'),
+    url(r'^loyalty_point_report/$',views.loyalty_point_report,name='loyalty_point_report'),
      url(r'^loyalty_configuration/$',views.loyalty_configuration,name='loyalty_configuration'),
-     url(r'^edit_loyalty/(?P<pk>\d+)$',views.edit_loyalty, name='edit_loyalty'),
+     url(r'^edit_loyalty/$',views.edit_loyalty, name='edit_loyalty'),
      url(r'^loyalty_configuration_farmer/$',views.loyalty_configuration_farmer,name='loyalty_configuration_farmer'),
+     url(r'^view_support_list/$',mobilefunctions.view_support_list,name='view_support_list'),
+
+     url(r'^add_famer_configuration/$',views.add_famer_configuration,name='add_famer_configuration'),
+
+     url(r'^edit_loyalty_configuration/(?P<pk>\d+)$',views.edit_loyalty_configuration, name='edit_loyalty_configuration'),
+     url(r'^loyalty_point_list/$',mobilefunctions.loyalty_point_list,name='loyalty_point_list'),
+     url(r'^user_notification/$',mobilefunctions.user_notification,name='user_notification'),
+
+     url(r'^user_status_farmer/$',views.user_status_farmer,name='user_status_farmer'),
+     url(r'^user_status_retailer/$',views.user_status_retailer,name='user_status_retailer'),
+     url(r'^user_status_wholesaler/$',views.user_status_wholesaler,name='user_status_wholesaler'),
+
     # url(r'^get_city_search/$',views.get_city_search,name='get_city_search'),alertController
     
 

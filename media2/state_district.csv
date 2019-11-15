@@ -1,0 +1,628 @@
+01,00,,JAMMU & KASHMIR
+01,01,,Kupwara
+01,02,,Baramula
+01,03,,Srinagar
+01,04,,Badgam
+01,05,,Pulwama
+01,06,,Anantnag
+01,07,,Leh (Ladakh)
+01,08,,Kargil
+01,09,,Doda
+01,10,,Udhampur
+01,11,,Punch
+01,12,,Rajauri
+01,13,,Jammu
+01,14,,Kathua
+02,00,,HIMACHAL PRADESH
+02,01,,Chamba
+02,02,,Kangra
+02,03,,Lahul & Spiti
+02,04,,Kullu
+02,05,,Mandi
+02,06,,Hamirpur
+02,07,,Una
+02,08,,Bilaspur
+02,09,,Solan
+02,10,,Sirmaur
+02,11,,Shimla
+02,12,,Kinnaur
+03,00,,PUNJAB
+03,01,,Gurdaspur
+03,02,,Amritsar
+03,03,,Kapurthala
+03,04,,Jalandhar
+03,05,,Hoshiarpur
+03,06,,Nawanshahr *
+03,07,,Rupnagar
+03,08,,Fatehgarh Sahib *
+03,09,,Ludhiana
+03,10,,Moga *
+03,11,,Firozpur
+03,12,,Muktsar *
+03,13,,Faridkot
+03,14,,Bathinda
+03,15,,Mansa *
+03,16,,Sangrur
+03,17,,Patiala
+04,00,,CHANDIGARH
+04,01,,Chandigarh
+05,00,,UTTARANCHAL
+05,01,,Uttarkashi
+05,02,,Chamoli
+05,03,,Rudraprayag *
+05,04,,Tehri Garhwal
+05,05,,Dehradun
+05,06,,Garhwal
+05,07,,Pithoragarh
+05,08,,Bageshwar
+05,09,,Almora
+05,10,,Champawat
+05,11,,Nainital
+05,12,,Udham Singh Nagar *
+05,13,,Hardwar
+06,00,,HARYANA
+06,01,,Panchkula *
+06,02,,Ambala
+06,03,,Yamunanagar
+06,04,,Kurukshetra
+06,05,,Kaithal
+06,06,,Karnal
+06,07,,Panipat
+06,08,,Sonipat
+06,09,,Jind
+06,10,,Fatehabad *
+06,11,,Sirsa
+06,12,,Hisar
+06,13,,Bhiwani
+06,14,,Rohtak
+06,15,,Jhajjar *
+06,16,,Mahendragarh
+06,17,,Rewari
+06,18,,Gurgaon
+06,19,,Faridabad
+07,00,,DELHI
+07,01,,North West   *
+07,02,,North   *
+07,03,,North East   *
+07,04,,East   *
+07,05,,New Delhi
+07,06,,Central  *
+07,07,,West   *
+07,08,,South West   *
+07,09,,South  *
+08,00,,RAJASTHAN
+08,01,,Ganganagar
+08,02,,Hanumangarh *
+08,03,,Bikaner
+08,04,,Churu
+08,05,,Jhunjhunun
+08,06,,Alwar
+08,07,,Bharatpur
+08,08,,Dhaulpur
+08,09,,Karauli *
+08,10,,Sawai Madhopur
+08,11,,Dausa *
+08,12,,Jaipur
+08,13,,Sikar
+08,14,,Nagaur
+08,15,,Jodhpur
+08,16,,Jaisalmer
+08,17,,Barmer
+08,18,,Jalor
+08,19,,Sirohi
+08,20,,Pali
+08,21,,Ajmer
+08,22,,Tonk
+08,23,,Bundi
+08,24,,Bhilwara
+08,25,,Rajsamand *
+08,26,,Udaipur
+08,27,,Dungarpur
+08,28,,Banswara
+08,29,,Chittaurgarh
+08,30,,Kota
+08,31,,Baran *
+08,32,,Jhalawar
+09,00,,UTTAR PRADESH
+09,01,,Saharanpur
+09,02,,Muzaffarnagar
+09,03,,Bijnor
+09,04,,Moradabad
+09,05,,Rampur
+09,06,,Jyotiba Phule Nagar *
+09,07,,Meerut
+09,08,,Baghpat *
+09,09,,Ghaziabad
+09,10,,Gautam Buddha Nagar *
+09,11,,Bulandshahr
+09,12,,Aligarh
+09,13,,Hathras *
+09,14,,Mathura
+09,15,,Agra
+09,16,,Firozabad
+09,17,,Etah
+09,18,,Mainpuri
+09,19,,Budaun
+09,20,,Bareilly
+09,21,,Pilibhit
+09,22,,Shahjahanpur
+09,23,,Kheri
+09,24,,Sitapur
+09,25,,Hardoi
+09,26,,Unnao
+09,27,,Lucknow
+09,28,,Rae Bareli
+09,29,,Farrukhabad
+09,30,,Kannauj *
+09,31,,Etawah
+09,32,,Auraiya *
+09,33,,Kanpur Dehat
+09,34,,Kanpur Nagar
+09,35,,Jalaun 
+09,36,,Jhansi
+09,37,,Lalitpur
+09,38,,Hamirpur
+09,39,,Mahoba *
+09,40,,Banda
+09,41,,Chitrakoot *
+09,42,,Fatehpur
+09,43,,Pratapgarh
+09,44,,Kaushambi *
+09,45,,Allahabad 
+09,46,,Barabanki
+09,47,,Faizabad
+09,48,,Ambedkar Nagar *
+09,49,,Sultanpur
+09,50,,Bahraich
+09,51,,Shrawasti *
+09,52,,Balrampur *
+09,53,,Gonda
+09,54,,Siddharthnagar
+09,55,,Basti
+09,56,,Sant Kabir Nagar *
+09,57,,Maharajganj
+09,58,,Gorakhpur
+09,59,,Kushinagar *
+09,60,,Deoria
+09,61,,Azamgarh
+09,62,,Mau
+09,63,,Ballia
+09,64,,Jaunpur
+09,65,,Ghazipur
+09,66,,Chandauli *
+09,67,,Varanasi
+09,68,,Sant Ravidas Nagar *
+09,69,,Mirzapur
+09,70,,Sonbhadra
+10,00,,BIHAR
+10,01,,Pashchim Champaran
+10,02,,Purba Champaran
+10,03,,Sheohar *
+10,04,,Sitamarhi
+10,05,,Madhubani
+10,06,,Supaul *
+10,07,,Araria
+10,08,,Kishanganj
+10,09,,Purnia
+10,10,,Katihar
+10,11,,Madhepura
+10,12,,Saharsa
+10,13,,Darbhanga
+10,14,,Muzaffarpur
+10,15,,Gopalganj
+10,16,,Siwan
+10,17,,Saran
+10,18,,Vaishali
+10,19,,Samastipur
+10,20,,Begusarai
+10,21,,Khagaria
+10,22,,Bhagalpur
+10,23,,Banka *
+10,24,,Munger
+10,25,,Lakhisarai *
+10,26,,Sheikhpura *
+10,27,,Nalanda
+10,28,,Patna
+10,29,,Bhojpur
+10,30,,Buxar *
+10,31,,Kaimur (Bhabua) *
+10,32,,Rohtas
+10,33,,Jehanabad 
+10,34,,Aurangabad
+10,35,,Gaya
+10,36,,Nawada
+10,37,,Jamui *
+11,00,,SIKKIM
+11,01,,North 
+11,02,,West
+11,03,,South
+11,04,,East
+12,00,,ARUNACHAL PRADESH
+12,01,,Tawang
+12,02,,West Kameng
+12,03,,East Kameng
+12,04,,Papum Pare *
+12,05,,Lower Subansiri
+12,06,,Upper Subansiri
+12,07,,West Siang
+12,08,,East Siang
+12,09,,Upper Siang *
+12,10,,Dibang Valley
+12,11,,Lohit
+12,12,,Changlang
+12,13,,Tirap
+13,00,,NAGALAND
+13,01,,Mon
+13,02,,Tuensang
+13,03,,Mokokchung
+13,04,,Zunheboto
+13,05,,Wokha
+13,06,,Dimapur *
+13,07,,Kohima
+13,08,,Phek
+14,00,,MANIPUR
+14,01,,Senapati
+14,02,,Tamenglong
+14,03,,Churachandpur
+14,04,,Bishnupur
+14,05,,Thoubal
+14,06,,Imphal West
+14,07,,Imphal East *
+14,08,,Ukhrul
+14,09,,Chandel
+15,00,,MIZORAM
+15,01,,Mamit *
+15,02,,Kolasib *
+15,03,,Aizawl
+15,04,,Champhai *
+15,05,,Serchhip *
+15,06,,Lunglei
+15,07,,Lawngtlai
+15,08,,Saiha *
+16,00,,TRIPURA
+16,01,,West Tripura 
+16,02,,South Tripura 
+16,03,,Dhalai  *
+16,04,,North Tripura 
+17,00,,MEGHALAYA
+17,01,,West Garo Hills
+17,02,,East Garo Hills
+17,03,,South Garo Hills *
+17,04,,West Khasi Hills
+17,05,,Ri Bhoi  *
+17,06,,East Khasi Hills
+17,07,,Jaintia Hills
+18,00,,ASSAM
+18,01,,Kokrajhar
+18,02,,Dhubri
+18,03,,Goalpara
+18,04,,Bongaigaon
+18,05,,Barpeta
+18,06,,Kamrup
+18,07,,Nalbari
+18,08,,Darrang
+18,09,,Marigaon
+18,10,,Nagaon
+18,11,,Sonitpur
+18,12,,Lakhimpur
+18,13,,Dhemaji
+18,14,,Tinsukia
+18,15,,Dibrugarh
+18,16,,Sibsagar
+18,17,,Jorhat
+18,18,,Golaghat
+18,19,,Karbi Anglong
+18,20,,North Cachar Hills
+18,21,,Cachar
+18,22,,Karimganj
+18,23,,Hailakandi
+19,00,,WEST BENGAL
+19,01,,Darjiling 
+19,02,,Jalpaiguri 
+19,03,,Koch Bihar 
+19,04,,Uttar Dinajpur
+19,05,,Dakshin Dinajpur *
+19,06,,Maldah 
+19,07,,Murshidabad 
+19,08,,Birbhum
+19,09,,Barddhaman 
+19,10,,Nadia 
+19,11,,North Twenty Four Parganas
+19,12,,Hugli 
+19,13,,Bankura 
+19,14,,Puruliya
+19,15,,Medinipur 
+19,16,,Haora 
+19,17,,Kolkata
+19,18,,South  Twenty Four Parganas
+20,00,,JHARKHAND
+20,01,,Garhwa *
+20,02,,Palamu
+20,03,,Chatra *
+20,04,,Hazaribag
+20,05,,Kodarma *
+20,06,,Giridih
+20,07,,Deoghar
+20,08,,Godda
+20,09,,Sahibganj
+20,10,,Pakaur *
+20,11,,Dumka
+20,12,,Dhanbad
+20,13,,Bokaro *
+20,14,,Ranchi
+20,15,,Lohardaga
+20,16,,Gumla
+20,17,,Pashchimi Singhbhum
+20,18,,Purbi Singhbhum
+21,00,,ORISSA
+21,01,,Bargarh  *
+21,02,,Jharsuguda  *
+21,03,,Sambalpur
+21,04,,Debagarh  *
+21,05,,Sundargarh
+21,06,,Kendujhar
+21,07,,Mayurbhanj
+21,08,,Baleshwar
+21,09,,Bhadrak  *
+21,10,,Kendrapara *
+21,11,,Jagatsinghapur  *
+21,12,,Cuttack
+21,13,,Jajapur  *
+21,14,,Dhenkanal
+21,15,,Anugul  *
+21,16,,Nayagarh  *
+21,17,,Khordha  *
+21,18,,Puri
+21,19,,Ganjam
+21,20,,Gajapati  *
+21,21,,Kandhamal
+21,22,,Baudh  *
+21,23,,Sonapur  *
+21,24,,Balangir
+21,25,,Nuapada  *
+21,26,,Kalahandi
+21,27,,Rayagada  *
+21,28,,Nabarangapur  *
+21,29,,Koraput
+21,30,,Malkangiri  *
+22,00,,CHHATTISGARH
+22,01,,Koriya *
+22,02,,Surguja
+22,03,,Jashpur *
+22,04,,Raigarh
+22,05,,Korba *
+22,06,,Janjgir - Champa*
+22,07,,Bilaspur
+22,08,,Kawardha *
+22,09,,Rajnandgaon
+22,10,,Durg
+22,11,,Raipur
+22,12,,Mahasamund *
+22,13,,Dhamtari *
+22,14,,Kanker *
+22,15,,Baster
+22,16,,Dantewada*
+23,00,,MADHYA PRADESH
+23,01,,Sheopur *
+23,02,,Morena
+23,03,,Bhind
+23,04,,Gwalior
+23,05,,Datia
+23,06,,Shivpuri
+23,07,,Guna
+23,08,,Tikamgarh
+23,09,,Chhatarpur
+23,10,,Panna
+23,11,,Sagar
+23,12,,Damoh
+23,13,,Satna
+23,14,,Rewa
+23,15,,Umaria *
+23,16,,Shahdol
+23,17,,Sidhi
+23,18,,Neemuch *
+23,19,,Mandsaur
+23,20,,Ratlam
+23,21,,Ujjain
+23,22,,Shajapur
+23,23,,Dewas
+23,24,,Jhabua
+23,25,,Dhar
+23,26,,Indore
+23,27,,West Nimar
+23,28,,Barwani *
+23,29,,East Nimar
+23,30,,Rajgarh
+23,31,,Vidisha
+23,32,,Bhopal
+23,33,,Sehore
+23,34,,Raisen
+23,35,,Betul
+23,36,,Harda *
+23,37,,Hoshangabad
+23,38,,Katni *
+23,39,,Jabalpur
+23,40,,Narsimhapur
+23,41,,Dindori *
+23,42,,Mandla
+23,43,,Chhindwara
+23,44,,Seoni
+23,45,,Balaghat
+24,00,,GUJARAT
+24,01,,Kachchh
+24,02,,Banas Kantha
+24,03,,Patan  *
+24,04,,Mahesana
+24,05,,Sabar Kantha
+24,06,,Gandhinagar
+24,07,,Ahmadabad
+24,08,,Surendranagar
+24,09,,Rajkot
+24,10,,Jamnagar
+24,11,,Porbandar  *
+24,12,,Junagadh
+24,13,,Amreli
+24,14,,Bhavnagar
+24,15,,Anand  *
+24,16,,Kheda
+24,17,,Panch Mahals
+24,18,,Dohad  *
+24,19,,Vadodara
+24,20,,Narmada  *
+24,21,,Bharuch
+24,22,,Surat
+24,23,,The Dangs
+24,24,,Navsari  *
+24,25,,Valsad
+25,00,,DAMAN & DIU
+25,01,,Diu
+25,02,,Daman
+26,00,,DADRA & NAGAR HAVELI
+26,01,,Dadra & Nagar Haveli
+27,00,,MAHARASHTRA
+27,01,,Nandurbar *
+27,02,,Dhule
+27,03,,Jalgaon
+27,04,,Buldana
+27,05,,Akola
+27,06,,Washim *
+27,07,,Amravati
+27,08,,Wardha
+27,09,,Nagpur
+27,10,,Bhandara
+27,11,,Gondiya *
+27,12,,Gadchiroli
+27,13,,Chandrapur
+27,14,,Yavatmal
+27,15,,Nanded
+27,16,,Hingoli *
+27,17,,Parbhani
+27,18,,Jalna
+27,19,,Aurangabad
+27,20,,Nashik
+27,21,,Thane
+27,22,,Mumbai (Suburban) *
+27,23,,Mumbai
+27,24,,Raigarh
+27,25,,Pune
+27,26,,Ahmadnagar
+27,27,,Bid
+27,28,,Latur
+27,29,,Osmanabad
+27,30,,Solapur
+27,31,,Satara
+27,32,,Ratnagiri
+27,33,,Sindhudurg
+27,34,,Kolhapur
+27,35,,Sangli
+28,00,,ANDHRA PRADESH
+28,01,,Adilabad
+28,02,,Nizamabad
+28,03,,Karimnagar
+28,04,,Medak
+28,05,,Hyderabad
+28,06,,Rangareddi
+28,07,,Mahbubnagar
+28,08,,Nalgonda
+28,09,,Warangal
+28,10,,Khammam
+28,11,,Srikakulam
+28,12,,Vizianagaram
+28,13,,Visakhapatnam
+28,14,,East Godavari
+28,15,,West Godavari
+28,16,,Krishna
+28,17,,Guntur
+28,18,,Prakasam
+28,19,,Nellore
+28,20,,Cuddapah
+28,21,,Kurnool
+28,22,,Anantapur
+28,23,,Chittoor
+29,00,,KARNATAKA
+29,01,,Belgaum
+29,02,,Bagalkot *
+29,03,,Bijapur
+29,04,,Gulbarga
+29,05,,Bidar
+29,06,,Raichur
+29,07,,Koppal *
+29,08,,Gadag *
+29,09,,Dharwad
+29,10,,Uttara Kannada
+29,11,,Haveri *
+29,12,,Bellary
+29,13,,Chitradurga
+29,14,,Davangere*
+29,15,,Shimoga
+29,16,,Udupi *
+29,17,,Chikmagalur
+29,18,,Tumkur
+29,19,,Kolar
+29,20,,Bangalore
+29,21,,Bangalore Rural
+29,22,,Mandya
+29,23,,Hassan
+29,24,,Dakshina Kannada
+29,25,,Kodagu
+29,26,,Mysore
+29,27,,Chamrajnagar*
+30,00,,GOA
+30,01,,North Goa 
+30,02,,South Goa
+31,00,,LAKSHADWEEP
+31,01,,Lakshadweep
+32,00,,KERALA
+32,01,,Kasaragod
+32,02,,Kannur
+32,03,,Wayanad
+32,04,,Kozhikode
+32,05,,Malappuram
+32,06,,Palakkad
+32,07,,Thrissur
+32,08,,Ernakulam
+32,09,,Idukki
+32,10,,Kottayam
+32,11,,Alappuzha
+32,12,,Pathanamthitta
+32,13,,Kollam
+32,14,,Thiruvananthapuram
+33,00,,TAMIL NADU
+33,01,,Thiruvallur
+33,02,,Chennai
+33,03,,Kancheepuram
+33,04,,Vellore
+33,05,,Dharmapuri
+33,06,,Tiruvannamalai
+33,07,,Viluppuram
+33,08,,Salem
+33,09,,Namakkal   *
+33,10,,Erode
+33,11,,The Nilgiris
+33,12,,Coimbatore
+33,13,,Dindigul
+33,14,,Karur  *
+33,15,,Tiruchirappalli
+33,16,,Perambalur  *
+33,17,,Ariyalur  *
+33,18,,Cuddalore
+33,19,,Nagapattinam  *
+33,20,,Thiruvarur
+33,21,,Thanjavur
+33,22,,Pudukkottai
+33,23,,Sivaganga
+33,24,,Madurai
+33,25,,Theni  *
+33,26,,Virudhunagar
+33,27,,Ramanathapuram
+33,28,,Thoothukkudi
+33,29,,Tirunelveli 
+33,30,,Kanniyakumari
+34,00,,PONDICHERRY
+34,01,,Yanam
+34,02,,Pondicherry
+34,03,,Mahe
+34,04,,Karaikal
+35,00,,ANDAMAN & NICOBAR ISLANDS
+35,01,,Andamans
+35,02,,Nicobars

@@ -51,20 +51,18 @@
                   {% csrf_token %}
                   {# A more "HTML" way of creating the login form#}
                    <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.loyalty_id}}">
+                   {% for val in data %}
                   <div class="row">
+                    
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label>Loyalty Type <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="loyalty_type"  id="loyalty_type" placeholder="Loyalty Type" value="{{data.loyalty_type}}">
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label>Loyalty Point <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="loyalty_point" id="loyalty_point" placeholder="Loyalty Point" value="{{data.loyalty_point}}">
+                        <label>{{val.loyalty_type}}</label>
+                        <input type="text" class="form-control" name="loyalty_point[]" id="loyalty_point" placeholder="Loyalty Point" value="{{val.loyalty_point}}">
+                       
                       </div>
                     </div>
                   </div>
+                  {% endfor %}
                 
 
               <div class="card-footer">
@@ -86,3 +84,4 @@
   <!-- /.content-wrapper -->
 
 {% endblock %}
+

@@ -1,6 +1,6 @@
 # dappx/admin.py
 from django.contrib import admin
-from hurlapp.models import Language,State,District,City,UserProfile,Order,Product,ManageContent,Notification,Support,SupportReply,Recharge,MobileLang,Scratch,OrderProductsDetail,LoyaltyPoints,UserLoyaltyPoints,UserLinkage
+from hurlapp.models import Language,State,District,City,UserProfile,Order,Product,ManageContent,Notification,Support,SupportReply,Recharge,MobileLang,Scratch,OrderProductsDetail,LoyaltyPoints,UserLoyaltyPoints,UserLinkage,FarmerRechargeConfiguration
 # Register your models here.
 admin.site.register(Language)
 admin.site.register(State)
@@ -20,3 +20,4 @@ admin.site.register(OrderProductsDetail)
 admin.site.register(LoyaltyPoints)
 admin.site.register(UserLoyaltyPoints)
 admin.site.register(UserLinkage)
+admin.site.register(FarmerRechargeConfiguration)

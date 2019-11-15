@@ -50,7 +50,7 @@
               <div class="card-body">
                   {% csrf_token %}
                   {# A more "HTML" way of creating the login form#}
-                  <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.loyalty_id}}">
+                  <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.user_id}}">
                   <input type="hidden" name="district_selct" id="district_selct" value="{{data.district.id}}">
                   <div class="row">
                     <div class="col-sm-6">
@@ -69,9 +69,9 @@
                       <div class="form-group">
                         <label for="user_type">Langauge</label>
                         <select class="form-control" id="language_id" name="language_id">
-                          <option  value="" selected="selected">---select---</option>
+                          <option  value="">---select---</option>
                           {% for lang_data in data.lang_data %}
-                        <option value="{{lang_data.id}}" {% if data.lang_data.name == data.lang_data.name %} selected="true" {% endif %} >{{lang_data.name}} </option>
+                        <option value="{{lang_data.id}}" {% if lang_data.id == data.language.id %} selected="selected" {% endif %} >{{lang_data.name}} </option>
                         {% endfor %}
                         </select>
                       </div>
@@ -293,10 +293,10 @@
                    
                     <div class="col-sm-6">
                       <div class="form-group">
-                        <label for="customFile">Land Area</label>
+                        <label for="customFile">Land Area in acres</label>
                         <div class="form-group">
                        
-                        <input type="text" class="form-control" name="land_area"  placeholder="Land Area" value="{{data.land_area}}">
+                        <input type="text" class="form-control" name="land_area"  placeholder="Land Area in acres" value="{{data.land_area}}">
                       </div>
 
                       </div>

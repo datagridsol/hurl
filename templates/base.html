@@ -218,7 +218,7 @@
 
 
           <li class="nav-item has-treeview ">
-            <a href="{% url 'loyalty_configuration' %}" class="nav-link {% if "/loyalty_configuration/" == request.path %} active {% endif %}">
+            <a href="{% url 'edit_loyalty' %}" class="nav-link {% if "/edit_loyalty/" == request.path %} active {% endif %}">
               <i class="far fa-circle nav-icon"></i>
               <p>
                 Retailer
@@ -289,11 +289,19 @@
                   </p>
                 </a>
               </li> 
+		
+		<li class="nav-item has-treeview ">
+              <a href="{% url 'recharge_report' %}" class="nav-link {% if "/recharge_report/" == request.path %} active {% endif %}"><i class="far fa-circle nav-icon"></i>
+                <p>
+                  Recharge Reports
+                </p>
+              </a>
+            </li>
 
             <li class="nav-item has-treeview ">
-              <a href="{% url 'recharge_loyalty_report' %}" class="nav-link {% if "/recharge_loyalty_report/" == request.path %} active {% endif %}"><i class="far fa-circle nav-icon"></i>
+              <a href="{% url 'loyalty_point_report' %}" class="nav-link {% if "/loyalty_point_report/" == request.path %} active {% endif %}"><i class="far fa-circle nav-icon"></i>
                 <p>
-                  Recharge/Loyalty Reports
+                  Loyalty Point Reports
                 </p>
               </a>
             </li>
@@ -364,6 +372,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{% static "dist/js/demo.js" %}"></script>
 <script src="{% static "dist/js/jquery_validation/jquery.validate.min.js" %}"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
  <!-- InputMask -->
 <script src="{% static "plugins/moment/moment.min.js" %}"></script>

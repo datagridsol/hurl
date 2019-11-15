@@ -3,60 +3,11 @@
 
 {% block body_block %}
 {% load staticfiles %}
-<style type="text/css">
-  .small-box {
-  border-radius: 0.25rem;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
-  display: block;
-  margin:2rem!important;
-  position: relative;
-  min-height: 214px;
+<style>
+.small-box .icon>i.ion {
+    font-size: 56px;
+    top: 10px;
 }
-
-
-.small-box h3 {
-    font-size: 4.2rem;
-    font-weight: 700;
-    margin: 0 0 10px 0;
-    padding: 0;
-    white-space: nowrap;
-    text-align: center;
-}
-.small-box p {
-    font-size: 1.2rem;
-    font-weight: 700;
-    text-align: center
-}
-
-.bg-warning, .bg-warning>a {
-    color: #fdfdfd!important;
-}
-@media (min-width: 992px) {
-  .col-xl-2 .small-box h3,
-  .col-lg-2 .small-box h3,
-  .col-md-2 .small-box h3 {
-    font-size: 1.6rem;
-  }
-  .col-xl-3 .small-box h3,
-  .col-lg-3 .small-box h3,
-  .col-md-3 .small-box h3 {
-    font-size: 1.6rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .col-xl-2 .small-box h3,
-  .col-lg-2 .small-box h3,
-  .col-md-2 .small-box h3 {
-    font-size: 2.2rem;
-  }
-  .col-xl-3 .small-box h3,
-  .col-lg-3 .small-box h3,
-  .col-md-3 .small-box h3 {
-    font-size: 2.2rem;
-  }
-}
-
 </style>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -178,7 +129,7 @@
             <!-- small box -->
             <div class="small-box bg-success" style="background-color: #B276B2!important;">
               <div class="inner">
-                <h3>{{data.total_product}}</h3>
+                <h3>{{data.total_retailer}}</h3>
 
                 <p>Total Amount Of Loyalty Point For Retailer</p>
               </div>
@@ -193,7 +144,7 @@
             <!-- small box -->
             <div class="small-box bg-warning" style="background-color: #DECF3F!important;">
               <div class="inner">
-                <h3>{{data.total_product}}</h3>
+                <h3>{{data.total_farmer}}</h3>
 
                 <p>Total Loyalty Amount Point For Farmer</p>
               </div>

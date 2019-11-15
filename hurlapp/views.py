@@ -1,4 +1,5 @@
 # dappx/views.py
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from hurlapp.forms import UserForm,UserProfileInfoForm,HotelForm
 from django.contrib.auth import authenticate, login, logout
@@ -55,6 +56,7 @@ def register(request):
     data=['amol','jamdade']
     return render(request,'registration.html',
                           {'data':data})
+
 @login_required
 @csrf_exempt
 def dashboard(request):
@@ -63,6 +65,10 @@ def dashboard(request):
     total_retailer=0
     total_product=0
     total_order=0
+    retailer_value=0
+    order_value1=0
+    start_date=''
+    end_date=''
     retailer_loyalty_point=0
     if request.GET.get('searchDate'):
         searchDate=request.GET.get('searchDate')
@@ -79,7 +85,23 @@ def dashboard(request):
         total_wholeseler=UserProfile.objects.filter(user_type_id='4',created_at__range=(start_date, end_date)).count()
         total_retailer=UserProfile.objects.filter(user_type_id='2',created_at__range=(start_date, end_date)).count()
         total_product=Product.objects.filter(status='1',created_at__range=(start_date, end_date)).count()
+        
         order_value=models.Order.objects.filter(status=1,created_at__range=(start_date, end_date)).aggregate(Sum('total_price'))
+        if order_value['total_price__sum']:
+            order_value1=order_value['total_price__sum']
+        farmer_value=models.UserLoyaltyPoints.objects.filter(user_id_farmer_id__userprofile__user_type=3,created_at__range=(start_date, end_date)).aggregate(Sum('loyalty_point'))
+        if farmer_value['loyalty_point__sum']==None:
+            farmer_value1=0
+        else:
+            farmer_value1=farmer_value['loyalty_point__sum']
+
+        
+        retailer_value=models.UserLoyaltyPoints.objects.filter(user_id_retailer_id__userprofile__user_type=2,created_at__range=(start_date, end_date)).aggregate(Sum('loyalty_point'))
+        if retailer_value['loyalty_point__sum']==None:
+            retailer_value1=0
+        else:
+            retailer_value1=retailer_value['loyalty_point__sum']
+        
 
     else:
         total_farmer=UserProfile.objects.filter(user_type_id='3').count()
@@ -87,7 +109,24 @@ def dashboard(request):
         total_retailer=UserProfile.objects.filter(user_type_id='2').count()
         total_product=Product.objects.filter(status='1').count()
         order_value=models.Order.objects.filter(status=1).aggregate(Sum('total_price'))
-    data={'total_farmer':total_farmer,'total_wholeseler':total_wholeseler,"total_retailer":total_retailer,"total_product":total_product,"total_order":total_order,"total_order":total_order,"total_order":total_order}
+        if order_value['total_price__sum']==None:
+            order_value1=0
+        else:
+            order_value1=order_value['total_price__sum']
+
+        farmer_value=models.UserLoyaltyPoints.objects.filter(user_id_farmer_id__userprofile__user_type=3).aggregate(Sum('loyalty_point'))
+        if farmer_value['loyalty_point__sum']==None:
+            farmer_value1=0
+        else:
+            farmer_value1=farmer_value['loyalty_point__sum']
+
+        retailer_value=models.UserLoyaltyPoints.objects.filter(user_id_retailer_id__userprofile__user_type=2).aggregate(Sum('loyalty_point'))
+        if retailer_value['loyalty_point__sum']==None:
+            retailer_value1=0
+        else:
+            retailer_value1=retailer_value['loyalty_point__sum']
+
+    data={'total_farmer':total_farmer,'total_wholeseler':total_wholeseler,"total_retailer":total_retailer,"total_product":total_product,"total_order":int(order_value1),"total_farmer_value":int(farmer_value1),"retailer_value":int(retailer_value1)}
     
     return render(request,'dashboard.html',{'data':data})
 
@@ -620,12 +659,20 @@ def user_status(request):
         user_details=User.objects.get(id=user_id)
         user_details.is_active=1
         user_details.save()
+        user_details=User.objects.filter(id=user_id).values_list('first_name','last_name','username')
+        full_name=user_details[0][0]+' '+user_details[0][1]
+        mobile_number=user_details[0][2]
+        sendapprove(full_name,'approved',mobile_number)
         response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
         return response
     else:
         user_details=User.objects.get(id=user_id)
         user_details.is_active=0
         user_details.save()
+        user_details=User.objects.filter(id=user_id).values_list('first_name','last_name','username')
+        full_name=user_details[0][0]+' '+user_details[0][1]
+        mobile_number=user_details[0][2]
+        sendapprove(full_name,'disapproved',mobile_number)
         response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
         return response
 
@@ -638,22 +685,6 @@ def get_username(request):
         response=JsonResponse({'status':'success'})
         return response
 
-@csrf_exempt
-def user_status(request):
-    status=request.POST.get('status')
-    user_id=request.POST.get('user_id')
-    if status=="Deactive":
-        user_details=User.objects.get(id=user_id)
-        user_details.is_active=1
-        user_details.save()
-        response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
-        return response
-    else:
-        user_details=User.objects.get(id=user_id)
-        user_details.is_active=0
-        user_details.save()
-        response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
-        return response
 
 def get_langauge():
     lang_data=[]
@@ -784,6 +815,8 @@ def get_product(request):
 #     return render(request, 'get_product.html', {'data':(data)})
     return render(request, 'get_product.html', {'data':(data)})
 
+
+
 @csrf_exempt
 def edit_product(request,pk):
     product_id=pk
@@ -798,20 +831,20 @@ def edit_product(request,pk):
         if request.FILES.get('product_image'):
             product_image = request.FILES['product_image']
 
-        product = Product.objects.get(id=pk)
-        product.product_name=product_name
-        product.product_code=product_code
-        product.product_unit=product_unit
-        product.product_unit_name=product_unit_name
-        product.product_price=product_price
-        product.product_image=product_image
-        product.updated_at=datetime.now()
-        product.save()
+        product_data = Product.objects.get(id=product_id)
+        product_data.product_name=product_name
+        product_data.product_code=product_code
+        product_data.product_unit=product_unit
+        product_data.product_unit_name=product_unit_name
+        product_data.product_price=product_price
+        product_data.product_image=product_image
+        product_data.updated_at=datetime.now()
+        product_data.save()
         response=JsonResponse({'status':'success'})
         return response
 
     else:
-        product_info=models.Product.objects.filter(id=pk).values_list('product_image','product_name','product_code','product_unit','product_price','status','id','product_unit_name')
+        product_info=models.Product.objects.filter(id=product_id).values_list('product_image','product_name','product_code','product_unit','product_price','status','id','product_unit_name')
         
         data={'product_image':'/'+product_info[0][0],'product_name':product_info[0][1],'product_code':product_info[0][2],'product_unit':product_info[0][3],'product_price':product_info[0][4],'product_id':product_info[0][6],'product_unit_name':product_info[0][7]}
         
@@ -1348,22 +1381,6 @@ def get_username(request):
         response=JsonResponse({'status':'success'})
         return response
 
-@csrf_exempt
-def user_status(request):
-    status=request.POST.get('status')
-    user_id=request.POST.get('user_id')
-    if status=="Deactive":
-        user_details=User.objects.get(id=user_id)
-        user_details.is_active=1
-        user_details.save()
-        response=JsonResponse({'status':'success','msg':'User Approved Successfuly'})
-        return response
-    else:
-        user_details=User.objects.get(id=user_id)
-        user_details.is_active=0
-        user_details.save()
-        response=JsonResponse({'status':'success','msg':'User Disapproved Successfuly'})
-        return response
 
 def get_langauge():
     lang_data=[]
@@ -1600,14 +1617,16 @@ def get_retailer(request):
         full_name=str(first_name)+" "+str(last_name)
         username=i[6]
         status=i[7]
+
         if status:
             status="Active"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-user-id="+str(user_id)+">Deactive</button></div>"
         else:
             status="Deactive"
-
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-user-id="+str(user_id)+">Active</button></div>"
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_retailer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a> | <a class='btn' href='/loyalty_retailer/"+str(user_id)+"'><i class='fas fa-gift'></i> Loyalty Points</a>"])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),btn,"<a href='/edit_retailer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a> | <a class='btn' href='/loyalty_retailer/"+str(user_id)+"'><i class='fas fa-gift'></i> Loyalty Points</a>"])
     return render(request, 'manage_retailer.html', {'data':(data)})
 
 
@@ -1727,14 +1746,16 @@ def get_farmer(request):
         full_name=str(first_name)+" "+str(last_name)
         username=i[6]
         status=i[7]
+	
         if status:
             status="Active"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-user-id="+str(user_id)+">Deactive</button></div>"
         else:
             status="Deactive"
-
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-user-id="+str(user_id)+">Active</button></div>"
 
         count+=1
-        data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_farmer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/farmer_view/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),btn,"<a href='/edit_farmer/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/farmer_view/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_farmer.html', {'data':(data)})
 
 @login_required
@@ -1860,15 +1881,14 @@ def get_wholesaler(request):
         status=i[7]
         if status:
             status="Active"
+            btn="<div class='editBut'><button class='btn btn-block btn-danger btn-sm disapprove' data-user-id="+str(user_id)+">Deactive</button></div>"
         else:
             status="Deactive"
-
+            btn="<div class='editBut'><button class='btn btn-block btn-success btn-sm approve' data-user-id="+str(user_id)+">Active</button></div>"
 
         count+=1
-        if full_name=="Hurl Admin":
-            pass
-        else:
-            data.append([count,str(full_name),str(username),str(district),str(state), str(status),"<a href='/edit_wholesaler/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
+        
+        data.append([count,str(full_name),str(username),str(district),str(state), str(status),btn,"<a href='/edit_wholesaler/"+str(user_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a> | <a class='btn' href='/user_profile/"+str(user_id)+"'><i class='fas fa-eye'></i> View</a>"])
     return render(request, 'manage_wholesaler.html', {'data':(data)})
 
 
@@ -1955,7 +1975,7 @@ def order_details(request,pk):
     phone=order_info[0][10]
 
     product_image="media/default/placeholder.png"
-    order_details=models.OrderProductsDetail.objects.filter(order_id=id).values_list('product_id','product_price','product_quantity','product_total_price','product__product_name','product__product_image','product__product_unit')
+    order_details=models.OrderProductsDetail.objects.filter(order_id=id).values_list('product_id','product_price','product_quantity','product_total_price','product__product_name','product__product_image','product__product_unit_name')
     
     for i in order_details:
         product_id=i[0]
@@ -1965,9 +1985,9 @@ def order_details(request,pk):
         product_name=i[4]
         if i[5]!= "":
             product_image=i[5]
-        product_unit=i[6]
+        product_unit_name=i[6]
         count+=1
-        data_prod.append([count,product_id,'<img src="/'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_quantity)+' '+str(product_unit),str(product_price),str(product_total_price)])
+        data_prod.append([count,product_id,'<img src="/'+str(product_image)+'"  width="70" height="50">',str(product_name),str(product_quantity)+' '+str(product_unit_name),str(product_price),str(product_total_price)])
     
     data={'full_name':full_name,'full_name_retailer':full_name_retailer,'created_at':formatedDate,'state':state,'district':district,'amount':amount,'id':id,'address':address,'phone':phone,'data_prod':data_prod}
     
@@ -2335,7 +2355,7 @@ def view_support(request,pk):
         last_name=user_info[0][5]
         user_type=user_info[0][6]
 
-        user_chats=models.SupportReply.objects.filter(support_id_id=pk).values_list('id','query','reply','created_at','user_id_admin_id').order_by('created_at')
+        user_chats=models.SupportReply.objects.filter(support_id_id=pk).values_list('id','query','reply','created_at','user_id_admin_id').order_by('id')
         for i in user_chats:
             chat_id=i[0]
             chat_query=i[1]
@@ -2437,7 +2457,6 @@ def loyalty_retailer(request,pk):
     return render(request, 'loyalty_retailer_view.html', {'data':(data)})
 
 
-
 @csrf_exempt
 def get_reports(request):
     from django.db.models import Q
@@ -2456,10 +2475,12 @@ def get_reports(request):
     retailers=models.UserProfile.objects.filter(user_type=2,user__is_active=1).values_list('user__id','user__first_name','user__last_name').order_by('-created_at')
     for i in retailers:
         retailers_data.append({'id':i[0],'full_name':i[1]+' '+i[2]})
+        retailers_data=sorted(retailers_data, key=itemgetter('full_name'))
 
     products=models.Product.objects.filter(status=1).values_list('id','product_name').order_by('-created_at')
     for i in products:
         products_data.append({'id':i[0],'product_name':i[1]})
+        products_data=sorted(products_data, key=itemgetter('product_name'))
 
     if request.GET.get('state'):
         state=request.GET.get('state')
@@ -2489,18 +2510,18 @@ def get_reports(request):
 
     q = Q()
     if state:
-        q &= Q(order__user_id_retailer_id__userprofile__state__id__in=state)
+        q &= Q(user_id_retailer_id__userprofile__state__id=state)
     if district:
-        q &= Q(order__user_id_farmer_id__userprofile__district__id__in=district)
+        q &= Q(user_id_farmer_id__userprofile__district__id=district)
     if retailers_id:
-        q &= Q(order__user_id_retailer_id__in=retailers_id)
+        q &= Q(user_id_retailer_id=retailers_id)
     if products_id:
         q &= Q(product=products_id)
     if searchDate:
-        q &= Q(order__created_at__range=(start_date, end_date))
-    # user_info=models.Order.objects.filter(q).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__username','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name').order_by('-updated_at')
-
-    user_info1=models.OrderProductsDetail.objects.filter(q).values_list('id','order__user_id_retailer_id__first_name','order__user_id_retailer_id__last_name','order__user_id_retailer_id__username','order__user_id_farmer_id__first_name','order__user_id_farmer_id__last_name','order__created_at','order__total_price','order__user_id_retailer_id__last_name','order__user_id_farmer_id__last_name','order__user_id_farmer_id__username').order_by('-updated_at')
+        q &= Q(created_at__range=(start_date, end_date))
+    
+    user_info1=models.Order.objects.filter(q).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__last_name','user_id_retailer_id__username','user_id_farmer_id__first_name','user_id_farmer_id__last_name','created_at','total_price','user_id_retailer_id__last_name','user_id_farmer_id__last_name','user_id_farmer_id__username').order_by('-updated_at')
+    print("user_info1",user_info1.query)
     for i in user_info1:
         id=i[0]
         retailer_first_name=i[1]
@@ -2518,6 +2539,7 @@ def get_reports(request):
         count+=1
         data.append([count,str(retailer_first_name)+' '+str(retailer_last_name),str(retailer_username),str(farmer__first_name)+' '+str(farmer_last_name),str(farmer_username),str(formatedDate),str(total_price)])
     return render(request, 'sales_report.html', {'data':(data),'state_data':state_data,'retailers':retailers_data,'products':products_data})
+
 
 
 @csrf_exempt
@@ -2568,10 +2590,10 @@ def wholeseller_upload(request):
             state=models.State.objects.get(state_name__icontains=state.strip())
             district=models.District.objects.get(district_name__contains=district.strip().capitalize())
             if city:
-                if models.City.objects.filter(city_name__contains=city.strip().capitalize()).exists():
+                if models.City.objects.filter(city_name=city.strip().capitalize()).exists():
                     city_name=city
                 else:
-                    new_city = models.City.objects.create(city_name__contains =city.strip().capitalize(),status=1)
+                    new_city = models.City.objects.create(city_name =city.strip().capitalize(),status=1)
                     new_city.save()
                     city_name=new_city.city_name
             # print('langn_id => '+str(langn_id))
@@ -2599,7 +2621,7 @@ def wholeseller_upload(request):
 
 def send_file(request):
 
-    import wget
+    # import wget
     import os, tempfile, zipfile
     from wsgiref.util import FileWrapper
     from django.conf import settings
@@ -2609,7 +2631,7 @@ def send_file(request):
 
     
     #template = "wholeseller_upload.html"
-    filename     = "/home/dev04/workspace/hurl/media/default/test.csv" # Select your file here.
+    filename     = "/opt/hurl/media/default/test.csv" # Select your file here.
     download_name ="sample_format.csv"
     # r = requests.get("home/dev04/workspace/hurl/media/default/test.csv")
     # response=urllib.request.urlretrieve(filename, '/Users/scott/Downloads/cat.jpg')
@@ -2660,8 +2682,9 @@ def farmer_details_view(request,pk):
     return render(request, 'farmer_view.html', {'data':(data)})
 
 
+
 @csrf_exempt
-def recharge_loyalty_report(request):
+def recharge_report(request):
     data=[]
     farmer_phone_data=[]
     farmer_name_data=[]
@@ -2673,6 +2696,8 @@ def recharge_loyalty_report(request):
     for i in retailers:
         farmer_name_data.append({'id':i[0],'name':i[1]+' '+i[2]})
         farmer_phone_data.append({'id':i[0],'mobile_number':i[3]})
+        farmer_phone_data=sorted(farmer_phone_data, key=itemgetter('mobile_number'))
+        farmer_name_data=sorted(farmer_name_data, key=itemgetter('name'))
 
     if request.GET.get('user_id'):
         user_id=request.GET.get('user_id')
@@ -2693,12 +2718,13 @@ def recharge_loyalty_report(request):
 
     q = Q()
     if user_id:
-        q &= Q(user_id_farmer_id__id=user_id)
+        q |= Q(user_id_farmer_id__id=user_id)
     if phone:
-        q &= Q(user_id_farmer_id__username=phone)
+        q |= Q(user_id_farmer_id__username=phone)
     if searchDate:
         q &= Q(order__created_at__range=(start_date, end_date))
-    user_info1=models.Recharge.objects.filter(q).values_list('id','user_id_farmer_id__first_name','user_id_farmer_id__last_name','created_at','user_id_farmer_id__username','amount').order_by('-updated_at')
+    user_info1=models.Recharge.objects.filter(q).values_list('id','user_id_farmer_id__first_name','user_id_farmer_id__last_name','order__created_at','user_id_farmer_id__username','amount').order_by('-updated_at')
+    print("user_info1",user_info1.query)
     for i in user_info1:
         id=i[0]
         farmer__first_name=i[1]
@@ -2711,17 +2737,66 @@ def recharge_loyalty_report(request):
         count+=1
         data.append([count,str(formatedDate),str(farmer__first_name)+' '+str(farmer_last_name),str(mobile_number),str(amount)])
 
-    return render(request, 'recharge_loyalty_report.html', {'data':(data),'farmer_name_data':farmer_name_data,'farmer_phone_data':farmer_phone_data})
+    return render(request, 'recharge_report.html', {'data':(data),'farmer_name_data':farmer_name_data,'farmer_phone_data':farmer_phone_data})
 
-# @csrf_exempt
-# def get_city_search(request):
-#     city_data=[]
-#     city_name=request.POST.get('city_name')
-#     city_list = models.City.objects.filter(city_name__icontains=city_name).values_list('id','city_name')
-#     for i in city_list:
-#         case2 = {'id': i[0], 'name': i[1]}
-#         city_data.append(case2)
-#     return HttpResponse(city_data)
+
+@csrf_exempt
+def loyalty_point_report(request):
+    data=[]
+    retailer_phone_data=[]
+    retailer_name_data=[]
+    count=0
+    searchDate=''
+    user_id=''
+    phone=''
+    retailers=models.UserProfile.objects.filter(user_type=2,user__is_active=1).values_list('user__id','user__first_name','user__last_name','user__username').order_by('-created_at')
+    for i in retailers:
+        retailer_name_data.append({'id':i[0],'name':i[1]+' '+i[2]})
+        retailer_phone_data.append({'id':i[0],'mobile_number':i[3]})
+        retailer_phone_data=sorted(retailer_phone_data, key=itemgetter('mobile_number'))
+        retailer_name_data=sorted(retailer_name_data, key=itemgetter('name'))
+
+    if request.GET.get('user_id'):
+        user_id=request.GET.get('user_id')
+    
+    if request.GET.get('phone'):
+        phone=request.GET.get('phone')
+    if request.GET.get('searchDate'):
+        searchDate=request.GET.get('searchDate')
+        daterange= searchDate.split(" - ")
+        start_date=daterange[0]
+        
+        newDate=datetime.strptime(start_date, '%d/%m/%Y')
+        start_date=newDate.strftime("%Y-%m-%d")
+        
+        end_date1=str(daterange[1])
+        newDate=datetime.strptime(end_date1, '%d/%m/%Y') + timedelta(days=1)
+        end_date=newDate.strftime("%Y-%m-%d")
+
+    q = Q()
+    if user_id:
+        q |= Q(user_id_retailer_id__id=user_id)
+    if phone:
+        q |= Q(user_id_retailer_id__username=phone)
+    if searchDate:
+        q &= Q(created_at__range=(start_date, end_date))
+    user_info1=models.UserLoyaltyPoints.objects.filter(q).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__last_name','created_at','user_id_retailer_id__username','loyalty_point','loyalty_type').order_by('-updated_at')
+    print("user_info1",user_info1.query)
+    for i in user_info1:
+        id=i[0]
+        farmer__first_name=i[1]
+        farmer_last_name=i[2]
+        created_at=i[3]
+        formatedDate = created_at.strftime("%d-%m-%Y")
+        mobile_number=i[4]
+        amount=i[5]
+        Loyalty_type=i[6]
+
+        count+=1
+        data.append([count,str(formatedDate),str(farmer__first_name)+' '+str(farmer_last_name),str(mobile_number),str(amount),str(Loyalty_type)])
+
+    return render(request, 'loyalty_point_report.html', {'data':(data),'retailer_name_data':retailer_name_data,'retailer_phone_data':retailer_phone_data})
+
 
 
 @csrf_exempt
@@ -2768,84 +2843,90 @@ def get_notifications(request):
 
 @csrf_exempt
 def add_notifications(request):
-    import requests
-    lang_data=get_langauge()
-    state_data=get_state()
-    if request.method == 'POST':
-        data={}
-        sms_response=''
-        push_response=''
-        push_service = FCMNotification(api_key="AAAAT-fnF2g:APA91bEWQbMJqFFPIy-zTLllngov5w09ed6u5MS3pUKLOq9GrVmq7HPxQCDWirrq4wGjYUI2v1vQP-IHQARgO3atV1LU_QM7vtWpEYo0ashQ7NiBdxCR8DneRWZ-OQwCaoxpWTXS7mA-")
-        user_type_get=request.POST.getlist('user_type[]')
-        group_id = ','.join(user_type_get)
-        title_eng = request.POST.get('title_eng')
-        title_hnd = request.POST.get('title_hnd')
-        request_for = request.POST.getlist('request_for[]')
-        sms_status='0'
-        push_status='0'
-        if 'push' in request_for:
-            push_status='1'
-        
-        if 'sms' in request_for:
-            sms_status='1'
-        
-        message_eng = request.POST.get('message_eng')
-        message_hnd = request.POST.get('message_hnd')
-        status = '1'
-        district_id = request.POST.get('district')
-        if district_id == '':
-           district_id=0
-        else:
-           district_id=district_id  
-        state_id = request.POST.get('state')
-        if state_id == '':
-           state_id=0
-        else:
-           state_id=state_id
+	import requests
+	import sys
+	reload(sys)
+	sys.setdefaultencoding('utf-8')
 
-        q = Q()
-        if '2' in user_type_get:
-            q |= Q(user_type=2)
-        if '3' in user_type_get:
-            q |= Q(user_type=3)
-        if '4' in user_type_get:
-            q |= Q(user_type=4)
-        user_info=models.UserProfile.objects.filter(q).values_list('user__username','language_id','fcm_id').order_by('-created_at')
-        #print(user_info.query)
-        for i in user_info:
-            mobile=i[0]
-            language_code=i[1]
-            if language_code == '1':
-                title=title_eng
-                message=message_eng
-            else:
-                title=title_hnd
-                message=message_hnd
-            fcm_id=i[2]
-            if push_status == '1':
-                print('Push Notification code')
+	lang_data=get_langauge()
+	state_data=get_state()
+	if request.method == 'POST':
+	    data={}
+	    sms_response=''
+	    push_response=''
+	    push_service = FCMNotification(api_key="AAAAT-fnF2g:APA91bEWQbMJqFFPIy-zTLllngov5w09ed6u5MS3pUKLOq9GrVmq7HPxQCDWirrq4wGjYUI2v1vQP-IHQARgO3atV1LU_QM7vtWpEYo0ashQ7NiBdxCR8DneRWZ-OQwCaoxpWTXS7mA-")
+	    user_type_get=request.POST.getlist('user_type[]')
+	    group_id = ','.join(user_type_get)
+	    title_eng = request.POST.get('title_eng')
+	    title_hnd = request.POST.get('title_hnd')
+	    request_for = request.POST.getlist('request_for[]')
+	    sms_status='0'
+	    push_status='0'
+	    if 'push' in request_for:
+	        push_status='1'
+	    
+	    if 'sms' in request_for:
+	        sms_status='1'
+	    
+	    message_eng = request.POST.get('message_eng')
+	    message_hnd = request.POST.get('message_hnd')
+	    status = '1'
+	    district_id = request.POST.get('district')
+	    if district_id == '':
+	       district_id=0
+	    else:
+	       district_id=district_id  
+	    state_id = request.POST.get('state')
+	    if state_id == '':
+	       state_id=0
+	    else:
+	       state_id=state_id
+
+	    q = Q()
+	    if '2' in user_type_get:
+	        q |= Q(user_type=2)
+	    if '3' in user_type_get:
+	        q |= Q(user_type=3)
+	    if '4' in user_type_get:
+	        q |= Q(user_type=4)
+	    user_info=models.UserProfile.objects.filter(q).values_list('user__username','language_id','fcm_id').order_by('-created_at')
+	    #print(user_info.query)
+	    for i in user_info:
+	        mobile=i[0]
+	        language_code=i[1]
+	        if language_code == '1':
+	            title=title_eng
+	            message=message_eng
+	        else:
+	            title=title_hnd
+	            message=message_hnd
+	        fcm_id=i[2]
+	        if push_status == '1':
+	            print('Push Notification code')
                 if fcm_id:
                     registration_id = fcm_id
                     message_title = title
                     message_body = message
-                    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body)
+                    
+                    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,message_icon='notification_icon')
                     print(result)
                     push_response=str(result)+'<br>'+push_response
-            if sms_status =='1':
-                print('SMS code')
-                Phone_number = mobile
-                sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-                data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(message)}
-                requests.packages.urllib3.disable_warnings()
-                r = requests.post(sms_url,data = data)
-                sms_response=r.content+'<br'+sms_response
-        Content = models.Notification.objects.create(title_eng=title_eng,title_hnd=title_hnd,message_eng=message_eng,message_hnd=message_hnd,push_status=push_status,sms_status=sms_status,push_response=push_response,sms_response=sms_response,status=status,district_id=district_id,group_id=group_id,state_id=state_id,created_at=datetime.now())
-        Content.save()
-        response=JsonResponse({'status':'success'})
-        return response
-    else:
-        data={'languages':lang_data,'state_data':state_data}
-        return render(request, 'add-notification.html', {'data':data})
+	        if sms_status =='1':
+	            print('SMS code')
+	            Phone_number = mobile
+	            sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+
+	            data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(message)}
+	            requests.packages.urllib3.disable_warnings()
+	            r = requests.post(sms_url,data = data)
+	            sms_response=r.content+'<br>'+sms_response
+	    Content = models.Notification.objects.create(title_eng=title_eng,title_hnd=title_hnd,message_eng=message_eng,message_hnd=message_hnd,push_status=push_status,sms_status=sms_status,push_response=push_response,sms_response=sms_response,status=status,district_id=district_id,group_id=group_id,state_id=state_id,created_at=datetime.now())
+	    Content.save()
+	    response=JsonResponse({'status':'success'})
+	    return response
+	else:
+	    data={'languages':lang_data,'state_data':state_data}
+	    return render(request, 'add-notification.html', {'data':data})
 
 
 @csrf_exempt
@@ -2900,3 +2981,356 @@ def edit_loyalty(request,pk):
         data={"loyalty_id":loyalty_id,"loyalty_type":loyalty_type,"loyalty_point":loyalty_point}
         count+=1
         return render(request, 'edit_loyalty.html', {'data':data})
+
+
+@csrf_exempt
+def loyalty_configuration(request):
+    userdata=models.LoyaltyPoints.objects.all().values_list('id','loyalty_type','loyalty_point')
+    data=[]
+    count=1
+    for nlist in userdata:
+        loyalty_id=nlist[0]
+        loyalty_type=nlist[1]
+        loyalty_point=nlist[2]
+        data.append([count,str(loyalty_type),loyalty_point,"<a href='/edit_loyalty/"+str(loyalty_id)+"' class='btn'><i class='fas fa-edit'></i> Edit</a>"])
+        count+=1
+    return render(request, 'loyalty_configuration.html', {'data':data})
+
+# @csrf_exempt
+# def loyalty_configuration_farmer(request):
+#     productdata=models.FarmerRechargeConfiguration.objects.all().values_list('id','product__product_name','product__product_unit_name','quantity','recharge_amount')
+#     data=[]
+#     count=1
+#     for nlist in productdata:
+#         conf_id=nlist[0]
+#         product_name=nlist[1]
+#         product_unit_name=nlist[2]
+#         quantity=nlist[3]
+#         recharge_amount=nlist[4]
+#         data.append([count,str(product_name),str(product_unit_name),str(quantity),str(recharge_amount),"<a href='/edit_user/"+str(conf_id)+"' class='btn'><i class='fas fa-edit'></i>Edit</a>"])
+#     count+=1
+#     return render(request, 'loyalty_configuration_farmer.html', {'data':data})
+
+@csrf_exempt
+def loyalty_configuration_farmer(request):
+    productdata=models.FarmerRechargeConfiguration.objects.all().values_list('id','product__product_name','product__product_unit_name','quantity','recharge_amount').order_by('-created_at')
+    data=[]
+    count=0
+    for nlist in productdata:
+        count+=1
+        conf_id=nlist[0]
+        product_name=nlist[1]
+        product_unit_name=nlist[2]
+        quantity=nlist[3]
+        recharge_amount=nlist[4]
+        data.append([count,str(product_name),str(product_unit_name),str(quantity),str(recharge_amount),"<a href='/edit_loyalty_configuration/"+str(conf_id)+"' class='btn'><i class='fas fa-edit'></i>Edit</a>"])
+    return render(request, 'loyalty_configuration_farmer.html', {'data':data})
+
+@csrf_exempt
+def edit_loyalty_configuration(request,pk):
+    products_data=[]
+    if request.method == 'POST':
+        product_id=request.POST.get('product_name')
+        quantity=request.POST.get('quantity')
+        recharge_amount=request.POST.get('recharge_amount')
+        print("product_idproduct_id",product_id)
+        conf_data = models.FarmerRechargeConfiguration.objects.get(id=pk)
+        product_id=models.Product.objects.get(id=product_id)
+        conf_data.product = product_id
+        conf_data.quantity = quantity
+        conf_data.recharge_amount = recharge_amount
+        conf_data.save()
+        response=JsonResponse({'status':'success'})
+        return response
+    else:
+        productdata=models.FarmerRechargeConfiguration.objects.all().values_list('id','product__product_name','product__product_unit','quantity','recharge_amount','product_id')
+        data=[]
+        count=1
+        for nlist in productdata:
+            conf_id=nlist[0]
+            product_name=nlist[1]
+            product_unit=nlist[2]
+            quantity=nlist[3]
+            recharge_amount=nlist[4]
+            product_id=nlist[5]
+            data={"conf_id":conf_id,"product_name":product_name,"product_unit_name":product_unit,"quantity":quantity,"recharge_amount":recharge_amount,"product_id":product_id}
+        products=models.Product.objects.filter(status=1).values_list('id','product_name').order_by('-created_at')
+        for i in products:
+            products_data.append({'id':i[0],'product_name':i[1]})
+            products_data=sorted(products_data, key=itemgetter('product_name'))
+        return render(request, 'edit_loyality_configuration.html',  {'data':(data),'products_data':products_data})
+
+
+@csrf_exempt
+def add_famer_configuration(request):
+    products_data=[]
+    if request.method == 'POST':
+        product_id=request.POST.get('product_name')
+        product_id=models.Product.objects.get(id=product_id)
+        quantity=request.POST.get('quantity')
+        recharge_amount=request.POST.get('recharge_amount')
+        farmer_conf = models.FarmerRechargeConfiguration.objects.create(product = product_id,quantity = quantity,recharge_amount=recharge_amount)
+        farmer_conf.save()
+        response=JsonResponse({'status':'success'})
+        return response
+    else:
+        productdata=models.FarmerRechargeConfiguration.objects.all().values_list('id','product__product_name','product__product_unit','quantity','recharge_amount')
+        data=[]
+        count=1
+        for nlist in productdata:
+            conf_id=nlist[0]
+            product_name=nlist[1]
+            product_unit=nlist[2]
+            quantity=nlist[3]
+            recharge_amount=nlist[4]
+            data.append([count,str(product_name+" "+product_unit),str(quantity),str(recharge_amount)])
+        count+=1
+        products=models.Product.objects.filter(status=1).values_list('id','product_name').order_by('-created_at')
+        for i in products:
+            products_data.append({'id':i[0],'product_name':i[1]})
+            products_data=sorted(products_data, key=itemgetter('product_name'))
+
+        print("data",data,products_data)
+        return render(request, 'add_famer_configuration.html',  {'data':(data),'products_data':products_data})
+
+
+
+@csrf_exempt
+def edit_loyalty(request):
+    data=[]
+    if request.method == 'POST':
+        type_list=request.POST.getlist('loyalty_point[]')
+        order_type=type_list[0]
+        reg_type=type_list[1]
+        if order_type:
+            loyalty= models.LoyaltyPoints.objects.get(loyalty_type='Order')
+            loyalty.loyalty_point=int(order_type)
+            loyalty.conversion=0
+            loyalty.updated_at=datetime.now()
+            loyalty.save()
+        if reg_type:
+            loyalty= models.LoyaltyPoints.objects.get(loyalty_type='Registration')
+            loyalty.loyalty_point=int(reg_type)
+            loyalty.conversion=0
+            loyalty.updated_at=datetime.now()
+            loyalty.save()
+
+        response=JsonResponse({'status':'success'})
+        return response
+    else:
+        userdata=models.LoyaltyPoints.objects.all().values_list('id','loyalty_type','loyalty_point')
+        data=[]
+        count=1
+        for nlist in userdata:
+            loyalty_id=nlist[0]
+            loyalty_type=nlist[1]
+            loyalty_point=nlist[2]
+            data.append({"loyalty_id":loyalty_id,"loyalty_type":loyalty_type,"loyalty_point":loyalty_point})
+        count+=1
+    print("data",data)
+    return render(request, 'edit_loyalty.html', {'data':data})
+
+@csrf_exempt
+def recharge_report(request):
+    data=[]
+    farmer_phone_data=[]
+    farmer_name_data=[]
+    count=0
+    searchDate=''
+    user_id=''
+    phone=''
+    retailers=models.UserProfile.objects.filter(user_type=3,user__is_active=1).values_list('user__id','user__first_name','user__last_name','user__username').order_by('-created_at')
+    for i in retailers:
+        farmer_name_data.append({'id':i[0],'name':i[1]+' '+i[2]})
+        farmer_phone_data.append({'id':i[0],'mobile_number':i[3]})
+        farmer_phone_data=sorted(farmer_phone_data, key=itemgetter('mobile_number'))
+        farmer_name_data=sorted(farmer_name_data, key=itemgetter('name'))
+
+    if request.GET.get('user_id'):
+        user_id=request.GET.get('user_id')
+    
+    if request.GET.get('phone'):
+        phone=request.GET.get('phone')
+    if request.GET.get('searchDate'):
+        searchDate=request.GET.get('searchDate')
+        daterange= searchDate.split(" - ")
+        start_date=daterange[0]
+        
+        newDate=datetime.strptime(start_date, '%d/%m/%Y')
+        start_date=newDate.strftime("%Y-%m-%d")
+        
+        end_date1=str(daterange[1])
+        newDate=datetime.strptime(end_date1, '%d/%m/%Y') + timedelta(days=1)
+        end_date=newDate.strftime("%Y-%m-%d")
+
+    q = Q()
+    if user_id:
+        q |= Q(user_id_farmer_id__id=user_id)
+    if phone:
+        q |= Q(user_id_farmer_id__username=phone)
+    if searchDate:
+        q &= Q(order__created_at__range=(start_date, end_date))
+    user_info1=models.Recharge.objects.filter(q).values_list('id','user_id_farmer_id__first_name','user_id_farmer_id__last_name','order__created_at','user_id_farmer_id__username','amount').order_by('-updated_at')
+    print("user_info1",user_info1.query)
+    for i in user_info1:
+        id=i[0]
+        farmer__first_name=i[1]
+        farmer_last_name=i[2]
+        created_at=i[3]
+        formatedDate = created_at.strftime("%d-%m-%Y")
+        mobile_number=i[4]
+        amount=i[5]
+
+        count+=1
+        data.append([count,str(formatedDate),str(farmer__first_name)+' '+str(farmer_last_name),str(mobile_number),str(amount)])
+
+    return render(request, 'recharge_report.html', {'data':(data),'farmer_name_data':farmer_name_data,'farmer_phone_data':farmer_phone_data})
+
+
+# @csrf_exempt
+# def loyalty_point_report(request):
+#     data=[]
+#     retailer_phone_data=[]
+#     retailer_name_data=[]
+#     count=0
+#     searchDate=''
+#     user_id=''
+#     phone=''
+#     retailers=models.UserProfile.objects.filter(user_type=2,user__is_active=1).values_list('user__id','user__first_name','user__last_name','user__username').order_by('-created_at')
+#     for i in retailers:
+#         retailer_name_data.append({'id':i[0],'name':i[1]+' '+i[2]})
+#         retailer_phone_data.append({'id':i[0],'mobile_number':i[3]})
+#         retailer_phone_data=sorted(retailer_phone_data, key=itemgetter('mobile_number'))
+#         retailer_name_data=sorted(retailer_name_data, key=itemgetter('name'))
+
+#     if request.GET.get('user_id'):
+#         user_id=request.GET.get('user_id')
+    
+#     if request.GET.get('phone'):
+#         phone=request.GET.get('phone')
+#     if request.GET.get('searchDate'):
+#         searchDate=request.GET.get('searchDate')
+#         daterange= searchDate.split(" - ")
+#         start_date=daterange[0]
+        
+#         newDate=datetime.strptime(start_date, '%d/%m/%Y')
+#         start_date=newDate.strftime("%Y-%m-%d")
+        
+#         end_date1=str(daterange[1])
+#         newDate=datetime.strptime(end_date1, '%d/%m/%Y') + timedelta(days=1)
+#         end_date=newDate.strftime("%Y-%m-%d")
+
+#     q = Q()
+#     if user_id:
+#         q |= Q(user_id_retailer_id__id=user_id)
+#     if phone:
+#         q |= Q(user_id_retailer_id__username=phone)
+#     if searchDate:
+#         q &= Q(created_at__range=(start_date, end_date))
+#     user_info1=models.UserLoyaltyPoints.objects.filter(q).values_list('id','user_id_retailer_id__first_name','user_id_retailer_id__last_name','created_at','user_id_retailer_id__username','loyalty_point').order_by('-updated_at')
+#     print("user_info1",user_info1.query)
+#     for i in user_info1:
+#         id=i[0]
+#         farmer__first_name=i[1]
+#         farmer_last_name=i[2]
+#         created_at=i[3]
+#         formatedDate = created_at.strftime("%d-%m-%Y")
+#         mobile_number=i[4]
+#         amount=i[5]
+
+#         count+=1
+#         data.append([count,str(formatedDate),str(farmer__first_name)+' '+str(farmer_last_name),str(mobile_number),str(amount)])
+
+#     return render(request, 'loyalty_point_report.html', {'data':(data),'retailer_name_data':retailer_name_data,'retailer_phone_data':retailer_phone_data})
+
+@csrf_exempt
+def get_product_unit(request,pk):
+    product_info=models.Product.objects.filter(id=pk).values_list('product_unit_name')
+    response=JsonResponse({'status':'success','unit':product_info[0][0]})
+    return response
+
+@csrf_exempt
+def user_status_active_deactive(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Activate Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'User Deactivate Successfuly'})
+        return response
+
+@csrf_exempt
+def user_status_farmer(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Farmer Activate Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Farmer Deactivate Successfuly'})
+        return response
+
+
+@csrf_exempt
+def sendapprove(full_name,status,mobile_number) :
+   import requests
+   #digits = "0123456789"
+   OTP = ""
+   # Phone_number=mobile_number
+   Phone_number = mobile_number
+   full_name=full_name
+   sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Hello "+full_name+",\nYour Apna urea profile has been "+status+", you can login to the App using the phone number "+Phone_number+"\nTeam Hurl"}
+   requests.packages.urllib3.disable_warnings()
+   r = requests.post(sms_url,data = data)
+   return OTP
+
+
+@csrf_exempt
+def user_status_retailer(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Retailer Activate Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Retailer Deactivate Successfuly'})
+        return response
+
+
+@csrf_exempt
+def user_status_wholesaler(request):
+    status=request.POST.get('status')
+    user_id=request.POST.get('user_id')
+    if status=="Deactive":
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=1
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Wholesaler Activate Successfuly'})
+        return response
+    else:
+        user_details=User.objects.get(id=user_id)
+        user_details.is_active=0
+        user_details.save()
+        response=JsonResponse({'status':'success','msg':'Wholesaler Deactivate Successfuly'})
+        return response
+

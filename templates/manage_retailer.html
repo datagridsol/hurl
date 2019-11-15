@@ -47,6 +47,7 @@
                     <th class="input-filter">District</th>
                     <th class="input-filter">State</th>
                     <th class="select-filter">Status</th>
+		    <th class="select-filter">Approval</th>
                     <th>Action</th>                  
                   </tr>
                   </thead>
@@ -58,6 +59,7 @@
                           <th class="input-filter">District</th>
                           <th class="input-filter">State</th>
                           <th class="select-filter">Status</th>
+			  <th class="select-filter">Approval</th>
                           <th>Action</th>   
                       </tr>
                   </tfoot>
@@ -133,7 +135,77 @@
                   } );
               }
         });
-  
+  	
+
+	$(document).on( 'click', '.editBut .disapprove', function () {
+      var $this=$(this);
+      var user_id=$this.data('user-id');
+      var status='Active';
+      var result=confirm("Are you sure, You want to deactivate the retailer?");
+      var btn = $this;
+      $(btn).buttonLoader('start');
+      if (result == true) { 
+        $.ajax({
+          'method':'POST',
+          'url':'/user_status_retailer/',
+          'data':{"status":status,"user_id":user_id},
+           success: function(response){
+            $(btn).buttonLoader('stop')
+            if(response.status=='success')
+            {
+              toastr.success(response.msg).delay(10000)
+              $this.parent('.editBut').parent('td').prev('td').html('Deactive');
+              $this.parent('.editBut').html("<button class='btn btn-block btn-success btn-sm approve' data-user-id="+user_id+">Active</button>");
+            }
+            else
+            {
+             toastr.success(response.msg).delay(10000)
+            }
+
+        },
+          error: function(xhr,status,errorThrown){
+            toastr.error(xhr.responseText)
+            $(btn).buttonLoader('stop')
+          },
+        });
+      }
+
+   });
+
+   $(document).on( 'click', '.editBut .approve', function () {
+      var $this=$(this);
+      var user_id=$this.data('user-id');
+      var status='Deactive';
+      var result=confirm("Are you sure, You want to activate the retailer?");
+      var btn = $this;
+      $(btn).buttonLoader('start');
+      if (result == true) { 
+        $.ajax({
+          'method':'POST',
+          'url':'/user_status_retailer/',
+          'data':{"status":status,"user_id":user_id},
+           success: function(response){
+            $(btn).buttonLoader('stop')
+            if(response.status=='success')
+            {
+              toastr.success(response.msg).delay(10000)
+              $this.parent('.editBut').parent('td').prev('td').html('Active');
+              $this.closest('.editBut').html("<button class='btn btn-block btn-danger btn-sm disapprove' data-user-id="+user_id+">Deactive</button>");
+            }
+            else
+            {
+             toastr.success(response.msg).delay(10000)
+            }
+
+        },
+          error: function(xhr,status,errorThrown){
+            toastr.error(xhr.responseText)
+            $(btn).buttonLoader('stop')
+          },
+        });        
+      }
+   });
+
   });
   
    </script>

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Edit Farmer{% endblock %}
+{% load staticfiles %}
+{% block body_block %}
+<style type="text/css">
+    #editconfForm label.error {
+      display: inline-block;
+      max-width: 100%;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color:#e82d2d;
+      width: 100%;
+    }
+    
+  </style>
+
+ <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+              <li class="breadcrumb-item active">Edit Loyality Configuration</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          
+          <!-- right column -->
+          <div class="col-md-8" style="margin: 0 auto;">
+            <!-- general form elements disabled -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Edit Loyality Configuration</h3>
+              </div>
+              <!-- /.card-header -->
+              <form role="form" method="post" id="editconfForm" enctype="multipart/form-data">
+              <div class="card-body">
+                  {% csrf_token %}
+                  {# A more "HTML" way of creating the login form#}
+                  <input type="hidden" name="user_id_pk" id="user_id_pk" value="{{data.conf_id}}">
+                  <input type="hidden" name="district_selct" id="district_selct" value="{{data.district.id}}">
+                  
+                  <div class="row">
+                   
+                    <div class="col-sm-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                          <label for="user_type">Product Name <span class="text-danger"></span></label>
+                          <select class="form-control" id="product_name" name="product_name" readonly=True>
+                            <option  value="">---select---</option>
+                             {% for product in products_data %}
+                             <option value="{{product.id}}" {% if product.id == data.product_id %} selected="true" {% endif %} >{{product.product_name}} </option>
+                             {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                          <label>Product Unit <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" name="product_unit_name" id="product_unit_name" disabled placeholder="Product Unit ..." value="{{data.product_unit_name}}">
+                        </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Product Quantity</label>
+                        <input type="text" class="form-control" name="quantity" id="quantity" placeholder="Product Quantity" value="{{data.quantity}}">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                          <label>Recharge Amount <span class="text-danger"></span></label>
+                          <input type="text" class="form-control" name="recharge_amount"  id="recharge_amount" placeholder="Recharge Amount" value="{{data.recharge_amount}}">
+                        </div>
+                      </div>
+                  </div>
+                            
+
+               
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </form>
+            <!-- /.card -->
+            
+          </div>
+          <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+{% endblock %}

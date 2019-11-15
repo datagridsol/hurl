@@ -142,7 +142,7 @@
       var $this=$(this);
       var user_id=$this.data('user-id');
       var status='Active';
-      var result=confirm("Are you sure, You want to user approve?");
+      var result=confirm("Are you sure, You want to disapprove the user?");
       var btn = $this;
       $(btn).buttonLoader('start');
       if (result == true) { 
@@ -177,7 +177,7 @@
       var $this=$(this);
       var user_id=$this.data('user-id');
       var status='Deactive';
-      var result=confirm("Are you sure, You want to user Disapprove?");
+      var result=confirm("Are you sure, You want to approve the user?");
       var btn = $this;
       $(btn).buttonLoader('start');
       if (result == true) { 
