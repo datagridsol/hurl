@@ -133,10 +133,10 @@ DATABASES = {
 # DATABASES = {
 #      'default': {
 #      'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#      'NAME': 'hurl_new',
+#      'NAME': 'test',
 #      'USER': 'hurl1',
 #      'PASSWORD': 'hurl',
-#      'HOST': 'localhost',
+#      'HOST': '172.105.56.178',
 #      'PORT': '5432',
 #      }
 #  }

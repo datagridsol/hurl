@@ -94,6 +94,7 @@ class UserProfile(models.Model):
     otp=models.CharField(max_length=10,null=True, blank=True)
     fcm_id=models.TextField(null=True, blank=True)
     fms_id=models.CharField(max_length=255,null=True, blank=True)
+    loyalty_point_balance=models.IntegerField(default=0)
     gst_number=models.CharField(max_length=255,null=True, blank=True)
     fertilizer_licence=models.CharField(max_length=255,null=True, blank=True)
     created_at = models.DateTimeField(default=datetime.datetime.now())
@@ -193,10 +194,12 @@ class SupportReply(models.Model):
 
 
 class Recharge(models.Model):
-    user_id_farmer_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='to_user_auth_recharge')
-    user_id_retailer_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='from_user_auth_recharge')
+    user= models.ForeignKey(User, on_delete=models.CASCADE)
+    user_type = models.ForeignKey(Group, on_delete=models.CASCADE)
+    # user_id_farmer_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='to_user_auth_recharge')
+    # user_id_retailer_id= models.ForeignKey(User, on_delete=models.CASCADE,related_name='from_user_auth_recharge')
     amount=models.CharField(max_length=255)
-    order=models.ForeignKey(Order,on_delete=models.CASCADE)
+    #order=models.ForeignKey(Order,on_delete=models.CASCADE)
     transation_id=models.IntegerField()
     transation_request=models.TextField()
     transation_response=models.TextField()
@@ -274,3 +277,12 @@ class FarmerRechargeConfiguration(models.Model):
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     def __str__(self):
         return str(self.product)
+
+
+class Conversion(models.Model):
+    point= models.IntegerField()
+    amount =models.IntegerField()
+    created_at = models.DateTimeField(default=datetime.datetime.now())
+    updated_at = models.DateTimeField(default=datetime.datetime.now())
+    def __str__(self):
+        return str(self.point)
