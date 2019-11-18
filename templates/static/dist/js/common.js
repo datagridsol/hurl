@@ -531,12 +531,36 @@ $(document).ready(function(){
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
         minlength: 12,
         maxlength: 12,
+        remote: {
+          url: "/check_aadhar_card/",
+          type: "post",
+          data: {
+            aadhar_no: function() {
+              return $( "#aadhar_no" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       state: {
         required: true,
@@ -556,12 +580,14 @@ $(document).ready(function(){
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
          minlength: "Your aadhar number must consist of at least 12 digits",
         maxlength: "Your aadhar number must consist of at max 12 digits",
+        remote: "Aadhar number already exists"
       },
       state: {
         required: "Please enter a state",
@@ -830,12 +856,36 @@ $(document).ready(function(){
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
         minlength: 12,
         maxlength: 12,
+        remote: {
+          url: "/check_aadhar_card/",
+          type: "post",
+          data: {
+            aadhar_no: function() {
+              return $( "#aadhar_no" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       state: {
         required: true,
@@ -855,12 +905,14 @@ $(document).ready(function(){
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exists"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
          minlength: "Your aadhar number must consist of at least 12 digits",
         maxlength: "Your aadhar number must consist of at max 12 digits",
+        remote: "Aadhar number already exists"
       },
       state: {
         required: "Please enter a state",
@@ -1022,12 +1074,36 @@ $("#editwholeselerForm").validate({
         required: true,
         minlength: 10,
         maxlength: 10,
-        number: true
+        number: true,
+        remote: {
+          url: "/check_user_mobile/",
+          type: "post",
+          data: {
+            mobile_number: function() {
+              return $( "#mobile_number" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       aadhar_no: {
         required: true,
         minlength: 12,
         maxlength: 12,
+        remote: {
+          url: "/check_aadhar_card/",
+          type: "post",
+          data: {
+            aadhar_no: function() {
+              return $( "#aadhar_no" ).val();
+            },
+            user_id: function() {
+              return $( "#user_id_pk" ).val();
+            }
+          }
+        }
       },
       state: {
         required: true,
@@ -1047,12 +1123,14 @@ $("#editwholeselerForm").validate({
         required: "Please enter a mobile number",
         minlength: "Your mobile number must consist of at least 10 digits",
         maxlength: "Your mobile number must consist of at max 10 digits",
-        number: "Please enter valid mobile number"
+        number: "Please enter valid mobile number",
+        remote: "Mobile number already exist"
       },
       aadhar_no: {
         required: "Please enter a aadhar no",
          minlength: "Your aadhar number must consist of at least 12 digits",
         maxlength: "Your aadhar number must consist of at max 12 digits",
+        remote: "Aadhar number already exist"
       },
       state: {
         required: "Please enter a state",

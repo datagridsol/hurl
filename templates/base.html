@@ -185,33 +185,31 @@
             </a>
           </li>
 
-          <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product3/" == request.path %} active {% endif %}">
+          <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-award"></i>
               <p>
                 Loyalty Configuration
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Retailer</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Farmers</p>
+                </a>
+              </li>
+              
+            </ul>
           </li>
 
-
-          <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product4/" == request.path %} active {% endif %}">
-              <i class="nav-icon fas fa-users"></i>
-              <p>
-                Retailer
-              </p>
-            </a>
-          </li>
-          
-          <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product5/" == request.path %} active {% endif %}">
-              <i class="nav-icon fas fa-users"></i>
-              <p>
-                Farmers
-              </p>
-            </a>
-          </li>
 
           
 
@@ -235,44 +233,33 @@
           </li>
 
 
-          <!-- <li class="nav-item has-treeview ">
-            <a href="#" class="nav-link {% if "/add_product10/" == request.path %} active {% endif %}">
-              <i class="nav-icon fas fa-chart-area"></i>
-              <p>
-                Manage Area
-              </p>
-            </a>
-          </li> -->
 
-         
-
-    <!--    <li class="nav-item has-treeview ">   <a href="#"  class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
- -->
-
-       <li class="nav-item has-treeview ">
-            <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
-
-              <p>
-                Reports
-              </p>
-            </a>
-
-        <ul class="treeview-menu" style="display: hidden;">
-       <li class="nav-item has-treeview ">
-            <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
-              <p>
-                Salers Reports
-              </p>
-            </a>
-          </li> 
-
-        <li class="nav-item has-treeview ">
-          <a href="{% url 'recharge_loyalty_report' %}" class="nav-link {% if "/recharge_loyalty_report/" == request.path %} active {% endif %}"><i class="nav-icon fas fa-headset"></i>
+        <li class="nav-item has-treeview">
+          <a href="#" class="nav-link {% if "/get_reports/" == request.path or "/recharge_loyalty_report/" == request.path %} active {% endif %}"">
+            <i class="nav-icon fas fa-file-excel"></i>
             <p>
-              Recharge/Loyalty Reports
+              Reports
+              <i class="right fas fa-angle-left"></i>
             </p>
           </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{% url 'get_reports' %}" class="nav-link {% if "/get_reports/" == request.path %} active {% endif %}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Saler Reports</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'recharge_loyalty_report' %}" class="nav-link {% if "/recharge_loyalty_report/" == request.path %} active {% endif %}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Recharge/Loyalty Reports</p>
+              </a>
+            </li>
+            
+          </ul>
         </li>
+
+       
       </ul> 
       </li>
 
@@ -340,7 +327,8 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{% static "dist/js/demo.js" %}"></script>
 <script src="{% static "dist/js/jquery_validation/jquery.validate.min.js" %}"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
  <!-- InputMask -->
 <script src="{% static "plugins/moment/moment.min.js" %}"></script>
 <script src="{% static "plugins/inputmask/min/jquery.inputmask.bundle.min.js" %}"></script>
