@@ -41,6 +41,7 @@ def login(request):
 def check_login(request):
     if request.method == 'POST':
         mobile_number = request.POST.get('mobile_number')
+        lang_id = request.POST.get('lang_id')
         otp = request.POST.get('otp')
         fcm_id = request.POST.get('fcm_id')
         userprofileDetails = models.UserProfile.objects.filter(Q(user__username=mobile_number) & Q(otp=otp)).values_list('user_type__name','user__first_name','user__last_name','user','language__id')
@@ -77,12 +78,19 @@ def check_login(request):
 def generateOTP(mobile_number) :
    import requests
    digits = "0123456789"
+   text=''
    OTP = random.randint(1000,9999)
    Phone_number=mobile_number
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   #data = {"user":"datagrid","password":"Dat$Fagt&","sender":"DATAGR","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Otp For Login"+" "+str(OTP)}
-   
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to login to your Apna Urea App."}
+   data = {"user":"datagrid","password":"Dat$Fagt&","sender":"DATAGR","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Otp For Login"+" "+str(OTP)}
+   lang_id=models.UserProfile.objects.filter(user__username=Phone_number).values_list('language__id')
+   if lang_id:
+       lang_id=lang_id[0][0]
+   if lang_id==1:
+       text=str(OTP)+" "+"is your OTP, use this to login to your Apna Urea App.\nTeam Hurl"
+   if lang_id==2:
+       text=str("Apna Urea App लॉगिन करने के लिये "+str(OTP)+"का इस्तेमाल  करे.\nTeam Hurl")
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sender,cdma":"919860609000","text":str(text)}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
@@ -122,7 +130,12 @@ def user_status(request):
 def get_username(request):
     username=request.POST.get('username')
     if User.objects.filter(username=username).exists():
-        response=JsonResponse({'status':'error','msg':'Phone No Already exists'})
+        lang_id=request.POST.get('lang_id')
+        if lang_id=="1":
+            msg='Phone Number Already Exists'
+        if lang_id=="2":
+            msg=str("यह फ़ोन नंबर पहले से मौजूद है")
+        response=JsonResponse({'status':'error','msg':msg})
         return response
     else:
         response=JsonResponse({'status':'success'})
@@ -376,7 +389,12 @@ def add_user_mobile(request):
         print('land_area => '+str(land_area))
         userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=parent_id,language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,user_photo=user_photo,fertilizer_photo=fertilizer_photo,soil_card=soil_card,land_area=land_area,gst_photo=gst_photo,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number,company_name=company_name,aadhar_card=aadhar_card,pan_card=pan_card,vote_id=vote_id)
         userprofile.save()
-        response=JsonResponse({'status':'success','msg':'User registered successfully'})
+        lang_id=request.POST.get('lang_id')
+        if lang_id=="1":
+            msg='User Registered Successfully'
+        if lang_id=="2":
+            msg=str("उपयोगकर्ता सफलतापूर्वक  पंजीकृत है")
+        response=JsonResponse({'status':'success','msg':msg})
         return response
 
     else:
@@ -548,7 +566,7 @@ def get_farmer_mobile(request):
             language={"name":language,'id':lang_id}
             state={"name":state,'id':state_id}
             district={"name":district,'id':district_id}
-    	    
+            
             data={"user_type":user_type,"language":language,"full_name":full_name,"email":email,"mobile_number":mobile_number,"aadhar_no":aadhar_no,"state":state,"city":city,"district":district,"pincode":pincode,"address":address,"user_photo":user_photo,"aadhar_card":aadhar_card,"pan_card":pan_card,"vote_id":vote_id,"soil_card":soil_card,"land_area":land_area,'group_data':group_data,"lang_data":lang_data,"state_data":state_data,"gst_number":gst_number,"fertilizer_licence":fertilizer_licence,"fms_id":fms_id,"gst_photo":gst_photo,"fertilizer_photo":fertilizer_photo,"company_name":company_name,"wholesaler_data":whole_data}
     response=JsonResponse({'status':'success','data':data})
     return response
@@ -600,11 +618,11 @@ def save_farmer_mobile(request):
     pincode=request.POST.get('pincode')
     address=request.POST.get('address')
     if request.POST.get('fms_id'):
-    	fms_id=request.POST.get('fms_id')
+        fms_id=request.POST.get('fms_id')
     if request.POST.get('fertilizer_licence'):
-    	fertilizer_licence=request.POST.get('fertilizer_licence')
+        fertilizer_licence=request.POST.get('fertilizer_licence')
     if request.POST.get('gst_number'):
-    	gst_number=request.POST.get('gst_number')
+        gst_number=request.POST.get('gst_number')
     user_info_photo=models.UserProfile.objects.filter(user=user_id).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card')
     for i in user_info_photo:
         user_photo1=i[0],
@@ -652,8 +670,8 @@ def save_farmer_mobile(request):
         user_profile.soil_card = soil_card
     
     if request.FILES.get('fertilizer_photo'):
-    	fertilizer_photo = request.FILES['fertilizer_photo']
-    	user_profile.fertilizer_photo = fertilizer_photo
+        fertilizer_photo = request.FILES['fertilizer_photo']
+        user_profile.fertilizer_photo = fertilizer_photo
 
 
 
@@ -707,14 +725,14 @@ def save_farmer_mobile(request):
 @csrf_exempt
 def get_farmer_profile(request):
 
-	user_type = request.POST.get('user_type')
-	userprofileDetails = models.UserProfile.objects.filter(user_type=user_type).values_list('user')
-	for i in userprofileDetails:
-		user_type=i[0]
-		data={"user_type":user_type,}
+    user_type = request.POST.get('user_type')
+    userprofileDetails = models.UserProfile.objects.filter(user_type=user_type).values_list('user')
+    for i in userprofileDetails:
+        user_type=i[0]
+        data={"user_type":user_type,}
         # "name":full_name,"mobile_number":mobile_number,"otp":otp,"user_id":str(user_id)}
-		response=JsonResponse({'status':'success','msg':'Otp Match','data':data})
-		return response
+        response=JsonResponse({'status':'success','msg':'Otp Match','data':data})
+        return response
 
 
 # @login_required
@@ -1248,7 +1266,12 @@ def add_order_list(request):
         mobile_number=user_details[0][2]
         send_sms_order_placed(mobile_number,new_order_id,total_price)
         data={'recharge_id':recharge_id,'recharge_amount':recharge_amount,"status":True}
-        response=JsonResponse({'status':'success','msg':'Order Placed Successfully','data':data})
+        lang_id=request.POST.get('lang_id')
+        if lang_id=="1":
+            msg='Order Placed Successfully'
+        if lang_id=="2":
+            msg=str("आपका ऑर्डर दर्ज हो गया है")
+        response=JsonResponse({'status':'success','msg':msg,'data':data})
         return response
 
 @csrf_exempt
@@ -1320,26 +1343,56 @@ def recharge_done(request):
         user_recharge.status = 1
         user_recharge.updated_at=datetime.now()
         user_recharge.save()
-        response=JsonResponse({'status':'success','msg':'Reacharge Done Successfully'})
+        lang_id=request.POST.get('lang_id')
+        if lang_id=="1":
+            msg='Reacharge Done Successfully'
+        if lang_id=="2":
+            msg=str("आपका रिचार्ज हो गया है")
+        response=JsonResponse({'status':'success','msg':msg})
         return response
 
 @csrf_exempt
 def send_opt_farmer(request):
     mobile_number = request.POST.get('mobile_number')
     genotp=sendoptFarmer(mobile_number)
-    data={"mobilesendoptFarmer_number":mobile_number,"opt":genotp}
-    response=JsonResponse({'status':'success','msg':'OTP send Successfully','data':data})
+    data={"mobile_number":mobile_number,"opt":genotp}
+    lang_id=request.POST.get('lang_id')
+    print("lang_id",lang_id)
+    if lang_id=="1":
+        msg='OTP Sent Successfully'
+    if lang_id=="2":
+        msg=str("आपका OTP भेजा गया है")
+    response=JsonResponse({'status':'success','msg':msg,'data':data})
     return response
 
 @csrf_exempt
 def sendoptFarmer(mobile_number):
    import requests
+   lang_id1=2
+   msg=''
    digits = "0123456789"
    OTP = random.randint(1000,9999)
    Phone_number=mobile_number
    #Phone_number = request.POST.get('mobile_number')
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(OTP)+" "+"is your OTP, use this to verify your mobile number for Apna Urea App\nTeam Hurl"}
+   if User.objects.filter(username=Phone_number).exists():
+        userprofile=models.UserProfile.objects.filter(user__username=Phone_number).values_list('language__id')
+        for i in userprofile:
+            lang_id1=i[0]
+        if lang_id1==1:
+            msg='Phone Number Already Exists'
+        if lang_id1==2:
+            msg=str("यह फ़ोन नंबर पहले से मौजूद है")
+        response=JsonResponse({'status':'error','msg':str(msg)})
+        return response    
+   lang_id=models.UserProfile.objects.filter(user__username=Phone_number).values_list('language__id')
+   if langn_id:
+       lang_id=lang_id[0][0]
+   if lang_id=="1":
+       text=str(OTP)+" "+"is your OTP, use this to verify your mobile number for Apna Urea App\nTeam Hurl"
+   if lang_id=="2":
+       msg=str("Apna Urea App जाँच करने के लिये न का इस्तेमाल करे\nTeam Hurl")
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":text}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    response=JsonResponse({'status':'success','msg':'Otp Match','data':str(r.content)})
@@ -1355,7 +1408,14 @@ def sendwlcomeFarmer(mobile_number,full_name) :
    Phone_number = mobile_number
    full_name=full_name
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Hello "+full_name+",\nCongratulations! You have successfully registered to Apna Urea App. You can login using the mobile number "+Phone_number+"\nTeam Hurl"}
+   lang_id=models.UserProfile.objects.filter(user__username=Phone_number).values_list('language__id')
+   if lang_id:
+       lang_id=lang_id[0][0]
+   if lang_id==1:
+       text="Hello "+full_name+",\nCongratulations! You have successfully registered to Apna Urea App. You can login using the mobile number "+Phone_number+"\nTeam Hurl"
+   if lang_id==2:
+       text=str("नमस्ते नाम,\nअभिनंदन Apna Urea App मे रजिस्टर हो गये है,आप "+Phone_number+" से लॉगिन कर सकते हैं\nTeam Hurl")
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(text)}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    return OTP
@@ -1618,6 +1678,11 @@ def send_query_list(request):
     support_id=support.id
     support_reply = models.SupportReply.objects.create(query=query,support_id_id=support_id,user_id_admin_id_id=user_id_admin_id_id)
     support_reply.save()
+    lang_id=request.POST.get('lang_id')
+    if lang_id=="1":
+        msg='Query Send Successfuly'
+    if lang_id=="2":
+        msg=str("आपका सवाल भेजा गया है")
     response=JsonResponse({'status':'success','msg':'Query Send Successfuly','support_id':support_id})
     return response
 
@@ -1748,7 +1813,15 @@ def sendwlcomeReatiler(mobile_number,full_name) :
    Phone_number = mobile_number
    full_name=full_name
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Hello "+full_name+",\nThank you for Registering to Apna Urea App. Your Profile is under review, you will recive a confirmation SMS once your profile is approved.\nTeam Hurl"}
+   lang_id=models.UserProfile.objects.filter(user__username=Phone_number).values_list('language__id')
+   if lang_id:
+       lang_id=lang_id[0][0]
+   if lang_id==1:
+       text="Hello "+full_name+",\nThank you for Registering to Apna Urea App. Your Profile is under review, you will recive a confirmation SMS once your profile is approved.\nTeam Hurl"
+   if lang_id==2:
+
+       text=str("नमस्ते नाम,\nअभिनंदन Apna Urea App मे रजिस्टर करने के लिये धन्यवाद.आपकी प्रोफाइल परिक्षण मे है, परिक्षण होने के बाद आपको SMS प्राप्त होगा\nTeam Hurl")
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(text)}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    return OTP
@@ -1763,7 +1836,14 @@ def send_sms_order_placed(mobile_number,order_id,ruppe) :
    order_id=order_id
    ruppe=ruppe
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Your order on Apna Urea App of Rs "+str(ruppe)+" has been placed successfully, Your order id is "+str(order_id)+". Keep ordering to earn more loyalty points \nTeam Hurl"}
+   lang_id=models.UserProfile.objects.filter(user__username=Phone_number).values_list('language__id')
+   if lang_id:
+       lang_id=lang_id[0][0]
+   if lang_id==1:
+       text="Your order on Apna Urea App of Rs "+str(ruppe)+" has been placed successfully, Your order id is "+str(order_id)+". Keep ordering to earn more loyalty points \nTeam Hurl"
+   if lang_id==2:
+       text=str("आपका Apna Urea App का "+str(ruppe)+" रुपये का आर्डर हो गया है.आपका आर्डर नंबर "+str(order_id)+" है,अधिक पॉइंट अर्जित करने के लिए आर्डर करते रहे \nTeam Hurl")
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(text)}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    return OTP

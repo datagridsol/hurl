@@ -225,6 +225,9 @@ $(document).ready(function(){
       district: {
         required: true,
       },
+      pincode: {
+        number: true,
+      },
       soil_card: {
         required: true,
       },
@@ -261,6 +264,9 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+      pincode: {
+        required: "Please enter a valid number",
       },
       soil_card: {
         required: "Please select a image",
@@ -354,7 +360,10 @@ $(document).ready(function(){
       },
       district: {
         required: true,
-      }
+      },
+      pincode: {
+        number: true,
+      },
     },
     messages: {
       user_type: {
@@ -384,6 +393,9 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+      pincode: {
+        required: "Please enter a valid number",
       }
     },
     submitHandler: function() {
@@ -456,6 +468,9 @@ $(document).ready(function(){
       },
       district: {
         required: true,
+      },
+      pincode:{
+        number: true,
       }
     },
     messages: {
@@ -482,6 +497,9 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+      pincode: {
+        required: "Please enter a valid number",
       }
     },
     submitHandler: function() {
@@ -567,6 +585,9 @@ $(document).ready(function(){
       },
       district: {
         required: true,
+      },
+      pincode:{
+        required: true,
       }
     },
     messages: {
@@ -594,6 +615,9 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+      pincode: {
+        required: "Please enter a valid number",
       }
     },
     submitHandler: function() {
@@ -769,6 +793,9 @@ $(document).ready(function(){
       district: {
         required: true,
       },
+      pincode: {
+        number:true
+      },
       soil_card: {
         required: true,
       },
@@ -801,6 +828,9 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+      pincode: {
+        required: "Please enter a valid number",
       },
       soil_card: {
         required: "Please select a image",
@@ -892,6 +922,9 @@ $(document).ready(function(){
       },
       district: {
         required: true,
+      },
+      pincode: {
+        number: true,
       }
     },
     messages: {
@@ -919,7 +952,12 @@ $(document).ready(function(){
       },
       district: {
         required: "Please enter a district",
+      },
+
+      pincode: {
+        required: "Please enter a valid number",
       }
+
     },
     submitHandler: function() {
       var userForm=document.getElementById('editfarmerForm');
@@ -988,6 +1026,9 @@ $("#wholesalerForm").validate({
       district: {
         required: true,
       },
+      pincode: {
+        number: true,
+      },
       soil_card: {
         required: true,
       },
@@ -1020,6 +1061,9 @@ $("#wholesalerForm").validate({
       },
       district: {
         required: "Please enter a district",
+      },
+      pincode: {
+        required: "Please enter a valid number",
       },
       soil_card: {
         required: "Please select a image",

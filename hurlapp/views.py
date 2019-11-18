@@ -26,6 +26,7 @@ from datetime import timedelta
 import io,csv
 from pyfcm import FCMNotification
 from django.db.models import Sum
+from django.db import transaction
 
 
 def index(request):
@@ -175,6 +176,7 @@ def user_login(request):
 
 @login_required
 @csrf_exempt
+@transaction.atomic
 def add_user(request):
     gr_no=[]
     first_name=''
@@ -187,6 +189,7 @@ def add_user(request):
     soil_card=''
     fertilizer_photo=''
     gst_photo=''
+    pincode=0
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -222,7 +225,8 @@ def add_user(request):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         fms_id=request.POST.get('fms_id')
         fertilizer_licence=request.POST.get('fertilizer_licence')
@@ -287,6 +291,7 @@ def edit_user(request, pk):
     last_name=''
     city_name=''
     state=''
+    pincode=0
     user_photo="/media/default/placeholder.png"
     aadhar_card="/media/default/placeholder.png"
     pan_card="/media/default/placeholder.png"
@@ -323,7 +328,8 @@ def edit_user(request, pk):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         fms_id=request.POST.get('fms_id')
         fertilizer_licence=request.POST.get('fertilizer_licence')
@@ -470,6 +476,7 @@ def edit_retailer(request, pk):
     last_name=''
     city_name=''
     state=''
+    pincode=0
     user_photo="/media/default/placeholder.png"
     aadhar_card="/media/default/placeholder.png"
     pan_card="/media/default/placeholder.png"
@@ -506,7 +513,8 @@ def edit_retailer(request, pk):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         fms_id=request.POST.get('fms_id')
         fertilizer_licence=request.POST.get('fertilizer_licence')
@@ -864,6 +872,7 @@ def edit_farmer(request, pk):
     vote_id="/media/default/placeholder.png"
     soil_card="/media/default/placeholder.png"
     data={}
+    pincode=0
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -892,7 +901,8 @@ def edit_farmer(request, pk):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         
         user_info_photo=models.UserProfile.objects.filter(user=pk).values_list('user_photo','aadhar_card','pan_card','vote_id','soil_card')
@@ -1197,6 +1207,7 @@ def edit_wholesaler(request, pk):
     last_name=''
     city_name=''
     state=''
+    pincode=0
     user_photo="/media/default/placeholder.png"
     aadhar_card="/media/default/placeholder.png"
     pan_card="/media/default/placeholder.png"
@@ -1234,7 +1245,8 @@ def edit_wholesaler(request, pk):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         fms_id=request.POST.get('fms_id')
         fertilizer_licence=request.POST.get('fertilizer_licence')
@@ -1467,6 +1479,7 @@ def product_unit(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def add_product(request):
     
     if request.method == 'POST':
@@ -1499,6 +1512,7 @@ def add_product(request):
 
 @login_required
 @csrf_exempt
+@transaction.atomic
 def add_retailer(request):
     gr_no=[]
 
@@ -1512,6 +1526,7 @@ def add_retailer(request):
     soil_card=''
     fertilizer_photo=''
     gst_photo=''
+    pincode=0
     group_data=get_group()
     lang_data=get_langauge()
     state_data=get_state()
@@ -1550,7 +1565,8 @@ def add_retailer(request):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         fms_id=request.POST.get('fms_id')
         fertilizer_licence=request.POST.get('fertilizer_licence')
@@ -1632,6 +1648,7 @@ def get_retailer(request):
 
 @login_required
 @csrf_exempt
+@transaction.atomic
 def add_farmer(request):
     gr_no=[]
     first_name=''
@@ -1642,6 +1659,7 @@ def add_farmer(request):
     pan_card=''
     vote_id=''
     soil_card=''
+    pincode=0
     fertilizer_photo=''
     gst_photo=''
     group_data=get_group()
@@ -1679,7 +1697,8 @@ def add_farmer(request):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         fms_id=request.POST.get('fms_id')
         fertilizer_licence=request.POST.get('fertilizer_licence')
@@ -1760,6 +1779,7 @@ def get_farmer(request):
 
 @login_required
 @csrf_exempt
+@transaction.atomic
 def add_wholesaler(request):
     gr_no=[]
 
@@ -1771,6 +1791,7 @@ def add_wholesaler(request):
     pan_card=''
     vote_id=''
     soil_card=''
+    pincode=0
     fertilizer_photo=''
     gst_photo=''
     group_data=get_group()
@@ -1811,7 +1832,8 @@ def add_wholesaler(request):
         state=request.POST.get('state')
         city=request.POST.get('city')
         district=request.POST.get('district')
-        pincode=request.POST.get('pincode')
+        if request.POST.get('pincode'):
+            pincode=request.POST.get('pincode')
         address=request.POST.get('address')
         fms_id=request.POST.get('fms_id')
         fertilizer_licence=request.POST.get('fertilizer_licence')
@@ -2184,6 +2206,7 @@ def get_content(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def add_content(request):
     lang_data=get_langauge()
     state_data=get_state()
@@ -2543,6 +2566,7 @@ def get_reports(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def wholeseller_upload(request):
     template = "add_wholesaler.html"
     if request.method =='GET':
@@ -2618,6 +2642,143 @@ def wholeseller_upload(request):
     response=JsonResponse({'status':'success','Number_Of_User_Added':count1,'Number_Already_Exits':count})
     return response
 
+
+# @csrf_exempt
+# @transaction.atomic
+# def wholeseller_upload(request):
+#     template = "add_wholesaler.html"
+#     if request.method =='GET':
+#         return render(request, template)
+
+#     csv_file = request.FILES['file']
+#     if not csv_file.name.endswith('.csv'):
+#         messages.error(request, "This is not a CSV FILE")
+
+#     data_set = csv_file.read().decode('UTF-8')
+#     io_string =io.StringIO(data_set)
+#     next(io_string)
+#     count=0
+#     count1=0
+#     count2=0
+#     count3=0
+#     count4=0
+#     count5=0
+#     usernameData=[]
+#     districtData=[]
+#     stateData=[]
+#     for i in csv.reader(io_string, delimiter = ',', quotechar="|"):
+#         # username = j[0]
+#         # state=j[6]
+#         # district=j[7]
+#         username = i[0]
+#         password=username
+#         first_name=i[1]
+#         last_name=i[2]
+#         email=i[3]
+#         company_name=i[4]
+#         language=i[5]
+#         state=i[6]
+#         district=i[7]
+#         city=i[8]
+#         pincode=i[9]
+#         aadhar_no=i[10]
+#         address=i[11]
+#         gst_number=i[12]
+#         fertilizer_licence=i[13]
+#         fms_id=i[14]
+#         usernameData.append(username)
+#         districtData.append(district)
+#         stateData.append(state)
+#     send_file11=send_file1(usernameData,stateData,districtData)
+#     if send_file11[1]:
+#         print("www111111111",send_file11)
+#         new_user = User.objects.create(username = username,password = username,first_name=first_name,last_name=last_name,is_active=1,email=email)
+#         new_user.set_password(password)
+#         new_user.save()
+#         new_Uid = new_user.id
+
+#         user_type=Group.objects.get(id=4)
+#         user_type.user_set.add(new_Uid)
+#         langn_id=models.Language.objects.get(lang_name__icontains=language.strip().capitalize())
+#         if models.State.objects.get(state_name__icontains=state.strip()):
+#             state=models.State.objects.get(state_name__icontains=state.strip())
+#         else:
+#             state=models.State.objects.get(state_name__icontains='Thane')
+#         if models.District.objects.filter(district_name=district.strip()).exists():
+#             district=models.District.objects.get(district_name__contains=district.strip().capitalize())
+#         else:
+#             response=JsonResponse({'status':'District Error','Row Number':count1})
+#             return response
+#         if city:
+#             if models.City.objects.filter(city_name=city.strip().capitalize()).exists():
+#                 city_name=city
+#             else:
+#                 new_city = models.City.objects.create(city_name=city.strip().capitalize(),status=1)
+#                 new_city.save()
+#                 city_name=new_city.city_name
+#         # print('langn_id => '+str(langn_id))
+#         # print('first_name => '+str(first_name))
+#         # print('last_name => '+str(last_name))
+#         # print('email => '+str(email))
+#         # print('company_name => '+str(company_name))
+#         # print('state => '+str(state))
+#         # print('district => '+str(district))
+#         # print('city => '+str(city))
+#         # print('pincode => '+str(pincode))
+#         # print('address => '+str(address))
+#         # print('gst_number => '+str(gst_number))
+#         # print('fertilizer_licence => '+str(fertilizer_licence))
+#         # print('fms_id => '+str(fms_id))
+#         userprofile = models.UserProfile.objects.create(user_id=new_Uid,user_type=user_type,parent_id=0, language=langn_id,aadhar_no=aadhar_no,state=state,city=city_name,district=district,pincode=pincode,address=address,fms_id=fms_id,fertilizer_licence=fertilizer_licence,gst_number=gst_number)
+#         userprofile.save()
+
+#         response=JsonResponse({'status':'error','msg':"Please check district at row no:"+str(count4)+""})
+#         return response
+#     else:
+#         test2=send_file11[0]
+#         test3=test2.split(':')
+#         typeval=test3[0]
+#         count=test3[1]
+
+#         if typeval=="Userexits":
+#             print("count",count)
+#             response=JsonResponse({'status':'error','msg':"User exits at row no:"+str(count)})
+#             return response
+
+# def send_file1(usernameData,stateData,districtData):
+#     count=0
+#     count1=0
+#     count2=0
+#     count3=0
+#     count4=0
+#     count5=0
+#     for k in usernameData:
+#         username=k
+#         if User.objects.filter(username=username).exists():
+#             count2+=1
+#             response=HttpResponse({'status':'error','msg':"user already exits at row no:"+str(count2)+""})
+#             print("user",username)
+#             user="Userexits:"+str(count2)
+#             return user,False
+#     for m in stateData:
+#         state=m
+#         count3+=1
+        
+#         if models.State.objects.filter(state_name=state.strip()).exists():
+#             state=models.State.objects.get(state_name=state.strip())
+#         else:
+#             response=JsonResponse({'status':'error','msg':"Please check state at row no:"+str(count3)+""})
+#             return response
+#     for l in districtData:
+#         district=l
+#         count4+=1
+#         if models.District.objects.filter(district_name=district.strip()).exists():
+#             district=models.District.objects.get(district_name__contains=district.strip().capitalize())
+#         else:
+#             response=JsonResponse({'status':'error','msg':"Please check district at row no:"+str(count4)+""})
+#             return response
+
+    
 
 def send_file(request):
 
@@ -2842,12 +3003,13 @@ def get_notifications(request):
     return render(request, 'manage_notifications.html', {'data':(data)})
 
 @csrf_exempt
+@transaction.atomic
 def add_notifications(request):
 	import requests
 	import sys
 	reload(sys)
 	sys.setdefaultencoding('utf-8')
-
+    
 	lang_data=get_langauge()
 	state_data=get_state()
 	if request.method == 'POST':
@@ -2901,16 +3063,16 @@ def add_notifications(request):
 	            title=title_hnd
 	            message=message_hnd
 	        fcm_id=i[2]
-	        if push_status == '1':
-	            print('Push Notification code')
-                if fcm_id:
-                    registration_id = fcm_id
-                    message_title = title
-                    message_body = message
+	        # if push_status == '1':
+	        #     print('Push Notification code')
+         #        if fcm_id:
+         #            registration_id = fcm_id
+         #            message_title = title
+         #            message_body = message
                     
-                    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,message_icon='notification_icon')
-                    print(result)
-                    push_response=str(result)+'<br>'+push_response
+         #            result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,message_icon='notification_icon')
+         #            print(result)
+         #            push_response=str(result)+'<br>'+push_response
 	        if sms_status =='1':
 	            print('SMS code')
 	            Phone_number = mobile
@@ -3293,7 +3455,15 @@ def sendapprove(full_name,status,mobile_number) :
    Phone_number = mobile_number
    full_name=full_name
    sms_url="http://sms.peakpoint.co/sendsmsv2.asp"
-   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":"Hello "+full_name+",\nYour Apna urea profile has been "+status+", you can login to the App using the phone number "+Phone_number+"\nTeam Hurl"}
+   lang_id=models.UserProfile.objects.filter(user__username=Phone_number).values_list('language__id')
+   if lang_id:
+       lang_id=lang_id[0][0]
+   if lang_id==1:
+       text="Hello "+full_name+",\nYour Apna urea profile has been "+status+", you can login to the App using the phone number "+Phone_number+"\nTeam Hurl"
+   if lang_id==2:
+       text="नमस्ते "+full_name+",\nआपका प्रोफाइल सफलतापूर्वक रजिस्टर हो गया है.आप यह "+Phone_number+" से लॉगिन कर सकते है.\nTeam Hurl"
+       
+   data = {"user":"apnaurea","password":"apna#241","sender":"HURLSE","PhoneNumber":Phone_number,"sendercdma":"919860609000","text":str(text)}
    requests.packages.urllib3.disable_warnings()
    r = requests.post(sms_url,data = data)
    return OTP
